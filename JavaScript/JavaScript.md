@@ -36,7 +36,13 @@ JavaScript
     ```javascript
     var sym = new Symbol(); // TypeError
     ```
-
+    需要注意的事 ```typeof``` 返回值可能是 
+    + 'undefined'  如果这个值未定义
+    + 'string'     如果这个值是字符串
+    + 'boolean'    如果这个值是布尔值
+    + 'number'     如果这个值是数值
+    + 'object'     如果这个值是对象或null
+    + 'function'   如果这个值是函数
 
 ## 引用类型
 
