@@ -24,13 +24,13 @@ JavaScript
 
 ## 基础数据类型
 
-1. Null
-2. Undefined
-3. Boolean
-4. String
-5. Number
-6. Object
-7. Symbol
++ Null
++ Undefined
++ Boolean
++ String
++ Number
++ Object
++ Symbol
 
     ES6引入了一种新的原始数据类型，表示独一无二的值。它是JavaScript的第七种数据类型
     ```javascript
@@ -44,28 +44,42 @@ JavaScript
     + 'object'     如果这个值是对象或null
     + 'function'   如果这个值是函数
 
+## 变量，作用域和内存问题
+
+1. 当从一个变量向另一个变量复制引用类型的值时，同样也会将存储在变量对象中的值复制一份放到
+为新变量分配的空间中。不同的是，这个值的副本实际上是一个指针，而这个指针指向存储在堆中的一
+个对象。复制操作结束后，两个变量实际上将引用同一个对象。
+2. 函数参数传递为按值传递
+
 ## 引用类型
 
-### Object
++ Object
 
-### Date
++ Date
 
-### Regexp
++ Regexp
 
-### Array
++ Array
 
-```javascript
-let array = [1,2,3]
-// 栈
-array.push(4)
-array.pop()
+  ```javascript
+  // 数组类型判断
+  Array.isArray(value)
+  
+  // 指定数组长度
+  let name = []
+  name.length = 100
 
-// 队列
-array.push(4)
-array.shift()
-```
+  let array = [1,2,3]
+  // 栈
+  array.push(4)
+  array.pop()
 
-### Function
+  // 队列
+  array.push(4)
+  array.shift()
+  ```
+
++ Function
 
 1. 作为值得函数
 
