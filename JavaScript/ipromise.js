@@ -60,7 +60,7 @@ function resolvePromise(promise2, x, resolve, reject) {
     return
   }
 
-  if ((x !== null) && ((typeof x === 'function') || (typeof x === 'object'))) {
+  if ((x !== null) && ((IS_FUNCTION(x)) || (typeof x === 'object'))) {
     try {
       then = x.then
       if (typeof then === 'function') {
@@ -92,14 +92,23 @@ function resolvePromise(promise2, x, resolve, reject) {
     resolve(x)
   }
 }
+/**
+ * 判断是否是函数
+ * @param {object} obj
+ * @returns {boolean}  
+ */
+function IS_FUNCTION(obj) {
+  return typeof obj === 'function'
+}
+
 promise.prototype.then = function (onResolved, onRejected) {
   var self = this
   var promise2
   // 根据标准，如果then的参数不是function，则我们需要忽略它，此处以如下方式处理
-  onResolved = typeof onResolved === 'function' ? onResolved : function(v) {
+  onResolved = IS_FUNCTION(onResolved) ? onResolved : function(v) {
     return v
   }
-  onRejected = typeof onRejected === 'function' ? onRejected : function(r) {
+  onRejected = IS_FUNCTION(onRejected) ? onRejected : function(r) {
     throw r
   }
 
