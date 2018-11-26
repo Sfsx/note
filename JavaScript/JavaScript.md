@@ -18,11 +18,12 @@ for (let item of data) {
 
 ## 内存
 
-JavaScript
+    JavaScript
 
-***
 
-## 基础数据类型
+# JavaScript高级程序设计
+
+## 第3章 基础数据类型
 
 + Null
 + Undefined
@@ -44,14 +45,14 @@ JavaScript
     + 'object'     如果这个值是对象或null
     + 'function'   如果这个值是函数
 
-## 变量，作用域和内存问题
+## 第4章 变量，作用域和内存问题
 
-1. 当从一个变量向另一个变量复制引用类型的值时，同样也会将存储在变量对象中的值复制一份放到
++ 当从一个变量向另一个变量复制引用类型的值时，同样也会将存储在变量对象中的值复制一份放到
 为新变量分配的空间中。不同的是，这个值的副本实际上是一个指针，而这个指针指向存储在堆中的一
 个对象。复制操作结束后，两个变量实际上将引用同一个对象。
-2. 函数参数传递为按值传递
++ 函数参数传递为按值传递
 
-## 引用类型
+## 第5章 引用类型
 
 + Object
 
@@ -80,10 +81,27 @@ JavaScript
   ```
 
 + Function
+1. 没有重载
 
-1. 作为值得函数
+    ```js
+    function addSomeNumber(num) { return num + 100 }
+    function addSomeNumber(num) { return num + 200 }
+    // 等价于
+    const addSomeNumber = function (num) { return num + 100 }
+    addSomeNumber = function (num) { return num + 200 }
+    ```
+2. 函数声明函数表达式
 
-    ```javascript
+    ```js
+    // 函数声明
+    function addSomeNumber(num) { return num + 100 }
+    // 函数表达式
+    const addSomeNumber = function (num) { return num + 100 }
+    ```
+
+3. 作为值得函数
+
+    ```js
     //比较object中的某一个属性
     function createComparisonFunction(propertyName) {
       return function(object1, object2){
@@ -112,7 +130,7 @@ JavaScript
     alert(data[0].name);  //Zachary
     ```
 
-2. 函数内部属性
+4. 函数内部属性
 
    + 函数内部有两个对象：arguments和this。其中arguments有一个callee的属性，该属性是一个指针，指向拥有这个arguments对象的函数
 
@@ -125,8 +143,7 @@ JavaScript
         }
       }
 
-      // 等价于
-
+      // 等价于 这样改写的好处是实现更松散的耦合，使函数与函数名factorial解耦，可以随意改变函数名（函数名仅是一个指向函数的指针）
       function factorial(num){
         if (num <=1) {
           return 1;
@@ -173,26 +190,50 @@ JavaScript
 
 ### 基本包装类型
 
-引用类型与基本包装类型的主要区别就是对象的生存期。使用 new 操作符创建的引用类型的实例， 在执行流离开当前作用域之前都一直保存在内存中。而自动创建的基本包装类型的对象，则只存在于一 行代码的执行瞬间，然后立即被销毁。这意味着我们不能在运行时为基本类型值添加属性和方法。
+    引用类型与基本包装类型的主要区别就是对象的生存期。使用 new 操作符创建的引用类型的实例， 在执行流离开当前作用域之前都一直保存在内存中。而自动创建的基本包装类型的对象，则只存在于一 行代码的执行瞬间，然后立即被销毁。这意味着我们不能在运行时为基本类型值添加属性和方法。
 
-```javascript
-var s1 = "some text";
-s1.color = "red";  //执行之后被销毁
-alert(s1.color);  //undefined
+  ```javascript
+  var s1 = "some text";
+  s1.color = "red";  //执行之后被销毁
+  alert(s1.color);  //undefined
 
-var value = "25";
-var number = Number(value);  //转型函数
-alert(typeof number);        //"number"
+  var value = "25";
+  var number = Number(value);  //转型函数
+  alert(typeof number);        //"number"
 
-var obj = new Number(value); //构造函数
-alert(typeof obj);           //"object"
-```
+  var obj = new Number(value); //构造函数
+  alert(typeof obj);           //"object"
+  ```
 
-1. Boolean
+1. Boolean  
    建议是永远不要使 用 Boolean 对象。
-2. Number
+2. Number  
    不建议直接实例化 Number 类型，而原因与显式创建 Boolean 对象一样。具体来讲，就是在使用 typeof 和 instanceof 操作符测试基本类型数值与引用类型数值时，得到的结果完全不同，如下面的 例子所示。
 3. String
+    ```js
+    // replace 第二个参数为字符串时可以使用特殊的字符序列 $$, $&, $', $`, $n, $nn 参考书中P127 
+    const text = "cat, bat, sat, fat";
+    result = text.replace(/(.at)/g, "world ($1)");
+    console.log(result); // "world (cat), world (bat), world (sat), world (fat)"
+    
+    // replace 第二个参数也可以为函数 三个参数分别为 匹配项，匹配项的位置和原始字符串
+    function htmlEscape(text) {
+      return text.replace(/[<>"&]/g, function(match, pos, originalText) {
+        switch(match){
+          case "<":                
+            return "&lt;";
+          case ">":                 
+            return "&gt;";             
+          case "&":                 
+            return "&amp;";             
+          case "\"":                 
+            return "&quot;";         
+        }                  
+      }); 
+    } 
+  
+    console.log(htmlEscape("<p class=\"greeting\">Hello world!</p>"));  //&lt;p class=&quot;greeting&quot;&gt;Hello world!&lt;/p&gt
+    ```
 
 ### 单体内置对象
 
@@ -222,7 +263,7 @@ alert(typeof obj);           //"object"
       var num = selectFrom(2, 10); alert(num);   // 介于 2 和 10 之间（包括 2 和 10）的一个数值
       ```
 
-## 面向对向程序设计
+## 第6章 面向对向程序设计
 
 1. 理解对象
 
