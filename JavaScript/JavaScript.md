@@ -25,25 +25,25 @@ for (let item of data) {
 
 ## 第3章 基础数据类型
 
-+ Null
-+ Undefined
-+ Boolean
-+ String
-+ Number
-+ Object
-+ Symbol
+### 3.1 Null
+### 3.2 Undefined
+### 3.3 Boolean
+### 3.4 String
+### 3.5 Number
+### 3.6 Object
+### 3.7 Symbol
 
-    ES6引入了一种新的原始数据类型，表示独一无二的值。它是JavaScript的第七种数据类型
-    ```javascript
-    var sym = new Symbol(); // TypeError
-    ```
-    需要注意的事 ```typeof``` 返回值可能是 
-    + 'undefined'  如果这个值未定义
-    + 'string'     如果这个值是字符串
-    + 'boolean'    如果这个值是布尔值
-    + 'number'     如果这个值是数值
-    + 'object'     如果这个值是对象或null
-    + 'function'   如果这个值是函数
+  ES6引入了一种新的原始数据类型，表示独一无二的值。它是JavaScript的第七种数据类型
+  ```javascript
+  var sym = new Symbol(); // TypeError
+  ```
+  需要注意的事 `typeof` 返回值可能是
+  + 'undefined'  如果这个值未定义
+  + 'string'     如果这个值是字符串
+  + 'boolean'    如果这个值是布尔值
+  + 'number'     如果这个值是数值
+  + 'object'     如果这个值是对象或null
+  + 'function'   如果这个值是函数
 
 ## 第4章 变量，作用域和内存问题
 
@@ -54,33 +54,33 @@ for (let item of data) {
 
 ## 第5章 引用类型
 
-+ Object
+### 5.1 Object
 
-+ Date
+### 5.2 Date
 
-+ Regexp
+### 5.3 Regexp
 
-+ Array
+### 5.4 Array
 
-  ```javascript
-  // 数组类型判断
-  Array.isArray(value)
-  
-  // 指定数组长度
-  let name = []
-  name.length = 100
+```javascript
+// 数组类型判断
+Array.isArray(value)
 
-  let array = [1,2,3]
-  // 栈
-  array.push(4)
-  array.pop()
+// 指定数组长度
+let name = []
+name.length = 100
 
-  // 队列
-  array.push(4)
-  array.shift()
-  ```
+let array = [1,2,3]
+// 栈
+array.push(4)
+array.pop()
 
-+ Function
+// 队列
+array.push(4)
+array.shift()
+```
+
+### 5.5 Function
 1. 没有重载
 
     ```js
@@ -90,6 +90,7 @@ for (let item of data) {
     const addSomeNumber = function (num) { return num + 100 }
     addSomeNumber = function (num) { return num + 200 }
     ```
+
 2. 函数声明函数表达式
 
     ```js
@@ -188,9 +189,9 @@ for (let item of data) {
       objectSayColor();    //blue
       ```
 
-### 基本包装类型
+### 5.6 基本包装类型
 
-    引用类型与基本包装类型的主要区别就是对象的生存期。使用 new 操作符创建的引用类型的实例， 在执行流离开当前作用域之前都一直保存在内存中。而自动创建的基本包装类型的对象，则只存在于一 行代码的执行瞬间，然后立即被销毁。这意味着我们不能在运行时为基本类型值添加属性和方法。
+引用类型与基本包装类型的主要区别就是对象的生存期。使用 new 操作符创建的引用类型的实例， 在执行流离开当前作用域之前都一直保存在内存中。而自动创建的基本包装类型的对象，则只存在于一 行代码的执行瞬间，然后立即被销毁。这意味着我们不能在运行时为基本类型值添加属性和方法。
 
   ```javascript
   var s1 = "some text";
@@ -235,9 +236,15 @@ for (let item of data) {
     console.log(htmlEscape("<p class=\"greeting\">Hello world!</p>"));  //&lt;p class=&quot;greeting&quot;&gt;Hello world!&lt;/p&gt
     ```
 
-### 单体内置对象
+### 5.7 单体内置对象
 
 1. Global 对象
+    + isNaN()
+    + isFinite()
+    + parseInt()
+    + parseFloat()
+    + encodeURI()
+    + eval()
 
 2. Math 对象
    + math 对象属性
@@ -254,7 +261,7 @@ for (let item of data) {
    + random()方法
       Math.random()方法返回大于等于 0小于 1的一个随机数。
       ```javascript
-      值 = Math.floor(Math.random() * 可能值的总数 + 第一个可能的值)
+      // 值 = Math.floor(Math.random() * 可能值的总数 + 第一个可能的值)
       function selectFrom(lowerValue, upperValue) {
         var choices = upperValue - lowerValue + 1;
         return Math.floor(Math.random() * choices + lowerValue);
@@ -265,11 +272,16 @@ for (let item of data) {
 
 ## 第6章 面向对向程序设计
 
-1. 理解对象
+### 6.1 理解对象
 
-   1.1 属性类型
+1. 属性类型
 
-   + 数据属性
+    + 数据属性
+
+        + Configurable
+        + Enumerable
+        + Writable
+        + Value
 
       ```javascript
       var person = {};
@@ -283,8 +295,12 @@ for (let item of data) {
 
       在调用 Object.defineProperty()方法时，如果不指定，configurable、enumerable 和 writable 特性的默认值都是 false
 
-   + 访问器属性
+    + 访问器属性
 
+        + Configurable
+        + Enumerable
+        + Get
+        + Set
       ```javascript
       var book = {
         _year: 2004,
@@ -305,73 +321,75 @@ for (let item of data) {
       book.year = 2005;
       alert(book.edition);  //2
       ```
+2. 定义多个属性
+3. 读取属性的特性
 
-   1.3 读取属性的特性
-   Object.getOwnPropertyDescriptor()
+    `Object.getOwnPropertyDescriptor(obj, key)`
 
-2. 创建对象
+### 6.2 创建对象
 
-   1. 工厂模式
-   2. 构造函数
-   3. 原型模式
+1. 工厂模式
+2. 构造函数
+3. 原型模式
 
-      ```javascript
-      function Person(){ }
+    ```javascript
+    function Person(){ }
 
-      Person.prototype = {
-        name : "Nicholas",
-        age : 29,
-        job: "Software Engineer",
-        sayName : function () {
-          alert(this.name);
-        }
-      };
-      ```
-
-   4. 原型的动态性
-   5. 原生对象的原型
-
-      不推荐在程序开发过程中修改原生对象的原型
-
-3. 继承
-   1. 原型链
-   2. 借用构造函数
-   3. 组合继承
-
-      组合继承（combination inheritance），有时候也叫做伪经典继承，指的是将原型链和借用构造函数的 技术组合到一块，从而发挥二者之长的一种继承模式
-
-   4. 原型继承
-
-      `Object.create()`即为原型继承。这个方法接收两个参数：一 个用作新对象原型的对象和（可选的）一个为新对象定义额外属性的对象。
-
-   5. 寄生式继承
-   6. 寄生组合式继承
-
-      ```javascript
-      function SuperType(name){
-        this.name = name;
-        this.colors = ["red", "blue", "green"];
-      }
-
-      SuperType.prototype.sayName = function(){
+    Person.prototype = {
+      name : "Nicholas",
+      age : 29,
+      job: "Software Engineer",
+      sayName : function () {
         alert(this.name);
-      };
-
-      function SubType(name, age){
-        SuperType.call(this, name);
-        this.age = age;
       }
+    };
+    ```
 
-      function inheritPrototype(subType, superType){
-        var prototype = object(superType.prototype);     //创建对象
-        prototype.constructor = subType;              //增强对象
-        subType.prototype = prototype;               //指定对象
-      }
+4. 原型的动态性
+5. 原生对象的原型
 
-      inheritPrototype(SubType, SuperType);
-      ```
+    不推荐在程序开发过程中修改原生对象的原型
 
-## 函数表达式
+### 6.3 继承
 
-1. 递归
-2. 闭包
+1. 原型链
+2. 借用构造函数
+3. 组合继承
+
+    组合继承（combination inheritance），有时候也叫做伪经典继承，指的是将原型链和借用构造函数的 技术组合到一块，从而发挥二者之长的一种继承模式
+
+2. 原型继承
+
+    `Object.create()`即为原型继承。这个方法接收两个参数：一 个用作新对象原型的对象和（可选的）一个为新对象定义额外属性的对象。
+
+3. 寄生式继承
+4. 寄生组合式继承
+
+    ```javascript
+    function SuperType(name){
+      this.name = name;
+      this.colors = ["red", "blue", "green"];
+    }
+
+    SuperType.prototype.sayName = function(){
+      alert(this.name);
+    };
+
+    function SubType(name, age){
+      SuperType.call(this, name);
+      this.age = age;
+    }
+
+    function inheritPrototype(subType, superType){
+      var prototype = object(superType.prototype);     //创建对象
+      prototype.constructor = subType;              //增强对象
+      subType.prototype = prototype;               //指定对象
+    }
+
+    inheritPrototype(SubType, SuperType);
+    ```
+
+## 第7章 函数表达式
+
+### 7.1 递归
+### 7.2 闭包
