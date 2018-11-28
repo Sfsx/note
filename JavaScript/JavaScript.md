@@ -244,8 +244,11 @@ for (let item of data) {
    + min()和max()
 
       ```javascript
+      // Math.max()函数原本参数为字符串
       var values = [1, 2, 3, 4, 5, 6, 7, 8];
       var max = Math.max.apply(Math, values);
+      // es6写法
+      max = Math.max(...values);
       ```
    + 舍入方法
       + Math.cell()
@@ -261,6 +264,9 @@ for (let item of data) {
       }
 
       var num = selectFrom(2, 10); alert(num);   // 介于 2 和 10 之间（包括 2 和 10）的一个数值
+
+      // 生成随机字符串
+      Math.random().toString(36).substr(2)
       ```
 
 ## 第6章 面向对向程序设计
