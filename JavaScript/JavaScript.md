@@ -439,6 +439,9 @@ array.shift()
       };
       friend.name; //undefined
       ```
+    + 原生对象的原型
+
+      不推荐在程序开发过程中修改原生对象的原型
 
     + 原型对象的问题 
 
@@ -451,11 +454,49 @@ array.shift()
 
 5. 动态原型模式
 
+    ```js
+    function Person(name) {
+      this.name = name
+
+      if (typeof this.sayName !== 'function') {
+        Person.prototype.sayName = function () {
+          alert(this.name);
+        };
+      }
+    }
+    ```
+
 6. 寄生构造函数模式
+
+    ```js
+    function Person(name) {
+      var o = {}
+      o.name = name;
+      o.sayName = function () {
+        alert(this.name);
+      };
+      return o;
+    }
+    var friend = new Person('Sfsx');
+    ```
+    这个模式和工厂模式其实是一模一样的，就是调用的时候用`new`关键字。  
+    同工厂模式一样，无法用`instanceof`来判断对象的类型。不建议使用
 
 7. 稳妥构造函数模式
 
-不推荐在程序开发过程中修改原生对象的原型
+    ```js
+    function Person(name) {
+      var o = {}
+      o.name = name;
+      o.sayName = function () {
+        alert(name);
+      };
+      return o;
+    }
+    var friend = Person("Nicholas", 29, "Software Engineer");
+    ```
+    稳妥构造函数遵循与寄生构造函数类似的模式，但有两点不同：一是新创建对象的实例方法不引用 this；二是不使用 new 操作符调用构造函数。  
+    无法用`instanceof`来判断对象的类型。不建议使用
 
 ### 6.3 继承
 
