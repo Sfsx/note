@@ -42,7 +42,7 @@ for (let item of data) {
   + 'string'     如果这个值是字符串
   + 'boolean'    如果这个值是布尔值
   + 'number'     如果这个值是数值
-  + 'object'     如果这个值是对象或null
+  + 'object'     如果这个值是对象或 `null`
   + 'function'   如果这个值是函数
 
 ## 第4章 变量，作用域和内存问题
@@ -133,7 +133,7 @@ alert(data[0].name);  //Zachary
 
 #### 5.5.4 函数内部属性
 
-1. 函数内部有两个对象：arguments和this。其中arguments有一个callee的属性，该属性是一个指针，指向拥有这个arguments对象的函数
+1. 函数内部有两个对象：`arguments` 和 `this` 。其中 `arguments` 有一个 `callee` 的属性，该属性是一个指针，指向拥有这个 `arguments` 对象的函数
 
     ```javascript
     function factorial(num) {
@@ -154,7 +154,7 @@ alert(data[0].name);  //Zachary
     }
     ```
 
-2. this 引用的是函数据以执行的环境对象——或者也可以说是 this 值（当在网页的全局作用域中调用函数时， this 对象引用的就是 window）
+2. this 引用的是函数据以执行的环境对象——或者也可以说是 `this` 值（当在网页的全局作用域中调用函数时， `this` 对象引用的就是 `window` ）
 
     ```javascript
     window.color = "red";
@@ -169,10 +169,10 @@ alert(data[0].name);  //Zachary
     o.sayColor();   //"blue"
     ```
 
-3. 每个函数都包含两个非继承而来的方法：apply()和 call()。这两个方法的用途都是在特定的作用域中调用函数，实际上等于设置函数体内 this 对象的值
-    + call() 第一个参数是在其中运行函数的作用域，其余参数都直接传递给函数。(this, .., .., .., ..)
-    + apply() 第一个参数是在其中运行函数的作用域，另一个是参数数组。(this, arguements)
-    + bind() 这个方法会创建一个函数的实例，其 this 值会被绑 定到传给 bind()函数的值。
+3. 每个函数都包含两个非继承而来的方法：`apply()` 和 `call()`。这两个方法的用途都是在特定的作用域中调用函数，实际上等于设置函数体内 `this` 对象的值
+    + call() 第一个参数是在其中运行函数的作用域，其余参数都直接传递给函数。`(this, .., .., .., ..)`
+    + apply() 第一个参数是在其中运行函数的作用域，另一个是参数数组。`(this, arguements)`
+    + bind() 这个方法会创建一个函数的实例，其 `this` 值会被绑 定到传给 `bind()` 函数的值。
       ```javascript
       window.color = "red";
       var o = { color: "blue" };
@@ -191,7 +191,7 @@ alert(data[0].name);  //Zachary
 
 ### 5.6 基本包装类型
 
-引用类型与基本包装类型的主要区别就是对象的生存期。使用 new 操作符创建的引用类型的实例， 在执行流离开当前作用域之前都一直保存在内存中。而自动创建的基本包装类型的对象，则只存在于一 行代码的执行瞬间，然后立即被销毁。这意味着我们不能在运行时为基本类型值添加属性和方法。
+引用类型与基本包装类型的主要区别就是对象的生存期。使用 `new` 操作符创建的引用类型的实例， 在执行流离开当前作用域之前都一直保存在内存中。而自动创建的基本包装类型的对象，则只存在于一行代码的执行瞬间，然后立即被销毁。这意味着我们不能在运行时为基本类型值添加属性和方法。
 
 ```javascript
 var s1 = "some text";
@@ -208,11 +208,11 @@ alert(typeof obj);           //"object"
 
 #### 5.6.1 Boolean  
 
-建议是永远不要使 用 Boolean 对象。
+建议是永远不要使用 `Boolean` 对象。
 
 #### 5.6.2 Number  
 
-不建议直接实例化 Number 类型，而原因与显式创建 Boolean 对象一样。具体来讲，就是在使用 typeof 和 instanceof 操作符测试基本类型数值与引用类型数值时，得到的结果完全不同，如下面的 例子所示。
+不建议直接实例化 `Number` 类型，而原因与显式创建 `Boolean` 对象一样。具体来讲，就是在使用 `typeof` 和 `instanceof` 操作符测试基本类型数值与引用类型数值时，得到的结果完全不同，如下面的例子所示。
 
 #### 5.6.3 String
 
@@ -245,16 +245,16 @@ console.log(htmlEscape("<p class=\"greeting\">Hello world!</p>"));  //&lt;p clas
 
 #### 5.7.1 Global 对象
 
-+ isNaN()
-+ isFinite()
-+ parseInt()
-+ parseFloat()
-+ encodeURI()
-+ eval()
++ `isNaN()`
++ `isFinite()`
++ `parseInt()`
++ `parseFloat()`
++ `encodeURI()`
++ `eval()`
 
 #### 5.7.2 Math 对象
-+ math 对象属性
-+ min()和max()
++ `math` 对象属性
++ `min()` 和 `max()`
 
   ```javascript
   // Math.max()函数原本参数为字符串
@@ -265,12 +265,12 @@ console.log(htmlEscape("<p class=\"greeting\">Hello world!</p>"));  //&lt;p clas
   ```
 
 + 舍入方法
-  + Math.cell()
-  + Math.floor()
-  + Math.round()
+  + `Math.cell()`
+  + `Math.floor()`
+  + `Math.round()`
 
-+ random()方法
-  Math.random()方法返回大于等于 0小于 1的一个随机数。
++ `random()` 方法  
+  `Math.random()`方法返回大于等于 `0` 小于 `1` 的一个随机数。
   ```javascript
   // 值 = Math.floor(Math.random() * 可能值的总数 + 第一个可能的值)
   function selectFrom(lowerValue, upperValue) {
@@ -293,9 +293,9 @@ console.log(htmlEscape("<p class=\"greeting\">Hello world!</p>"));  //&lt;p clas
 1. 数据属性
 
     + Configurable  
-    表示能否通过 delete 删除属性从而重新定义属性，能否修改属性的特性，或者能否把属性修改为访问器属性
+    表示能否通过 `delete` 删除属性从而重新定义属性，能否修改属性的特性，或者能否把属性修改为访问器属性
     + Enumerable   
-    表示能否通过 for-in 循环返回属性
+    表示能否通过 `for-in` 循环返回属性
     + Writable  
     表示能否修改属性的值
     + Value  
@@ -311,7 +311,7 @@ console.log(htmlEscape("<p class=\"greeting\">Hello world!</p>"));  //&lt;p clas
     });
     ```
 
-  在调用 Object.defineProperty()方法时，如果不指定，configurable、enumerable 和 writable 特性的默认值都是 false
+  在调用 `Object.defineProperty()` 方法时，如果不指定，`configurable`、`enumerable` 和 `writable` 特性的默认值都是 `false`
 
 2. 访问器属性
 
@@ -390,13 +390,13 @@ var person2 = new Person("Greg", 27, "Doctor");
 Person("Greg", 27, "Doctor"); // 添加到 window
 window.sayName(); //"Greg"
 ```
-要创建 Person 的新实例，必须使用 new 操作符。以这种方式调用构造函数实际上会经历以下 4 个步骤：  
+要创建 `Person` 的新实例，必须使用 `new` 操作符。以这种方式调用构造函数实际上会经历以下 4 个步骤：  
 >(1) 创建一个新的对象  
 >(2) 将构造函数的作用域传给新的对象  
 >(3) 执行构造函数，为这个新对象添加属性  
 >(4) 返回新的对象   
 
-构造函数模式虽然好用，但也并非没有缺点。使用构造函数的主要问题，就是每个方法都要在每个实例上重新创建一遍。在前面的例子中， person1 和 person2 都有一个名为 sayName()的方法，但那两个方法不是同一个 Function 的实例。这样如果创建多个实例会造成内存浪费
+构造函数模式虽然好用，但也并非没有缺点。使用构造函数的主要问题，就是每个方法都要在每个实例上重新创建一遍。在前面的例子中， `person1` 和 `person2` 都有一个名为 `sayName()`的方法，但那两个方法不是同一个 `Function` 的实例。这样如果创建多个实例会造成内存浪费
 
 #### 6.2.3 原型模式
 
@@ -410,7 +410,7 @@ Person.prototype.sayName = function () {
   alert(this.name);
 };
 ```
-与构造函数模式不同的是，新对象的这些属性和方法是由所有实例共享的。换句话说，person1 和 person2 访问的都是同一组属性和同一个 sayName()函数。
+与构造函数模式不同的是，新对象的这些属性和方法是由所有实例共享的。换句话说，`person1` 和 `person2` 访问的都是同一组属性和同一个 `sayName()` 函数。
 
 1. 理解原型对象  
 
@@ -440,7 +440,7 @@ Person.prototype.sayName = function () {
 
 4. 原型的动态性  
 
-    调用构造函数时会为实例添加一个指向初始原型的`[[Prototype]]`指针，此时将原型改为另外一个对象会切断构造函数与最初原型的联系，使构造函数指向新的原型。但实例还是指向最初的原型
+    调用构造函数时会为实例添加一个指向初始原型的 `[[Prototype]]` 指针，此时将原型改为另外一个对象会切断构造函数与最初原型的联系，使构造函数指向新的原型。但实例还是指向最初的原型
     ```js
     function Person(){ }
     var friend = new Person();
@@ -490,8 +490,8 @@ function Person(name) {
 }
 var friend = new Person('Sfsx');
 ```
-这个模式和工厂模式其实是一模一样的，就是调用的时候用`new`关键字。  
-同工厂模式一样，无法用`instanceof`来判断对象的类型。不建议使用
+这个模式和工厂模式其实是一模一样的，就是调用的时候用 `new` 关键字。  
+同工厂模式一样，无法用 `instanceof` 来判断对象的类型。不建议使用
 
 #### 6.2.7 稳妥构造函数模式
 
@@ -513,13 +513,90 @@ var friend = Person("Nicholas", 29, "Software Engineer");
 
 #### 6.3.1 原型链
 
+```js
+function SuperType(){
+  this.property = true;
+}
+SuperType.prototype.getSuperValue = function(){
+  return this.property;
+};
+function SubType(){
+  this.subproperty = false;
+}
+//继承了 SuperType
+SubType.prototype = new SuperType();
+SubType.prototype.getSubValue = function (){
+  return this.subproperty;
+};
+var instance = new SubType();
+alert(instance.getSuperValue()); //true
+```
+
+`A` 类型的原型是 `B` 类型的实例，而 `B` 类型原型又是 `C` 类型的实例，那么 `A` 类型则继承了 `B` 类型和 `C` 类型原型上的所有方法。如此层层递进，则形成原型链。
+
+1. 别忘记默认原型
+
+    所有引用类型默认都继承了 `Object`，而这个继承也是通过原型链实现的。所有函数的默认原型都是 `Object` 的实例，因此默认原型都会包含一个内部指针，指向 `Object.prototype`。  
+    **所有对象都是通过函数创建，所有函数都是对象。**
+    
+
+2. 确定原型链与实例的关系
+
+    + `instanceof`
+    + `isPrototypeOf()`
+
+3. 谨慎地定义方法
+
+    理解原型的继承关系，要清楚知道什么时候形成原型链，什么时候可以改写原型中的方法，注意原型中的 `constructor` 属性， `[[Prototype]]` 属性和`prototype` 属性
+
+4. 原型链问题
+
+    **包含引用类型值的原型属性会被所有实例共享**
+
 #### 6.3.2 借用构造函数
+
+**函数只不过是在特定环境中执行代码的对象，
+因此通过使用 `apply()` 和 `call()` 方法也可以在（将来）新创建的对象上执行构造函数**
+```js
+function SuperType() {
+  this.colors = ["red", "blue", "green"];
+}
+
+function SubType() {
+  SuperType.call(this);
+}
+
+var instancel = new SubType();
+instancel.colors.push("black");
+alert(instancel.colors); //"red, blue, green, black"
+```
+
+1. 传递参数
+
+    ```js
+    function SuperType(name){
+      this.name = name;
+    }
+    function SubType(){
+      //继承了 SuperType，同时还传递了参数
+      SuperType.call(this, "Nicholas");
+      //实例属性
+      this.age = 29;
+    }
+    var instance = new SubType();
+    ```
+    为了确保 `SuperType` 构造函数不会重写子类型的属性，可以在调用超类型构造函数后，再添加应该在子类型中定义的属性。
+
+2. 借用构造函数的问题
+
+    方法都在构造函数中定义，那么函数复用无从谈起
+    超类型的原型中定义的方法，对子类型也是不可见的，结果所有子类都都只能使用构造函数模式。
 
 #### 6.3.3 组合继承
 
-组合继承（combination inheritance），有时候也叫做伪经典继承，指的是将原型链和借用构造函数的 技术组合到一块，从而发挥二者之长的一种继承模式
+组合继承，有时候也叫做伪经典继承，指的是将原型链和借用构造函数的 技术组合到一块，从而发挥二者之长的一种继承模式
 
-2. 原型式继承
+#### 6.3.4 原型式继承
 
     `Object.create()`即为原型继承。这个方法接收两个参数：一 个用作新对象原型的对象和（可选的）一个为新对象定义额外属性的对象。
 
