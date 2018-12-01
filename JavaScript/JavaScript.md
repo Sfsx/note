@@ -170,8 +170,8 @@ alert(data[0].name);  //Zachary
     ```
 
 3. 每个函数都包含两个非继承而来的方法：`apply()` 和 `call()`。这两个方法的用途都是在特定的作用域中调用函数，实际上等于设置函数体内 `this` 对象的值
-    + call() 第一个参数是在其中运行函数的作用域，其余参数都直接传递给函数。`(this, .., .., .., ..)`
-    + apply() 第一个参数是在其中运行函数的作用域，另一个是参数数组。`(this, arguements)`
+    + `call()` 第一个参数是在其中运行函数的作用域，其余参数都直接传递给函数。`(this, .., .., .., ..)`
+    + `apply()` 第一个参数是在其中运行函数的作用域，另一个是参数数组。`(this, arguements)`
     + bind() 这个方法会创建一个函数的实例，其 `this` 值会被绑 定到传给 `bind()` 函数的值。
       ```javascript
       window.color = "red";
@@ -311,7 +311,7 @@ console.log(htmlEscape("<p class=\"greeting\">Hello world!</p>"));  //&lt;p clas
     });
     ```
 
-  在调用 `Object.defineProperty()` 方法时，如果不指定，`configurable`、`enumerable` 和 `writable` 特性的默认值都是 `false`
+    在调用 `Object.defineProperty()` 方法时，如果不指定，`configurable`、`enumerable` 和 `writable` 特性的默认值都是 `false`
 
 2. 访问器属性
 
@@ -525,6 +525,8 @@ function SubType(){
 }
 //继承了 SuperType
 SubType.prototype = new SuperType();
+//修改 constructor 指向
+SubType.prototype.constructor = SubType;
 SubType.prototype.getSubValue = function (){
   return this.subproperty;
 };
@@ -596,11 +598,66 @@ alert(instancel.colors); //"red, blue, green, black"
 
 组合继承，有时候也叫做伪经典继承，指的是将原型链和借用构造函数的 技术组合到一块，从而发挥二者之长的一种继承模式
 
+```js
+function SuperType(name){
+  this.name = name;
+  this.colors = ["red", "blue", "green"];
+}
+SuperType.prototype.sayName = function() {
+  alert(this.name);
+}
+function SubType(){
+  //继承了 SuperType，同时还传递了参数
+  SuperType.call(this, "Nicholas");
+  //实例属性
+  this.age = 29;
+}
+SubType.prototype = new SuperType();
+SubType.prototype.constructor = SubType;
+SubType.prototype.sayAge = function() {
+  alert(this.age);
+}
+var instance = new SubType();
+```
+
+组合继承避免了原型链和借用构造函数的缺陷，融合了它们的优点，成为 JavaScript 中常用的继承模式。而且，`instanceof` 和 `isPrototypeOf()` 也能够用于识别基于组合继承创建的对象。  
+但是**组合继承会调用2次超类型的构造函数**，改进方法看 6.3.6 这一节
+
 #### 6.3.4 原型式继承
 
-    `Object.create()`即为原型继承。这个方法接收两个参数：一 个用作新对象原型的对象和（可选的）一个为新对象定义额外属性的对象。
+`Object.create()`即为原型继承。这个方法接收两个参数：一个用作新对象原型的对象和（可选的）一个为新对象定义额外属性的对象。
+```js
+var superType = {
+  color: ["red", "blue", "green"]
+};
+
+var subType = Object.create(superType);
+subType.color.push("black");
+var anotherSubType = Object.create(superType);
+anotherSubType.color.push("white");
+alert(anotherSubType.color) // "red, blue, green, black, white"
+```
+但是，当对象包含引用类型值的属性时，通过`Object.create()`创建的对象会始终共享其值，就像原型模式一样。
 
 #### 6.3.5 寄生式继承
+
+寄生式继承的思路与寄生构造函数和工厂模式类似，即创建一个仅用于封装继承过程的函数，该函数在内部以某种方式来增强对象，后再像真地是它做了所有工作一样返回对象
+
+```js
+function createAnother(original){
+  var clone = object(original);  //通过调用函数创建一个新对象
+  clone.sayHi = function(){      //以某种方式来增强这个对象
+    alert("hi");     
+  };
+  return clone;                  //返回这个对象
+}
+var person = {     
+  name: "Nicholas",     
+  friends: ["Shelby", "Court", "Van"]
+}; 
+ 
+var anotherPerson = createAnother(person); anotherPerson.sayHi(); //"hi"
+```
 
 #### 6.3.6 寄生组合式继承
 
@@ -619,6 +676,10 @@ function SubType(name, age){
   this.age = age;
 }
 
+/**
+ * 跳过父类的构造函数，直接复制其原型，并修改constructor属性
+ * 最后将复制的结果作为子类的原型
+ */
 function inheritPrototype(subType, superType){
   var prototype = object(superType.prototype);     //创建对象
   prototype.constructor = subType;              //增强对象
