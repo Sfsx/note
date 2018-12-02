@@ -689,7 +689,14 @@ function inheritPrototype(subType, superType){
 inheritPrototype(SubType, SuperType);
 ```
 
+这个例子的高效率体现在它只调用了一次 `SuperType` 构造函数，并且因此避免了在 `SubType.prototype` 上面创建不必要的、多余的属性。与此同时，原型链还能保持不变；因此，还能够正常使用 `instanceof` 和 `isPrototypeOf()`。**开发人员普遍认为寄生组合式继承是引用类型理想的继承范式。**
+
 ## 第7章 函数表达式
 
++ 函数表达式的特征
++ 使用函数实现递归
++ 使用闭包定义私有变量
+ 
 ### 7.1 递归
+
 ### 7.2 闭包
