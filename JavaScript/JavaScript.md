@@ -699,4 +699,38 @@ inheritPrototype(SubType, SuperType);
  
 ### 7.1 递归
 
+严格模式下，不能通过脚本访问 `arguments.callee`，访问这个属性会导致错误。不过，可以使用命名函数表达式来达成相同的结果。
+```js
+"use strict";
+var factorial = (function f(num){
+  if (num <= 1){
+    return 1;
+  } else {
+    return num * f(num-1);
+  }
+})
+alert(f); // undefined 
+```
 ### 7.2 闭包
+
+**闭包是指一个函数有权访问另一个函数作用域中的变量**
+
+#### 7.2.1 闭包与变量
+
+闭包的副作用，闭包只能取得包含函数所有变量的最后一个值。若包含函数的变量在包含函数执行过程中发生改变，闭包只能取得最终改变的结果。
+
+```js
+function createFunction() {
+  var result = new Array();
+  for (var i = 0; i < 10; i++) {
+    resutl[i] = function () {
+      return i;
+    }
+    return result;
+  }
+}
+```
+
+#### 7.2.2 关于this对象
+
+如果要访问作用域中的this对象，必须将this的引用保存到另一个闭包能够访问的变量中。
