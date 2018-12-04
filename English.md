@@ -12,3 +12,12 @@
 + corrupted
 + binary
 + inspect
++ custom
++ navigation
++ implement
++ initial
++ preserved
++ chain
++ otherwise
++ property
++ preamble

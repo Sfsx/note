@@ -806,3 +806,31 @@ var person = function() {
 
 有人进一步改进模块模式，使其返回的单例是属于某种类型，同时还添加某种属性和方法对其加以增强。
 
+```js
+var singleton = function() {
+  var name = "Sfsx";
+  var age = 29;
+  function isStudent() {
+    reutrn false;
+  }
+
+  var object = new CustomType();
+  
+  object.publicProperty = true;
+  object.publicGetName = function() {
+    return name;
+  }
+  return object;
+}()
+```
+
+## 第8章 BOM
+
++ 理解 window 对象——BOM核心
++ 控制窗口、框架和弹出窗口
++ 利用 location 对象中的页面信息
++ 使用 navigation 对象了解浏览器
+
+### 8.1 window
+
+#### 8.1 全局作用域
