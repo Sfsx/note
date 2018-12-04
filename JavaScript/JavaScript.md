@@ -717,7 +717,8 @@ alert(f); // undefined
 
 #### 7.2.1 闭包与变量
 
-闭包的副作用，闭包只能取得包含函数所有变量的最后一个值。若包含函数的变量在包含函数执行过程中发生改变，闭包只能取得最终改变的结果。
++ 闭包所保存的是整个变量对象，而不是某个特殊的变量。  
++ 闭包的副作用，闭包只能取得包含函数所有变量的最后一个值。若包含函数的变量在包含函数执行过程中发生改变，闭包只能取得最终改变的结果。
 
 ```js
 function createFunction() {
@@ -733,4 +734,75 @@ function createFunction() {
 
 #### 7.2.2 关于this对象
 
-如果要访问作用域中的this对象，必须将this的引用保存到另一个闭包能够访问的变量中。
+如果要访问外部作用域中的this对象，必须将this的引用保存到另一个闭包能够访问的变量中。
+
+#### 7.2.3 内存泄漏
+
+闭包会引用包含另一个函数作用域中的整个活动对象（包含这个作用域中所有的变量）。若想指定内存，请将引用该内存的变量置为 `null`
+
+### 7.3 模仿块级作用域
+
+匿名自执行函数可以模仿块级作用域。
+
+### 7.4 私有变量
+
+在构造函数中定义私有变量和特权方法
+```js
+function Person(name){
+  var age = 29;
+  this.getName = function() {
+    return name;
+  };
+  this.setName = function(value) {
+    name = value;
+  };
+  this.getAge = function() {
+    return age;
+  }
+}s
+```
+但是这种方法存在构造函数模式继承所存在的问题: 针对每一个实例都会创建同样的一组新方法
+
+#### 7.4.1 静态私有变量
+
+```js
+(function() {
+  var name = "Sfsx";
+  Person = function() {}
+  Person.prototype.getName = function() {
+    return name;
+  }
+})()
+
+var student = new Person();
+alert(student.getName()); // "Sfsx"
+```
+
+在非严格模式下，Person前不加var关键字，使其从私有作用域升级为全局变量。**这个模式下私有变量是所有实例共有的**
+
+#### 7.4.2 模块模式
+
+前面的两种模式是为自定义类型建立私有变量和特权方法。而模块模式则是为单例创建私有变量和特权方法。
+
+```js
+var person = function() {
+  var name = "Sfsx";
+  var age = 28;
+
+  return {
+    publicProperty: true,
+    getName: function() {
+      return name;
+    },
+    setName: function(newName) {
+      name = newName;
+    }
+  } 
+}() 
+```
+因为是单例所以
+
+#### 7.4.3 增强模块模式
+
+有人进一步改进模块模式，使其返回的单例是属于某种类型，同时还添加某种属性和方法对其加以增强。
+
