@@ -826,6 +826,8 @@ var singleton = function() {
 
 ## 第8章 BOM
 
+BOM 浏览器对象模型
+
 + 理解 window 对象——BOM核心
 + 控制窗口、框架和弹出窗口
 + 利用 location 对象中的页面信息
@@ -848,3 +850,5 @@ delete window.age; // 报错
 #### 8.1.3 窗口位置
 
 #### 8.1.4 窗口大小
+
+#### 8.1.5 导航和打开窗口
