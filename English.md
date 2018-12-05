@@ -12,3 +12,11 @@
 + corrupted
 + binary
 + inspect
++ instance
++ decouples
++ manipulations 
++ feed
++ spawn
++ structure
++ wrapper 
++ further
