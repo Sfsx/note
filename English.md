@@ -21,3 +21,11 @@
 + otherwise
 + property
 + preamble
++ instance
++ decouples
++ manipulations 
++ feed
++ spawn
++ structure
++ wrapper 
++ further
