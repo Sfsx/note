@@ -3,12 +3,13 @@
 + synchronised
 + factor
 + profile
+### Dec 4th, 2018
 + features
 + particular
 + migration
 + several
 + alternative
-### Dec 4th, 2018
+### Dec 5th, 2018
 + corrupted
 + binary
 + inspect
@@ -19,7 +20,6 @@
 + preserved
 + chain
 + otherwise
-### Dec 5th, 2018
 + property
 + preamble
 + instance
@@ -30,3 +30,7 @@
 + structure
 + wrapper 
 + further
++ interval
++ increment
++ transform
++ protocol
