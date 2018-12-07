@@ -15,11 +15,13 @@
 + inspect
 + custom
 + navigation
+### Dec 6th, 2018
 + implement
 + initial
 + preserved
 + chain
 + otherwise
+### Dec 7th, 2018
 + property
 + preamble
 + instance
@@ -34,3 +36,5 @@
 + increment
 + transform
 + protocol
++ chrome
++ excel

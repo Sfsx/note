@@ -921,5 +921,75 @@ setTimeout(increamentNumber, 500);
 `navigator.plugin` 是一个数组，数组每个对象都有 `name`, `description`, `filename`, `length` 属性
 
 但是在IE中检测插件的唯一方式就是使用专有的 `ActiveXObejct` 类型
+
 #### 8.3.2 注册处理程序
 
+### 8.4 screen 对象
+
+### 8.5 history 对象
+
++ `history.go()`
++ `history.back()`
++ `history.forward()`
+
+## 第9章 客户端检测
+
++ 使用能力检测
++ 用户代理检测的历史
++ 选择检测方式
+
+### 9.1 能力检测
+
+识别浏览器能力
+
+#### 9.1.1 更可靠的能力检测
+
+#### 9.1.2 能力检测不是浏览器检测
+
+### 9.2 怪癖检测
+
+识别浏览器特殊行为
+
+### 9.3 用户代理检测
+
+http herader User-Agent
+
+#### 9.3.1 用户代理字符串的历史
+
+1. 早期浏览器
+
+    mosaic浏览器  
+    User-Agent: `Mosaic/0.9`
+
+2. Netspace Navigator 3 和 Internet Explorer 3
+
+    Mozilla/版本号 (平台; 加密类型 [; 操作系统或 CPU 说明])  
+    + NN  
+    User-Agent: `Mozilla/3.0 (Win95; U)`  
+    + IE  
+    User-Agent: `Mozilla/2.0 (compatible; MSIE 3.02; Windows 95)`
+
+3. Netspace Navigator 4 和 IE 4 ~ 8
+
+    + NC  
+    User-Agent: `Mozilla/4.0 (Win98; I)`
+    + IE 4  
+    User-Agent: `Mozilla/4.0 (compatible; MSIE 4.0; Windows 98)`
+    + IE 9 兼容模式  
+    User-Agent: `Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)`
+
+4. Gecko
+
+    Gecko 是 Firefox 的呈现引擎。当初的 Gecko 是作为通用 Mozilla 浏览器的一部分开发的，而第一个采用 Gecko 引擎的浏览器是 Netscape 6。
+
+    Mozilla/Mozilla 版本号 (平台; 加密类型; 操作系统或 CPU; 语言; 预先发行版本) Gecko/Gecko 版本号 应用程序或产品/应用程序或产品版本号
+
+    + Windows XP 下的 Firefox 2.0.0.11  
+    User-Agent: `Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11`
+
+5. WebKit
+
+    2003 年， Apple 公司宣布要发布自己的 Web 浏览器，名字定为 Safari。 Safari 的呈现引擎叫 WebKit，是 Linux 平台中 Konqueror 浏览器的呈现引擎 KHTML 的一个分支。几年后， WebKit 独立出来成为了一个开源项目，专注于呈现引擎的开发。
+
+    + Mac OS X 下的 Safari  
+    User-Agent: `Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/124 (KHTML, like Gecko)Safari/125.1`
