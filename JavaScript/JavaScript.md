@@ -265,7 +265,7 @@ console.log(htmlEscape("<p class=\"greeting\">Hello world!</p>"));  //&lt;p clas
   ```
 
 + 舍入方法
-  + `Math.cell()`
+  + `Math.ceil()`
   + `Math.floor()`
   + `Math.round()`
 
@@ -852,3 +852,5 @@ delete window.age; // 报错
 #### 8.1.4 窗口大小
 
 #### 8.1.5 导航和打开窗口
+
+### 8.3.1 检测插件
