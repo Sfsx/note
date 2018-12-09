@@ -993,3 +993,101 @@ http herader User-Agent
 
     + Mac OS X 下的 Safari  
     User-Agent: `Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/124 (KHTML, like Gecko)Safari/125.1`
+
+#### 9.3.2 用户代理字符串检查技术
+
+#### 9.3.3 完整代码
+
+#### 9.3.4 使用方法
+
+## DOM
+
+**DOM(文档对象类型)是针对html和xml文档的一个API**
+
++ 理解包含不同层次的dom
++ 使用不同的节点类型
++ 克服浏览器兼容问题以及各种缺陷
+
+### 10.1 节点层次
+
+#### 10.1.1 Node 类型
+
+DOM1 定义了一个 `Node` 接口，该接口将由 DOM 中的所有节点类型实现。`Node` 对象是整个 DOM 的主要数据类型。这个 `Node` 接口在 `JavaScript` 中是作为node类型实；除IE外所有浏览器都可以访问这个类型。`JavaScritp` 中的所有节点类型都继承自node接口，所以他们都共享着相同的属性和方法
+
++ `Node.ELEMENT_NODE(1)`
++ `Node.ATTRIBUTE_NODE(2)`
++ `Node.TEXT_NODE(3)`
++ `Node.CDATA_SECTION_NODE(4)`
++ `Node.ENTITY_REFERENCE_NODE(5)`
++ `Node.ENTITY_NODE(6)`
++ `Node.PROCESSING_INSTRUCTION_NODE(7)`
++ `Node.COMMENT_NODE(8)`
++ `Node.DOCUMENT_NODE(9)`
++ `Node.DOCUMENT_TYPE_NODE(10)`
++ `Node.DOCUMENT_FRAGMENT_NODE(11)`
++ `Node.NOTATION_NODE(12)`
+
+1. `nodeName` 和 `nodeValue` 属性
+2. 节点关系
+3. 操作节点
+4. 其他方法
+
+#### 10.1.2 Document 类型
+
+`JavaScript` 通过 `Document` 类型表示文档。 在浏览器中 `Document` 对象是 `HTMLDocument` 的一个实例，表示整个`HTML`页面。而且`Document`对象是`window`的一个属性。
+Document节点具有以下特征：
++ nodeType 值为9
++ nodeName 值为"#document"
++ nodeValue 值为null
++ parentNode 值为null
+
+1. 文档的子节点
+
+    一般页面文档的子节点为`<html>`标签的引用
+
+2. 文档信息
+
+    作为 HTMLDocument 的一个实例，document 对象还有一些标准的 Document 对象所没有的属性。 
+    `document.title` `document.URL` `document.domain`
+
+3. 查找元素
+4. 特殊集合
+
+    除了属性和方法，document 对象还有一些特殊的集合。这些集合都是 HTMLCollection 对象， 为访问文档常用的部分提供了快捷方式
+
+5. DOM一致性检测
+
+    由于 `DOM` 分为多个级别，也包含多个部分，因此检测浏览器实现了 `DOM` 的哪些部分就十分必要 了。`document.implementation` 属性就是为此提供相应信息和功能的对象，与浏览器对 DOM的实现 直接对应。DOM1级只为 `document.implementation` 规定了一个方法，即 `hasFeature()`。这个方 法接受两个参数：要检测的 DOM功能的名称及版本号。如果浏览器支持给定名称和版本的功能，则该 方法返回 `true`，如下面的例子所示
+
+#### 10.1.3 Element 类型
+
+除了 `Document` 类型之外，`Element` 类型就要算是 `web` 浏览器中最常见的类型了。`Element` 类型用于表现XML或HTML元素，提供了对元素标签和子节点特性的访问。`Element` 具有以下特征：
+
++ nodeType `1`
++ nodeName 元素标签名
++ nodeValue `null`
++ parentNode `Document` 或 `Element` 
+
+1. HTML 元素
+
+    所有 `HTML` 元素都由 `HTMLElement` 类型表示，不是直接通过这个类型，也是通过它的子类型来表 示。`HTMLElement` 类型直接继承自 `Element` 并添加了一些属性。添加的这些属性分别对应于每个 `HTML` 元素中都存在的下列标准特性
+
+    + id
+    + title
+    + lang
+    + dir
+    + className
+
+2. 取得特性
+
+    `getAttribute()`
+
+3. 设置特性
+
+    `setAttribute()`
+
+4. `attribute` 属性
+5. 创建元素
+6. 元素中的子节点
+
+#### 10.1.4 Text 类型
