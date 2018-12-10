@@ -1002,7 +1002,7 @@ http herader User-Agent
 
 ## DOM
 
-**DOM(文档对象类型)是针对html和xml文档的一个API**
+**DOM(文档对象类型) 是针对html和xml文档的一个 API。它提供了对文档的结构化的表述，并定义了一种方式可以使从程序中对该结构进行访问，从而改变文档的结构，样式和内容。DOM 将文档解析为一个由节点和对象（包含属性和方法的对象）组成的结构集合。简言之，它会将 web 页面和脚本或程序语言连接起来。**
 
 + 理解包含不同层次的dom
 + 使用不同的节点类型
@@ -1091,3 +1091,27 @@ Document节点具有以下特征：
 6. 元素中的子节点
 
 #### 10.1.4 Text 类型
+
+文本节点由 `Text` 类型表示，包含的是可以照字面解释的纯文本内容。纯文本可以包含转义后的 `html` 代码，但不能包含 `html` 代码，`Text` 节点具有以下特征：
++ nodeType 3
++ nodeName "#text"
++ nodeValue 节点所包含的文本
++ parentNode Element
++ 没有子节点
++ `appendData(text)`
++ `deleteData(offset, count)`
++ `insertData(offset, text)`
++ `replaceData(offset, count, text)`
++ `splitText(offset)`
++ `substringData(offset, count)`
+
+在默认情况下，每个可以包含内容的元素最多只能有一个文本节点，而且必须确实有内容存在。来
+看几个例子。
+```html
+<!-- 没有内容，也就没有文本节点 -->
+<div></div>
+<!-- 有空格，因而有一个文本节点 -->
+<div> </div>
+<!-- 有内容，因而有一个文本节点 -->
+<div>Hello World!</div>
+```

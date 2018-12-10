@@ -26,17 +26,20 @@
 + preamble
 + instance
 + decouples
-+ manipulations 
++ manipulations
+### Dec 8th, 2018
 + feed
 + spawn
 + structure
 + wrapper 
 + further
+### Dec 9th, 2018
 + ceil
 + floor
 + interval
 + increment
 + transform
+### Dec 10th, 2018
 + protocol
 + chrome
 + excel
@@ -44,3 +47,11 @@
 + interface
 + sibling
 + domain
++ offset
++ intended
++ inherit
++ adapter
++ bidirectional
++ polling
++ cluster
++ regular
