@@ -1115,3 +1115,85 @@ Document节点具有以下特征：
 <!-- 有内容，因而有一个文本节点 -->
 <div>Hello World!</div>
 ```
+
+1. 创建文本节点
+
+    ```js
+    var element = document.createElement("div"); element.className = "message"; 
+    
+    var textNode = document.createTextNode("Hello world!"); element.appendChild(textNode); 
+    
+    document.body.appendChild(element);
+    ```
+
+2. 规范化文本节点
+
+    `element.normalize()`合并element中相邻文本节点
+
+3. 分割文本节点
+
+    `element.splitText(5)`切割文本节点
+
+#### 10.1.5 Comment 类型
+
+注释在DOM中是通过 `Comment` 类型来表示的。`Commnet` 具有一下特征：
++ nodeType 8
++ nodeName "#comment"
++ nodeValue 注释的内容
++ parentNode Element 或者 Document
++ 没有子节点
+
+`Comment` 类型与 `Text` 类型继承自相同的基类
+
+`document.createComment()`并为其传递注释文本也可以创建注释节点
+
+#### 10.1.6 CDATASection
+
+`CDATASection` 类型只针对基于 `XML` 的文档，表示的是 `CDATA` 区域。与 `Comment` 类似，`CDATASection` 类型继承自 `Text` 类型，因此拥有除 `splitText()` 之外的所有字符串操作方法。`CDATASection` 具有以下特征：
++ nodeType 4
++ nodeName "#cdata-section"
++ nodeValue CDATA 区域中的内容
++ parentNode Element 或 Document
++ 没有子节点
+
+在 `XML` 文档中只有 `document.createCDATASection()` 来创建
+
+#### 10.1.7 DocumentType 类型
+
+`DocumentType` 在浏览器中并不常用，仅有 Fiefox、Safari和Opera支持。`DocumentType`包含着与文档的doctype有关的所有信息，它具有一下特性：
++ nodeType 10
++ nodeName doctype 的名称
++ parentNode Document
++ 不支持子节点
+
+在 `DOM1` 中，`DocmentType` 不能动态创建，而只能通过解析文档代码的方式来创建。浏览器会把 `DocumentType` 对象储存在 `document.doctype` 中。这个对象，只有name属性是有用的，其中保存着文档的类型名称，也就是`<!DOCTYPE`之后的文本
+
+```html
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+alert(document.doctype.name); //"HTML"
+```
+
+#### 10.1.8 DocumentFragment 类型
+
+在所有节点类型中，只有 `DocumentFragment` 在文档中没有对应的标记。`DOM` 规定文档片段是一种 “轻量级” 的文档，可以包含和控制节点。`DocumentFragment` 节点具有一下特征：
++ nodeValue 11
++ nodeName "#document-fragment"
++ nodeValue null
++ 子节点 Element Comment Text CDATASection EntityReference或 ProcessingInstruction
+
+`DocumentFragment` 类似一个仓库，可以在里面保存将来可能会添加到文档中的节点。假设我们要向 `<ul>` 元素添加三个列表项，就可以将三个列表项存在`DocumentFragment` 中，在一次性添加到 `<ul>` 元素中避免浏览器过度渲染。
+
+#### 10.1.9 Attr 类型
+
+元素的特性在 `DOM` 中以 `Attr` 类型表示。在所有浏览器中都可以访问 `Attr` 类型的构造函数和原型。特性就是存在与元素的 `attributes` 属性中的节点。特性节点具有以下特征：
++ nodeType 2
++ nodeName 特性的名称
++ nodeValue 特性的值
++ parentNode null
++ 在html中没有子节点
++ 在xml中子节点可以是 Text 或 EntityReference
+
+尽管他们也是节点，但是特性却不被认为是 `DOM` 文档树中的一部分。`Attr` 对象有三个属性 name value specified
+
+### 10.2 DOM操作技术
