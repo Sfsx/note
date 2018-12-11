@@ -59,3 +59,5 @@
 + fragment
 + instruction
 + specified
++ property
++ prototype

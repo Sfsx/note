@@ -1197,3 +1197,29 @@ alert(document.doctype.name); //"HTML"
 尽管他们也是节点，但是特性却不被认为是 `DOM` 文档树中的一部分。`Attr` 对象有三个属性 name value specified
 
 ### 10.2 DOM操作技术
+
+#### 10.2.1 动态元素脚本
+
+在页面加载时不存在，但在将来某一时刻通过修改DOM的方式动态添加脚本。创建动态脚本有两种方式: 插入外部文件和直接插入 JavaScript 代码
+
+```js
+function loadScript(url) {
+  var script = document.createElement('script');
+  script.type = "text/javascript";
+  script.src = url;
+  // script.text = "function sayHi(){alert('hi');}"
+  document.body.appendChild(script);
+}
+```
+
+#### 10.2.2 动态样式
+
+动态加载不存在的样式
+
+#### 10.2.3 操作表格
+
+#### 10.2.4 使用NodeList
+
++ `NodeList`， `NameNodeMap`， `HTMLCollection` 这三者是动态的，每当文档发生变化的时候，这三者都会得到更新。
++ `document.getElementsByTagName("div")` 将获取文档中所有`<div>`元素的HTMLCollection。由于这个集合是“动态的”，因此只要有`<div>`被添加到页面中，这个元素也会被添加到集合中。
++ 尽量减少 NodeList 的访问次数，每次访问都会运行一次基于文档的查询。所以可以考虑将其缓存起来。

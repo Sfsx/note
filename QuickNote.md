@@ -11,3 +11,32 @@
 
 + flutter框架
 + polyfills
++ 异步
+    ```js
+    /**
+     * 异步试题
+     * 重点在于 promise2 和 async1 end 谁先输出
+     * 异步任务是丢入任务队列的，队列先进先出。执行栈从任务队列加载任务并
+     * 执行，由于执行栈一次只抓取一个异步回调函数，所以没有改变任务队列中
+     * 的任务顺序，还是先进先出。
+    */
+    (async function() {
+    async function async1() {
+        console.log('async1 start');
+        await async2();
+        console.log('async1 end');
+    }
+    async function async2() {
+        console.log('async2');
+    }
+
+    async1();
+
+    new Promise(function(resolve) {
+        console.log("promise1");
+        resolve();
+    }).then(function() {
+        console.log("promise2");
+    });
+    })();
+    ```

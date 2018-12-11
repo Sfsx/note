@@ -45,3 +45,35 @@ readFile("myfile.js", "utf8").then(function(contents) {
     console.log("Error reading file", e);
 });
 ```
+
+## 为什么要用Array.prototype.forEach.call(array, cb)而不直接使用array.forEach(cb)
+
+有一些看起来很像数组的对象：
++ `argument`
++ `children` and `childNodes` collections
++ NodeList collections returned by methods like `document.getElementsByClassName` and `document.querySelectorAll`
++ jQuery collections
++ and even strings.
+
+[原文链接](https://stackoverflow.com/questions/26546352/why-would-one-use-array-prototype-foreach-callarray-cb-over-array-foreachcb)
+
+## Object.prototype.hasOwnProperty.call()
+
+JavaScript 并没有保护 `hasOwnProperty` 属性名，因此某个对象是有可能存在使用这个属性名的属性。
+
+```js
+var foo = {
+    hasOwnProperty: function() {
+        return false;
+    },
+    bar: 'Here be dragons'
+};
+
+foo.hasOwnProperty('bar'); // 始终返回 false
+
+// 如果担心这种情况，可以直接使用原型链上真正的 hasOwnProperty 方法
+({}).hasOwnProperty.call(foo, 'bar'); // true
+
+// 也可以使用 Object 原型上的 hasOwnProperty 属性
+Object.prototype.hasOwnProperty.call(foo, 'bar'); // true
+```
