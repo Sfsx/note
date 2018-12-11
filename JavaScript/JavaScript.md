@@ -1223,3 +1223,74 @@ function loadScript(url) {
 + `NodeList`， `NameNodeMap`， `HTMLCollection` 这三者是动态的，每当文档发生变化的时候，这三者都会得到更新。
 + `document.getElementsByTagName("div")` 将获取文档中所有`<div>`元素的HTMLCollection。由于这个集合是“动态的”，因此只要有`<div>`被添加到页面中，这个元素也会被添加到集合中。
 + 尽量减少 NodeList 的访问次数，每次访问都会运行一次基于文档的查询。所以可以考虑将其缓存起来。
+
+## 第11章 DOM 扩展
+
++ 理解 Selectors API
++ 使用 HTML5 DOM 扩展
++ 了解专有 DOM 扩展
+
+### 11.1 选择符API
+
+`Jquery` 的核心就是通过CSS选择符查询 DOM 文档获得元素引用，从而抛开`getElementById()` 和 `getElementByTagName()`
+ 
+`Selectors API` 是由W3C发起制定的一个标准，致力于让浏览器支持元素 `CSS` 查询。所有实现这一功能的 `JavaScript` 库都会写一个基础CSS解析器，然后在使用以有 `DOM` 方法并查询文档并找到匹配的节点。但是现在这个解析功能变成原生 `API` 之后，解析和查询操作可以由浏览器内部通过编译后的代码来完成，极大的改善了性能。
+
+#### 11.1.1 `querySelector()`方法
+
+```js
+//取得 body 元素
+var body = document.querySelector("body"); 
+ 
+//取得 ID 为"myDiv"的元素
+var myDiv = document.querySelector("#myDiv"); 
+ 
+//取得类为"selected"的第一个元素
+var selected = document.querySelector(".selected"); 
+ 
+//取得类为"button"的第一个图像元素
+var img = document.body.querySelector("img.button");
+```
+
+#### 11.1.2 `querySelectAll()`方法
+
+接受参数和 `querySelector()` 一样，但返回是一个 `NodeList` 的实例
+
+具体来说，返回的值实际上是带有所有属性和方法的 `NodeList`，而其底层实现则类似于一组元素的快照，而非不断对文档进行搜索的动态查询。这样实现可以避免使用 `NodeList` 对象通常会引起的大多数性能问题
+
+#### 11.1.3 `matchesSelector()`方法
+
+`Selectors API Level 2` 规范为 `Element` 类型新增了一个方法 `matchesSelector()`。这个方法接受一个参数 `CSS` 选择符，如果调用元素与选择符匹配，返回 `true` 否则 `false`。
+
+#### 11.2 元素遍历
+
+对于元素之间的空格，不同浏览器处理方式不一样，导致使用 `childNodes` 和 `firstChild` 等属性时行为不一致
+
+`Element Traversal API` 为 `DOM` 添加5个特性：
++ childElementCount
++ firstElementChild
++ lastElementChild
++ previousElementSibling
++ nextElementSibling
+
+### 11.3 HTML5
+
+本节重点介绍 HTML5 与 DOM 相关的内容
+
+#### 11.3.1 与类相关的扩充
+
+1. `getElementByClassName()`  
+   
+    在 `document` 对象上调用会返回与类名匹配的所有元素，在元素上调用会返回后代元素中匹配的元素。返回为 `NodeList` 故该方法存在性能问题
+
+2. classList 属性
+
+    `classList` 属性是新集合类型 `DOMTokenList` 的实例。存储元素的 `className` 中所有的类名
+    + length
+    + add(value)
+    + contains(value)
+    + remove(value)
+    + toggle(value)
+
+#### 11.3.2 焦点管理
+

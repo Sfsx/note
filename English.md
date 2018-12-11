@@ -61,3 +61,4 @@
 + specified
 + property
 + prototype
++ toggle
