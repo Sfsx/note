@@ -45,11 +45,13 @@
 + excel
 + previous
 + interface
+### Dec 11th, 2018
 + sibling
 + domain
 + offset
 + intended
 + inherit
+### Dec 12th, 2018
 + adapter
 + bidirectional
 + polling
@@ -62,3 +64,6 @@
 + property
 + prototype
 + toggle
++ focus
++ compat
++ charset
