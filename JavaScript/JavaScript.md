@@ -1321,3 +1321,55 @@ var img = document.body.querySelector("img.button");
 
 #### 11.3.2 焦点管理
 
++ `document.activeElement` 这个属性返回当前 `DOM` 中获得焦点的元素。文档加载期间值为null，文档刚加载完成值为 `document.body`
++ `document.hasFocus()` 
+
+#### 11.3.3 HTMLDocument 变化
+
+HTML5 扩展了 HTMLDocument, 增加了新功能
+
+1. `document.readyState` 属性——文档加载状态 
+    + loading 文档正在加载
+    + complete 文档加载完成
+
+2. `document.compatMode` 属性——兼容模式
+    + CSS1Compat 标准模式渲染
+    + BackCompat 兼容模式渲染
+
+3. `document.head` 属性——`<head>`标签
+
+#### 11.3.4 字符集属性
+
+`document.charset` 这个属性的值为 `"UTF-16"`，但可以通过 `<meta>` 元素、响应头部或直接设置 `charset` 属性修改这个值。
+
+#### 11.3.5 自定义数据属性
+
++ HTML5 规定可以为元素添加非标准属性。但是属性名要加上前缀 `data-` 目的是为元素提供渲染无关的信息
++ 可以通过元素的 `dataset` 属性访问，`dataset` 属性的
+值是 `DOMStringMap` 的一个实例。内部是键值对
+
+#### 11.3.6 插入标记
+
+1. innerHTML 属性
+
+    + 读 `innerHTML` 返回元素所有子节点
+    + 写 `innerHTML` 的值会被解析为 `DOM` 子树，替换调用元素原来的所有子节点。
+    + 插入`<script>`元素后脚本并不会被执行。
+    + `<col>`、 `<colgroup>`、`<frameset>`、 `<head>`、 `<html>`、 `<style>`、 `<table>`、 `<tbody>`、 `<thead>`、 `<tfoot>`和`<tr>`不支持 `innerHTML` 属性
+
+2. outerHTML 属性
+
+    + 读 `outerHTML` 返回当前元素及所有子节点的 HTML 标签
+    + 写 `outerHTML` 会根据指定的 HTML 字符串生成 `DOM` 树，并替换当前元素
+
+3. insertAdjacentHTML() 方法
+
+    两个参数：插入位置和要插入的 HTML 文本
+
+4. 内存与性能问题
+
+    使用本节介绍的方法替换子节点可能会导致浏览器的内存占用问题，尤其是在 IE 中，问题更加明显。
+
+#### 11.3.7 `scrollIntoView()` 方法
+
+scrollIntoView()可以在所有 HTML 元素上调用，通过滚动浏览器窗口或某个容器元素，调用元素就可以出现在视口中。如果给这个方法传入 true 作为参数，或者不传入任何参数，那么窗口滚动之后会让调用元素的顶部与视口顶部尽可能平齐。如果传入 false 作为参数，调用元素会尽可能全部出现在视口中，（可能的话，调用元素的底部会与视口顶部平齐。）不过顶部不一定平齐
