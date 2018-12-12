@@ -1012,7 +1012,7 @@ http herader User-Agent
 
 #### 10.1.1 Node 类型
 
-DOM1 定义了一个 `Node` 接口，该接口将由 DOM 中的所有节点类型实现。`Node` 对象是整个 DOM 的主要数据类型。这个 `Node` 接口在 `JavaScript` 中是作为node类型实；除IE外所有浏览器都可以访问这个类型。`JavaScritp` 中的所有节点类型都继承自node接口，所以他们都共享着相同的属性和方法
+`DOM1` 定义了一个 `Node` 接口，该接口将由 `DOM` 中的所有节点类型实现。`Node` 对象是整个 `DOM` 的主要数据类型。这个 `Node` 接口在 `JavaScript` 中是作为node类型实；除IE外所有浏览器都可以访问这个类型。`JavaScritp` 中的所有节点类型都继承自 `node` 接口，所以他们都共享着相同的属性和方法
 
 + `Node.ELEMENT_NODE(1)`
 + `Node.ATTRIBUTE_NODE(2)`
@@ -1030,38 +1030,59 @@ DOM1 定义了一个 `Node` 接口，该接口将由 DOM 中的所有节点类�
 1. `nodeName` 和 `nodeValue` 属性
 2. 节点关系
 3. 操作节点
+    
+    + `appendChild(newNode)`
+    + `insertBefor(newNode, someNode)`
+    + `replaceChild(newNode, someNode)`
+
 4. 其他方法
 
 #### 10.1.2 Document 类型
 
-`JavaScript` 通过 `Document` 类型表示文档。 在浏览器中 `Document` 对象是 `HTMLDocument` 的一个实例，表示整个`HTML`页面。而且`Document`对象是`window`的一个属性。
-Document节点具有以下特征：
-+ nodeType 值为9
-+ nodeName 值为"#document"
-+ nodeValue 值为null
-+ parentNode 值为null
+`JavaScript` 通过 `Document` 类型表示文档。 在浏览器中 `Document` 对象是 `HTMLDocument` 的一个实例，表示整个 `HTML` 页面。而且 `Document` 对象是 `window` 的一个属性。`Document` 节点具有以下特征：
+
++ nodeType `9`
++ nodeName `"#document"`
++ nodeValue `null`
++ parentNode `null`
 
 1. 文档的子节点
 
-    一般页面文档的子节点为`<html>`标签的引用
+    `document`
+    + `documentElement` -> `<html>`
+    + `firstChild` -> `<html>`
+    + `childNodes[0]` -> `<html>`
+    + `body` -> `<body>`
+    + `doctype` -> `<!DOCTYPE>`
 
 2. 文档信息
 
-    作为 HTMLDocument 的一个实例，document 对象还有一些标准的 Document 对象所没有的属性。 
-    `document.title` `document.URL` `document.domain`
+    作为 `HTMLDocument` 的一个实例，`document` 对象还有一些标准的 `Document` 对象所没有的属性。   
+    + `title` -> 浏览器标签标题
+    + `URL` -> 地址栏 url
+    + `domain` -> 域名
+    + `referrer` -> 来源页面 url
 
 3. 查找元素
+
+    以下三个方法均返回 `HTMLCollectioin` 存在性能问题比较耗时，避免多次调用
+    + `getElementById()`
+    + `getElementsByTagName()`
+    + `getElementsByName()`
+    
 4. 特殊集合
 
-    除了属性和方法，document 对象还有一些特殊的集合。这些集合都是 HTMLCollection 对象， 为访问文档常用的部分提供了快捷方式
+    除了属性和方法，`document` 对象还有一些特殊的集合。这些集合都是 `HTMLCollection` 对象， 为访问文档常用的部分提供了快捷方式
 
-5. DOM一致性检测
+5. `DOM` 一致性检测
 
     由于 `DOM` 分为多个级别，也包含多个部分，因此检测浏览器实现了 `DOM` 的哪些部分就十分必要 了。`document.implementation` 属性就是为此提供相应信息和功能的对象，与浏览器对 DOM的实现 直接对应。DOM1级只为 `document.implementation` 规定了一个方法，即 `hasFeature()`。这个方 法接受两个参数：要检测的 DOM功能的名称及版本号。如果浏览器支持给定名称和版本的功能，则该 方法返回 `true`，如下面的例子所示
 
+6. 文档写入
+
 #### 10.1.3 Element 类型
 
-除了 `Document` 类型之外，`Element` 类型就要算是 `web` 浏览器中最常见的类型了。`Element` 类型用于表现XML或HTML元素，提供了对元素标签和子节点特性的访问。`Element` 具有以下特征：
+`Element` 类型用于表现XML或HTML元素，提供了对元素标签和子节点特性的访问。`Element` 具有以下特征：
 
 + nodeType `1`
 + nodeName 元素标签名
@@ -1070,12 +1091,12 @@ Document节点具有以下特征：
 
 1. HTML 元素
 
-    所有 `HTML` 元素都由 `HTMLElement` 类型表示，不是直接通过这个类型，也是通过它的子类型来表 示。`HTMLElement` 类型直接继承自 `Element` 并添加了一些属性。添加的这些属性分别对应于每个 `HTML` 元素中都存在的下列标准特性
+    所有 `HTML` 元素都由 `HTMLElement` 类型表示，不是直接通过这个类型，也是通过它的子类型来表示。`HTMLElement` 类型直接继承自 `Element` 并添加了一些属性。添加的这些属性分别对应于每个 `HTML` 元素中都存在的下列标准特性
 
     + id
     + title
     + lang
-    + dir
+    + dir 语言方向
     + className
 
 2. 取得特性
@@ -1087,6 +1108,9 @@ Document节点具有以下特征：
     `setAttribute()`
 
 4. `attribute` 属性
+
+    `attributes` 属性中包含一个 `NamedNodeMap`，与 `NodeList` 类似，也是一个“动态”的集合。元素的每一个特性都由一个 `Attr` 节点表示，每个节点都保存在 `NamedNodeMap` 对象中。
+
 5. 创建元素
 6. 元素中的子节点
 
@@ -1105,8 +1129,8 @@ Document节点具有以下特征：
 + `splitText(offset)`
 + `substringData(offset, count)`
 
-在默认情况下，每个可以包含内容的元素最多只能有一个文本节点，而且必须确实有内容存在。来
-看几个例子。
+在默认情况下，每个可以包含内容的元素最多只能有一个文本节点，而且必须确实有内容存在。来看几个例子。
+
 ```html
 <!-- 没有内容，也就没有文本节点 -->
 <div></div>
@@ -1121,18 +1145,19 @@ Document节点具有以下特征：
     ```js
     var element = document.createElement("div"); element.className = "message"; 
     
-    var textNode = document.createTextNode("Hello world!"); element.appendChild(textNode); 
+    var textNode = document.createTextNode("Hello world!"); 
+    element.appendChild(textNode); 
     
     document.body.appendChild(element);
     ```
 
 2. 规范化文本节点
 
-    `element.normalize()`合并element中相邻文本节点
+    `element.normalize()` 合并element中相邻文本节点
 
 3. 分割文本节点
 
-    `element.splitText(5)`切割文本节点
+    `element.splitText(5)` 切割文本节点
 
 #### 10.1.5 Comment 类型
 
@@ -1145,9 +1170,9 @@ Document节点具有以下特征：
 
 `Comment` 类型与 `Text` 类型继承自相同的基类
 
-`document.createComment()`并为其传递注释文本也可以创建注释节点
+`document.createComment()` 并为其传递注释文本也可以创建注释节点
 
-#### 10.1.6 CDATASection
+#### 10.1.6 CDATASection 类型
 
 `CDATASection` 类型只针对基于 `XML` 的文档，表示的是 `CDATA` 区域。与 `Comment` 类似，`CDATASection` 类型继承自 `Text` 类型，因此拥有除 `splitText()` 之外的所有字符串操作方法。`CDATASection` 具有以下特征：
 + nodeType 4
@@ -1166,12 +1191,14 @@ Document节点具有以下特征：
 + parentNode Document
 + 不支持子节点
 
-在 `DOM1` 中，`DocmentType` 不能动态创建，而只能通过解析文档代码的方式来创建。浏览器会把 `DocumentType` 对象储存在 `document.doctype` 中。这个对象，只有name属性是有用的，其中保存着文档的类型名称，也就是`<!DOCTYPE`之后的文本
+在 `DOM1` 中，`DocmentType` 不能动态创建，而只能通过解析文档代码的方式来创建。浏览器会把 `DocumentType` 对象储存在 `document.doctype` 中。这个对象，只有name属性是有用的，其中保存着文档的类型名称，也就是 `<!DOCTYPE` 之后的文本
 
 ```html
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 
-alert(document.doctype.name); //"HTML"
+<script type="text/javascript">
+  alert(document.doctype.name); //"HTML"
+</script>
 ```
 
 #### 10.1.8 DocumentFragment 类型
@@ -1194,13 +1221,13 @@ alert(document.doctype.name); //"HTML"
 + 在html中没有子节点
 + 在xml中子节点可以是 Text 或 EntityReference
 
-尽管他们也是节点，但是特性却不被认为是 `DOM` 文档树中的一部分。`Attr` 对象有三个属性 name value specified
+他们也是节点，但是特性却不被认为是 `DOM` 文档树中的一部分。`Attr` 对象有三个属性 `name`, `value`, `specified`
 
 ### 10.2 DOM操作技术
 
 #### 10.2.1 动态元素脚本
 
-在页面加载时不存在，但在将来某一时刻通过修改DOM的方式动态添加脚本。创建动态脚本有两种方式: 插入外部文件和直接插入 JavaScript 代码
+创建动态脚本有两种方式: 插入外部文件和直接插入 `JavaScript` 代码
 
 ```js
 function loadScript(url) {
@@ -1221,8 +1248,8 @@ function loadScript(url) {
 #### 10.2.4 使用NodeList
 
 + `NodeList`， `NameNodeMap`， `HTMLCollection` 这三者是动态的，每当文档发生变化的时候，这三者都会得到更新。
-+ `document.getElementsByTagName("div")` 将获取文档中所有`<div>`元素的HTMLCollection。由于这个集合是“动态的”，因此只要有`<div>`被添加到页面中，这个元素也会被添加到集合中。
-+ 尽量减少 NodeList 的访问次数，每次访问都会运行一次基于文档的查询。所以可以考虑将其缓存起来。
++ `document.getElementsByTagName("div")` 将获取文档中所有 `<div>` 元素的 `HTMLCollection`。由于这个集合是 “动态的”，因此只要有 `<div>` 被添加到页面中，这个元素也会被添加到集合中。
++ 尽量减少 `NodeList` 的访问次数，每次访问都会运行一次基于文档的查询。所以可以考虑将其缓存起来。
 
 ## 第11章 DOM 扩展
 
@@ -1234,7 +1261,7 @@ function loadScript(url) {
 
 `Jquery` 的核心就是通过CSS选择符查询 DOM 文档获得元素引用，从而抛开`getElementById()` 和 `getElementByTagName()`
  
-`Selectors API` 是由W3C发起制定的一个标准，致力于让浏览器支持元素 `CSS` 查询。所有实现这一功能的 `JavaScript` 库都会写一个基础CSS解析器，然后在使用以有 `DOM` 方法并查询文档并找到匹配的节点。但是现在这个解析功能变成原生 `API` 之后，解析和查询操作可以由浏览器内部通过编译后的代码来完成，极大的改善了性能。
+`Selectors API` 是由W3C发起制定的一个标准，致力于让浏览器支持元素 `CSS` 查询。所有实现这一功能的 `JavaScript` 库都会写一个基础 `CSS` 解析器，然后在使用以有 `DOM` 方法并查询文档并找到匹配的节点。但是现在这个解析功能变成原生 `API` 之后，解析和查询操作可以由浏览器内部通过编译后的代码来完成，极大的改善了性能。
 
 #### 11.1.1 `querySelector()`方法
 
@@ -1286,11 +1313,11 @@ var img = document.body.querySelector("img.button");
 2. classList 属性
 
     `classList` 属性是新集合类型 `DOMTokenList` 的实例。存储元素的 `className` 中所有的类名
-    + length
-    + add(value)
-    + contains(value)
-    + remove(value)
-    + toggle(value)
+    + `length`
+    + `add(value)`
+    + `contains(value)`
+    + `remove(value)`
+    + `toggle(value)`
 
 #### 11.3.2 焦点管理
 
