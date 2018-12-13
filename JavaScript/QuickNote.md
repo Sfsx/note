@@ -124,3 +124,6 @@ new Promise(function(resolve) {
 
 没有块级作用域回来带很多难以理解的问题，比如 `for` 循环 `var` 变量泄露，变量覆盖等问题。`let` 声明的变量拥有自己的块级作用域，且修复了 `var` 声明变量带来的变量提升问题。
 
+## `MediaDevices.getUserMedia()`
+
+HTML5 调用摄像头，音频媒体api

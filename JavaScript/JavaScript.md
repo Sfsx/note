@@ -364,7 +364,7 @@ function createPerson(name, age, job){
   o.age = age;
   o.job = job;
   o.sayName = function(){
-  alert(this.name);
+    alert(this.name);
   };
   return o;
 }
