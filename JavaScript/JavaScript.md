@@ -1350,19 +1350,19 @@ HTML5 扩展了 HTMLDocument, 增加了新功能
 
 #### 11.3.6 插入标记
 
-1. innerHTML 属性
+1. `innerHTML` 属性
 
     + 读 `innerHTML` 返回元素所有子节点
     + 写 `innerHTML` 的值会被解析为 `DOM` 子树，替换调用元素原来的所有子节点。
     + 插入`<script>`元素后脚本并不会被执行。
     + `<col>`、 `<colgroup>`、`<frameset>`、 `<head>`、 `<html>`、 `<style>`、 `<table>`、 `<tbody>`、 `<thead>`、 `<tfoot>`和`<tr>`不支持 `innerHTML` 属性
 
-2. outerHTML 属性
+2. `outerHTML` 属性
 
-    + 读 `outerHTML` 返回当前元素及所有子节点的 HTML 标签
+    + 读 `outerHTML` 返回当前元素及所有子节点的 `HTML` 标签
     + 写 `outerHTML` 会根据指定的 HTML 字符串生成 `DOM` 树，并替换当前元素
 
-3. insertAdjacentHTML() 方法
+3. `insertAdjacentHTML()` 方法
 
     两个参数：插入位置和要插入的 HTML 文本
 
@@ -1373,3 +1373,56 @@ HTML5 扩展了 HTMLDocument, 增加了新功能
 #### 11.3.7 `scrollIntoView()` 方法
 
 scrollIntoView()可以在所有 HTML 元素上调用，通过滚动浏览器窗口或某个容器元素，调用元素就可以出现在视口中。如果给这个方法传入 true 作为参数，或者不传入任何参数，那么窗口滚动之后会让调用元素的顶部与视口顶部尽可能平齐。如果传入 false 作为参数，调用元素会尽可能全部出现在视口中，（可能的话，调用元素的底部会与视口顶部平齐。）不过顶部不一定平齐
+
+### 11.4 专有扩展
+
+不同的浏览器都会向 `DOM` 添加专有扩展，以弥补功能上的不足，这些专有扩展中就有一部分在HTML5规范中成为标准。
+
+#### 11.4.1 文档模式
+
+`IE8` 引入了一个新的概念叫"文档模式"(`document mode`)。页面的文档模式决定了可以使用什么功能。换句话说，文档模式决定了你可以使用哪个级别的 `CSS`，可以在 `JavasCript` 中使用哪些 `API`，以及如何对待文档类型(`doctype`)
+```html
+<meta http-equiv="X-UA-Compatible" content="IE=IEVersion"> 
+``` 
+`document.documentMode ` 可以确定当前页面使用的是什么文档模式
+
+#### 11.4.2 `children` 属性
+
+是 `HTMLCollection` 的实例，只包含元素中同样还是元素的子节点，除此之外和 `childNodes` 没有什么区别。（当元素的子节点中间有空格时 `childNodes` 会将空白符计数为文本节点）
+
+#### 11.4.3 `contains()`
+
+判断一个节点是不是另一个节点的后代
+```js
+alert(document.documentElement.contains(document.body));    //true 
+```
+`DOM3` 中的 `compareDocumentPosition()` 也能够确定节点间的关系。
+
+#### 11.4.4 插入文本
+`innerHTML` 和 `outerHTML` 已经被 `HTML5` 纳入规范。 但另外两个插入文本的专有属性 `innerText` 和 `outerText` 没有被 `HTML5` 看中。
+1. `innerText` 属性
+
+    设置该属性后会替换调用元素的所有内容（元素下原有的子节点都会被替换成文本，并且会过滤HTML标签）。设置 `innerText` 永远只会生成当前节点的一个子文本节点
+    ```js
+    div.innerText = div.innerText;
+    ``` 
+    能够清除 div 下所有子节点。
+
+2. `outerText` 属性
+
+    除了作用范围扩大到包含调用他的节点之外，`outerText` 与 `innerText` 基本没有太大的区别。
+
+#### 11.4.5 滚动
+
+除 HTML5 的 `scrollIntoView()` 之外的滚动方法。他们都是对 `HTMLElement` 类型的扩展，因此在所有元素中都能调用。
+
++ `scrollIntoViewIfNeeded(alignCenter)`:  
+  当前元素在视口中不可见的情况下，才滚动浏览器窗口或容器元素，直至元素可见。如果元素可见则什么都不做。如果将可选的  `alignCenter` 参数设置为 `true`，则表示尽量将元素显示在视口中部（垂直方向）。 
++ `scrollByLine(lineCount)`:  
+  将元素的内容滚动指定的高度，lineCount可以是正值也可以是负值。
++ `scrollByPage(pageCount)`:  
+  将元素的内容滚动指定的页面高度，具体高度由元素而定。
+
+注意 `scrollIntoView()` 和 `scrollIntoViewIfNeeded()` 的作用对象是元素的容器，而 `scrollByLines()` 和 `scrollByPages()` 影响的则是元素自身。
+
+

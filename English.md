@@ -69,3 +69,5 @@
 + charset
 + custom
 + extension
++ contains
++ compare
