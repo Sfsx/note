@@ -59,7 +59,7 @@ readFile("myfile.js", "utf8").then(function(contents) {
 + jQuery collections
 + and even strings.
 
-[原文链接](https://stackoverflow.com/questions/26546352/why-would-one-use-array-prototype-foreach-callarray-cb-over-array-foreachcb)
+[StackOverflow 链接](https://stackoverflow.com/questions/26546352/why-would-one-use-array-prototype-foreach-callarray-cb-over-array-foreachcb)
 
 ---
 
