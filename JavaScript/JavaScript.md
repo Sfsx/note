@@ -45,12 +45,16 @@ for (let item of data) {
   + 'object'     如果这个值是对象或 `null`
   + 'function'   如果这个值是函数
 
+---
+
 ## 第4章 变量，作用域和内存问题
 
 + 当从一个变量向另一个变量复制引用类型的值时，同样也会将存储在变量对象中的值复制一份放到
 为新变量分配的空间中。不同的是，这个值的副本实际上是一个指针，而这个指针指向存储在堆中的一
 个对象。复制操作结束后，两个变量实际上将引用同一个对象。
 + 函数参数传递为按值传递
+
+---
 
 ## 第5章 引用类型
 
@@ -283,6 +287,8 @@ console.log(htmlEscape("<p class=\"greeting\">Hello world!</p>"));  //&lt;p clas
   // 生成随机字符串
   Math.random().toString(36).substr(2)
   ```
+
+---
 
 ## 第6章 面向对向程序设计
 
@@ -691,6 +697,8 @@ inheritPrototype(SubType, SuperType);
 
 这个例子的高效率体现在它只调用了一次 `SuperType` 构造函数，并且因此避免了在 `SubType.prototype` 上面创建不必要的、多余的属性。与此同时，原型链还能保持不变；因此，还能够正常使用 `instanceof` 和 `isPrototypeOf()`。**开发人员普遍认为寄生组合式继承是引用类型理想的继承范式。**
 
+---
+
 ## 第7章 函数表达式
 
 + 函数表达式的特征
@@ -823,6 +831,7 @@ var singleton = function() {
   return object;
 }()
 ```
+---
 
 ## 第8章 BOM
 
@@ -932,6 +941,8 @@ setTimeout(increamentNumber, 500);
 + `history.back()`
 + `history.forward()`
 
+---
+
 ## 第9章 客户端检测
 
 + 使用能力检测
@@ -1000,7 +1011,9 @@ http herader User-Agent
 
 #### 9.3.4 使用方法
 
-## DOM
+---
+
+## 第10章 DOM
 
 **DOM(文档对象类型) 是针对html和xml文档的一个 API。它提供了对文档的结构化的表述，并定义了一种方式可以使从程序中对该结构进行访问，从而改变文档的结构，样式和内容。DOM 将文档解析为一个由节点和对象（包含属性和方法的对象）组成的结构集合。简言之，它会将 web 页面和脚本或程序语言连接起来。**
 
@@ -1251,6 +1264,8 @@ function loadScript(url) {
 + `document.getElementsByTagName("div")` 将获取文档中所有 `<div>` 元素的 `HTMLCollection`。由于这个集合是 “动态的”，因此只要有 `<div>` 被添加到页面中，这个元素也会被添加到集合中。
 + 尽量减少 `NodeList` 的访问次数，每次访问都会运行一次基于文档的查询。所以可以考虑将其缓存起来。
 
+---
+
 ## 第11章 DOM 扩展
 
 + 理解 Selectors API
@@ -1368,11 +1383,12 @@ HTML5 扩展了 HTMLDocument, 增加了新功能
 
 4. 内存与性能问题
 
-    使用本节介绍的方法替换子节点可能会导致浏览器的内存占用问题，尤其是在 IE 中，问题更加明显。
+    使用本节介绍的方法替换子节点可能会导致浏览器的内存占用问题，尤其是在 IE 中，问题更加明显。在删除带有事件处理程序或者引用其他 `JavaScript` 对象子树时，就有可能导致内存占用问题。当元素带有事件处理程序（或者引用了一个 `JavaScript` 对象作为属性），当元素被上述方法删除后，元素与处理程序（或 `JavaScript` 对象）之间的绑定程序并没有从内存中一并删除。如果该情况频繁出现，页面占用内存数就会明显增加。
+    最好在删除前，先手动删除元素绑定的处理事件或者元素引用的`JavaScript` 对象。
 
 #### 11.3.7 `scrollIntoView()` 方法
 
-scrollIntoView()可以在所有 HTML 元素上调用，通过滚动浏览器窗口或某个容器元素，调用元素就可以出现在视口中。如果给这个方法传入 true 作为参数，或者不传入任何参数，那么窗口滚动之后会让调用元素的顶部与视口顶部尽可能平齐。如果传入 false 作为参数，调用元素会尽可能全部出现在视口中，（可能的话，调用元素的底部会与视口顶部平齐。）不过顶部不一定平齐
+`scrollIntoView()`可以在所有 `HTML` 元素上调用，通过滚动浏览器窗口或某个容器元素，调用元素就可以出现在视口中。如果给这个方法传入 `true` 作为参数，或者不传入任何参数，那么窗口滚动之后会让调用元素的顶部与视口顶部尽可能平齐。如果传入 `false` 作为参数，调用元素会尽可能全部出现在视口中，（可能的话，调用元素的底部会与视口顶部平齐。）不过顶部不一定平齐
 
 ### 11.4 专有扩展
 
@@ -1399,6 +1415,7 @@ alert(document.documentElement.contains(document.body));    //true
 `DOM3` 中的 `compareDocumentPosition()` 也能够确定节点间的关系。
 
 #### 11.4.4 插入文本
+
 `innerHTML` 和 `outerHTML` 已经被 `HTML5` 纳入规范。 但另外两个插入文本的专有属性 `innerText` 和 `outerText` 没有被 `HTML5` 看中。
 1. `innerText` 属性
 
@@ -1425,4 +1442,272 @@ alert(document.documentElement.contains(document.body));    //true
 
 注意 `scrollIntoView()` 和 `scrollIntoViewIfNeeded()` 的作用对象是元素的容器，而 `scrollByLines()` 和 `scrollByPages()` 影响的则是元素自身。
 
+## 第12章 DOM2 和 DOM3
 
++ DOM2 和 DOM3 的变化
++ 操作样式的DOM API
++ DOM遍历与范围
+
+DOM1 主要定义的是 HTML 和 XML 文档的底层结构。DOM2 和 DOM3 则在这个结构的基础上引入了更多交互能力，也支持更高级的 XML 特性。
+DOM2 模块：
++ DOM2 核心
++ DOM2 视图
++ DOM2 事件
++ DOM2 遍历和范围
++ DOM2 HTML
+
+### 12.1 DOM 变化
+
+本章只讨论那些已经有浏览器实现的部分，任何浏览器都没有实现的部分不做讨论
+
+#### 12.1.1 针对XML命名空间的变化
+
+有了 `XML` 命名空间，不同 `XML` 文档的元素就可以混合在一起，共同构成良好的文档。`HTML` 不支持 `XML` 命名空间，但 `XHTML` 支持 `XML` 命名空间。本节主要介绍 `XHTML`
+
+```html
+<xhtml:html xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <xhtml:head>
+    <xhtml:title>Example XHTML page</xhtml:title>
+  </xhtml:head>
+  <xhtml:body xhtml:class="home">
+    Hello world!
+  </xhtml:body>
+</xhtml:html>
+```
+这是一个 `XHTML` 命名空间，其中 `xhtml` 为命名空间前缀（非必需）。该命名空间是 `http://www.w3.org/1999/xhtml` 由 `xmlns` 来指定
+
+1. `Node` 类型变化
+
+    在 `DOM2` 中，`Node` 类型包含下列特定于命名空间的属性
+    + localName 不带命名空间前缀的节点名称
+    + namespaceURI 命名空间URI(default: null)
+    + prefix 命名空间前缀(default: null)
+
+2. `Document` 类型变化
+
+    新增方法：
+    + `createElementNS(namespaceURI, tagName)`
+    + `createAttributeNS(namespaceURI, attributeName)`
+    + `getElementByTagNameNS(namespaceURI, tagName)`
+
+3. `Element` 类型变化
+
+    新增方法
+    + `getAttributeNs(namespaceURI, localName)`
+    + `getAttributeNodeNS(namespaceURI, localName)`
+    + `getElementsByTagNameNS(namespaceURI, tagName)`
+    + `hasAttributeNS(namespaceURI, localName)`
+    + `removeAttriubteNS(namespaceURI, localName)`
+    + `setAttributeNS(namespaceURI, qualifiedName, value)`
+    + `setAttributeNodeNS(attNode)`
+
+4. `NameNodeMap` 类型变化
+
+    新增方法
+    + `getNamedItemNS(namespaceURI, localName)`
+    + `removeNamedItemNS(namespaceURI, localName)`
+    + `setNamedItemNS(node)`
+
+#### 12.1.2 其他方面变化
+
+1. `DocumentType` 类型变化
+
+    新增属性能够完整访问  
+    ```html
+    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"     "http://www.w3.org/TR/html4/strict.dtd">
+    ```
+    中的信息
+
+2. `Document` 类型变化
+
+    + `importNode()` 这个方法的用途是从一个 文档中取得一个节点，然后将其导入到另一个文档
+    + `defaultView` 属性确定文档所属的视图窗口
+    + `document.implementation.createDocumentType()`
+    + `document.implementation.createDocument()`
+    + `document.implementation.createHTMLDocument()`
+
+3. `Node` 类型变化
+
+    + `isSupported()` 但这个方法不实用
+    + `isSomeNode()`
+    + `isEqualNode()`
+    + `setUserData()` 处理函数会在带有数据的节点被复制、删除、重命名或引入一个文档时调用，因而你可以事先决定在上述操作发生时如何处理用户数据。处理函数接受 5 个参数：表示操作类型的数值（1 表示复制，2 表示导入，3 表示删除，4 表示重命名）、数据键、数据值、源节点和目标节点
+
+4. 框架的变化 
+    
+    框架和内嵌框架分别用 `HTMLFrameElement` 和 `HTMLIFrameElement` 表示，他们的新属性是 `contenDocument` 这个属性包含一个指针，指向表示框架内容的文档对象。
+
+### 12.2 样式
+
+在HTML 中定义样式的方式有三种
++ `<link/>` 元素包含外部样式文件
++ `<style/>` 元素定义嵌入式样式
++ 使用 `style` 特性针对特定元素定义特定样式
+DOM2 围绕这三种样式的机制提供一套API
+
+#### 12.2.1 访问元素样式
+
+任何支持 `style` 特性的 HTML 元素在 JavaScript 中都有一个对应的 style 属性。这个 style 对象是 CSSStyleDecaration 实例, 包含通过 HTML 的 style 特性指定的所有信息，但不包含与外部样式表或嵌入样式表经过层叠而来的样式。
+
+对于使用短划线的CSS属性，需要转变成驼峰式，JavaScript才能访问，并且在设置属性值时需要指定度量单位
+
+其中不能直接转换的为 float 属性，float 是 JavaScript 保留的关键字，需要转换成 styleFloat
+
+1. DOM 样式属性和方法
+
+    DOM2 对 style 对象还定义了一些属性和方法
+    + `cssText`
+    + `length`
+    + `parenRule` 表示 CSS 信息的 `CSSRule` 对象，这个对象包含两个属性 `cssText` 和 `cssValueType`。其中 `cssValueType` 属性则是一个数值常量，表示值的类型：0表示继承的值，1表示基本的值，2表示 值列表，3表示自定义的值
+    + `getPropertyCssValue(propertyName)`
+    + `getPropertyProprity(propertyName)` 如果给定对象的属性使用了 `!important` 设置则返回 `"important"` 否则返回空字符串
+     + `getProtpertyValue(propertyName)`
+     + `item(index)` 返回指定位置的 CSS 属性名称是带短划线
+     + `removeProperty(propertyName)`
+     + `setProperty(propertyName, value, proprity)` 
+
+2. 计算的样式
+
+    `getComputedStyle("elementName", "伪元素字符串")` 第二个参数可以为 `null`。方法返回一 个 CSSStyleDeclaration 对象（与 style 属性的类型相同）  
+
+    `var myDiv = document.getElementById("myDiv");`可以获得元素计算后的样式
+
+#### 12.2.2 操作样式表
+
+CSSStyleSheet 类型表示的是样式表，包括 `<link/>` (HTMLLinkElement 类型) 和 `<style/>` (HTMLStyleElement 类型)。该对象上只有**只读**接口(有一个属性例外)
+
+CSSStyleSheet 继承自 StyleSheet 属性如下：
++ `disabled`
++ `herf`： `<link>`的样式URL
++ `media`
++ `ownerNode`
++ `parentStyleSheet`：在当前样式表是通过@import 导入的情况下，这个属性是一个指向导入 它的样式表的指针。
++ `title`：`ownerNode` 中 title 属性的值
++ `type`：`"type/css"`
++ `cssRule`
++ `ownerRule`：如果样式表是通过@import 导入的，这个属性就是一个指针，指向表示导入的规 则；否则，值为 null
++ `insertRule`
+  
+1. CSS 规则
+ 
+    CSSStyleRuyle 类型包含下列属性：
+    + cssText
+    + parentRule
+    + parentStyleSheet
+    + selectorText
+    + style
+    + type
+
+    ```js
+    var sheet = document.styleSheets[0];
+    var rules = sheet.cssRules || sheet.rules;
+    ```
+
+2. 创建规则
+
+    `inserRule()` 该函数接受两个参数，规则文本和插入的规则索引
+    ```js
+    sheet.insertRule("body { background-color: silver }", 0); 
+    ```
+
+3. 删除规则
+
+    `deleteRule()` 参数为删除样式的索引
+
+#### 12.2.3 元素大小
+
+1. 偏移量
+
+    + offsetHeight
+    + offsetWidth
+    + offsetLeft
+    + offsetTop
+
+2. 客户区大小
+3. 滚动大小
+4. 确定元素大小
+
+### 12.3 遍历
+
+“DOM2 遍历和范围” 模块定义了两个用于辅助完成顺序遍历 DOM结构的类型：`NodeIterator` 和 `TreeWalker`
+
+对 dom 树进行右子树优先 深度优先 的遍历
+
+#### 12.3.1 `NodeIterator`
+
+`document.createNodeIterator()` 方法创建。该方法有四个参数：
++ root
++ whatToShow
++ filter： NodeFilter 对象或者是一个表示应该接受还是拒绝某种特定节点的函数
++ entityReferenceExpansion： 该参数在 HTML 页面中没有用
+
+#### 12.3.2 `TreeWalker`
+
+`TreeWalker` 是 `NodeIterator` 的高级版本。用`document.createTreeWalker()`方法创建，参数与`document.createNodeIterator()`相同。除了包括 `nextNode()` 和 `previousNode()` 还有以下方法：
++ `parentNode()`
++ `firstChild()`
++ `lastChild()`
++ `nextSilbing()`
++ `previousSlibing()`
+
+### 12.4 范围
+
+“DOM2 遍历和范围” 模块定义了“范围”接口。
+
+#### 12.4.1 DOM 中的范围
+
+DOM2 在 `Document` 类型中定义了 `createRange()` 方法
+
++ `startContainer`
++ `startOffset`  
+  范围在 `startContainer` 中的偏移量
++ `endCountainer`
++ `endOffset`
++ `commonAncestorContainer`  
+  `startContainer` 和 `endContainer` 共同的祖先节点在文档树中位置最深的那个
+
+1. 用 DOM 范围实现简单选择
+
+    `selectNode()` 选择整个节点，包括子节点  
+    `selectNodeContents()` 只选择节点的子节点  
+    这两个方法都接受一个参数，即一个 DOM 节点。
+    ```js
+    document.createRange().selectNode()
+    document.createRange().selectNodeContents()
+    ```
+
+2. 用 DOM 范围实现复杂选择
+
+    `setStart()`
+    `setEnd()`
+
+3. 操作 DOM 范围中的内容
+
+    `deleteContents()` 方法相似，`extractContents()` 也会从文档中移除范围选区。但这两个方法的区别在于，`extractContents()` 会返回范围的文档片段。利用这个返回的值，可以将范围的内容插入到文档中的其他地方。
+
+4. 插入 DOM 范围中的内容
+5. 折叠 DOM 范围
+
+    `collapse()`
+
+6. 比较 DOM 范围
+
+    `compareBoundaryPoints()` 确定范围是否有公共的边界
+
+7. 复制 DOM 范围
+
+    `cloneRange()`
+
+8. 清理 DOM 范围
+
+    `detach()`
+
+#### 12.4.8 IE8以及更早版本的范围
+
+1. 使用 IE 范围实现简单的选择
+2. 使用 IE 范围实现复杂的选择
+3. 操作 IE 范围中的内容
+4. 折叠 IE 范围
+5. 比较 IE 范围
+6. 复制 IE 范围
+ 

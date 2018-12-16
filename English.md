@@ -57,17 +57,42 @@
 + polling
 + cluster
 + regular
+### Dec 13th, 2018
 + section
 + fragment
 + instruction
 + specified
 + property
+### Dec 14th, 2018
 + prototype
 + toggle
 + focus
 + compat
 + charset
+### Dec 15th, 2018
 + custom
 + extension
 + contains
 + compare
++ horizontal
++ vertical
++ generates
++ integer
++ prefix
++ tag
++ referred to
++ meta
++ note about
++ lenient
+  + lenient error handling
++ simplifies
++ encounter
++ parsers
++ contrast to
++ hack
+  + It’s important to note that this is kind of a hack, and depends on the de facto error handling behavior of HTML parsers.
+  + There are also many other subtle differences between HTML and XHTML that aren’t covered by this simple syntax hack.
++ determines
++ priority
++ iterator
++ previous
