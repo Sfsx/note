@@ -1855,7 +1855,128 @@ IE event 都具有的属性和方法：
 1. load
 
     当页面加载完成后就会触发 window 上的load事件
+
+    在向文档添加新图像元素时，新图像元素不一定要从添加到文档后才开始 下载，只要设置了 src 属性就会开始下载
     
 2. unload
+
+    只要用户从一个页面切 换到另一个页面，就会发生 unload 事件
+
+    unload 事件是在一切 都被卸载之后才触发，那么在页面加载后存在的那些对象，此时就不一定存在了。
+
 3. resize
+
+    当浏览器窗口被调整到一个新的高度或宽度时，就会触发 resize 事件
+
+    与其他发生在 window 上的事件类似，在兼容 DOM 的浏览器中，传入事件处理程序中的 event 对象有一个 target 属性，值为 document
+
 4. scroll
+
+    scroll 事件虽然是在 window 上发生的，但他实际表示的是页面中对象发生的变化
+
+    与 resize 事件类似，scroll 事件也会在文档被滚动期间重复被触发，所以有必要尽量保持事件处理程序的代码简单
+
+#### 13.4.2 焦点事件
+
+焦点事件会在页面元素获得焦点时触发，配合 documnet.hasFocus() 以及 document.activeElement 属性配合可获取用户行踪。
++ blur 在元素失去焦点时触发，不会冒泡
++ focus 在元素获得焦点时触发，不会冒泡
++ focusout 在元素获得焦点时触发，这个事件与 HTML 的 focus 等价，会冒泡
+
+当焦点从页面一个元素移动到另一个元素会触发以下事件
+1. focusout 失去焦点的元素
+2. focusin 获得焦点的元素
+3. blur 失去焦点的元素
+4. focus 获得焦点的元素
+
+#### 13.4.3 鼠标与滚轮事件
+
+鼠标事件如下：
++ click
++ dblclick
++ mousedown
++ mouseenter
++ mouseleave
++ mousemove 鼠标指针在元素中移动时重复触发
++ mouseout
++ mouseover 鼠标从元素外部，首次移入另一个元素的边界之内时触发
++ mouseup
+
+mousedown + mouseup = click  
+click + click = dblclick
+
+1. 客户区坐标位置
+
+    `event.clientX` 和 `event.clientY`
+
+2. 页面坐标位置
+
+    `event.pageX` 和 `event.pageY`
+
+    在页面没有滚动的情况下，pageX 和 pageY 的值与 clientX 和 clientY 的值相等
+
+3. 屏幕坐标位置
+
+    `event.screenX` 和 `event.screenY`
+
+4. 修改键
+
+    `evnet.shiftKey`   
+    `event.ctrlKey`   
+    `event.altKey`  
+    `event.metaKey` (win -> win, mac -> cmd)
+
+5. 相关元素
+
+    mouseover mouseout
+
+6. 鼠标按钮
+
+    event.button 0表示主鼠标按钮 1表示中间的鼠标按钮 2表示次鼠标按钮
+
+7. 更多的事件信息
+
+    event.detail 中包含了一个数值，表示在给定位置上发生了多少次单击
+
+8. 鼠标滚轮事件
+
+    wheeldelta 事件  
+    event.wheelDelta 表示滚轮滚动方向
+
+9.  触摸设备
+
+    + 不支持 dblclick 双击窗口放大
+    + 轻击可单击元素会触发mouseove事件。如果此操作会导致内容变化，则不再有其他事件发生。若屏幕没有变化，会依次发生 mousedown, mouseup, click事件
+    + 两个个手指滚动页面会触发 mousewheel 和 scroll 事件
+
+10. 无障碍性问题
+
+    + 使用 click 事件执行代码，通过 mousedown 事件执行代码会让人感觉过快
+    + 不要使用 onmouseover 向用户展示新的选项。原因同上
+    + 不要时 dblclick 事件执行重要操作，因为键盘无法触发这个事件
+
+#### 13.4.4 键盘与文本事件
+
+键盘事件有三个：
++ keydown 按下任意键触发，按住不放重复触发
++ keypress 按下字符键触发，按住不放重复触发
++ keyup 释放按键触发
+
+文本事件：
++ textInput 文本插入文本框之前触发
+
+1. 键码
+
+    event.keyCode 属性值与 ASCII 码中对应小写字母或数字的编码相同
+
+2. 字符编码
+
+    keypress 事件意味着按下会影响到屏幕中显示的文本
+
+    keypress 事件才有的属性 event.charCode 表示按下那个键所代表字符的 ASCII 编码
+
+3. DOM3 变化
+
+    DOM3 级事件中的键盘事件，不再包含 charCode 属性，而是包含两个新属性：key 和 char。key 属性是按下键相应的文本字符 char 属性在按下字符键时与 key 值一样
+4. textInput 事件
+5. 设备中的键盘事件
