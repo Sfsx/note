@@ -96,3 +96,6 @@
 + priority
 + iterator
 + previous
++ attach
++ detach
++ bubble

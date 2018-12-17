@@ -1710,4 +1710,152 @@ DOM2 在 `Document` 类型中定义了 `createRange()` 方法
 4. 折叠 IE 范围
 5. 比较 IE 范围
 6. 复制 IE 范围
- 
+
+## 第13章 事件
+
++ 理解事件流
++ 使用事件处理程序
++ 不同的事件类型
+
+### 13.1 事件流
+
+事件流描述的是从页面中接收事件的顺序。IE 的事件流为事件冒泡。Netspace Communicator 的事件流为事件捕获
+
+#### 13.1.1 事件冒泡
+
+事件开始时由最具体的元素（文档中嵌套层次最深的节点）接收，然后逐级向上传播到较为不具体的节点
+
+#### 13.1.2 事件捕获
+
+与事件冒泡相反，不太具体的节点最早接收事件，而最具体的节点应该最后接收到事件。
+
+#### 13.1.3 DOM事件流
+
+“DOM2 事件” 规定的事件流包括三个阶段：
++ 事件捕获阶段  
+  从Document 向下传递事件，对象事件并没有触发
++ 处于目标阶段  
+  触发具体对象事件
++ 事件冒泡阶段
+
+目前浏览器都会在事件捕获阶段触发事件对象上的事件，导致在一个完整的事件流上，有两次机会在目标对象上面操作事件
+
+### 13.2 事件处理程序
+
+#### 13.2.1 HTML事件处理程序
+
+在 HTML 中指定事件处理程序有两个缺点：
++ 时差，用户可能在 HTML 元素一出现在页面上就触发该事件，而这时页面还没有加载完成，绑定的 JavaScript 函数还没完成加载
++ 以这种方式拓展的事件处理程序的作用域链在不同浏览器中是不同的。不同的 JavaScript 引擎遵循的标识符解析规则略有差异，很可能在访问非限定对象时出错
++ HTML 与 JavaScript 代码紧密耦合，如果更换程序需要更换两个地方
+
+#### 13.2.2 DOM0 事件处理程序
+
+```js
+var btn = document.getElementById("myBtn");
+btn.onclick = function(){
+  alert("Clicked");
+};
+```
+DOM0方法指定的事件处理程序被认为是元素的方法，此时事件处理程序是在元素的作用域中执行的
+
+#### 13.2.3 DOM2 事件处理程序
+
+“DOM2 事件” 模块定义的方法 `addEventListener()` 和 `removeEventListener()`，这两个函数都接受3个参数：
++ 要处理的事件名
++ 事件处理函数
++ Boolean 
+  + true表示在捕获阶段调用事件处理程序
+  + flase表示在冒泡阶段调用事件处理程序
+
+同 DOM0 一样处理函数是在元素的作用域中执行，能够多次添加，顺序执行
+```js
+var btn = document.getElementById("myBtn");
+btn.addEventListener("click", function(){
+  alert(this.id);
+}, false);
+```
+
+#### 13.2.4 IE 事件处理程序
+
+`attachEvent()` 和 `detachEvent()` 这两个参数接受相同的两个参数：
++ 事件处理程序名称
++ 事件处理函数
+
+```js
+var btn = document.getElementById("myBtn");
+btn.attachEvent("onclick", function(){
+  alert("Clicked");
+});
+```
+全局作用域
+
+#### 13.2.5 跨浏览器的事件处理程序
+
+### 13.3 事件对象
+
+event 对象
+
+#### 13.3.1 DOM中的事件对象
+
+event 都具有的属性和方法：
++ bubbles 事件是否冒泡
++ cancelable 是否取消事件默认行为
++ cuurentTarget 处理事件的那个元素
++ defaultPrevented
++ detail
++ eventPhase 事件处理的阶段 1表示捕获 2表示处于目标 3表示冒泡
++ preventDefault() 取消事件默认行为
++ stopImmediatePropagation() 取消事件进一步捕获或者冒泡
++ stopPropagation() 
++ target
++ trusted 事件是浏览器生成 还是 JavaScript 创建
++ type
++ view
+
+只有在事件处理期间，event对象才会存在，一旦事件处理程序执行完成，event对象就会被销毁
+
+#### 13.3.2 IE 中的事件对象
+
+若使用 DOM0 添加事件处理程序 event 作为 window 对象的一个属性存在  
+若使用 `attachEvent()` 添加事件处理函数， event 作为 window 对象的一个属性存在， 并且作为处理函数的参数
+
+IE event 都具有的属性和方法：
++ cancelBubble
++ returnValue
++ srcElemnet
++ type
+
+#### 13.3.3 跨浏览器的事件对象
+
+### 13.4 事件类型
+
+“DOM3 事件”模块定义一下事件类型
++ UI 当用户与页面上的元素交互时发生
++ 焦点事件
++ 鼠标事件
++ 滚轮事件
++ 文本事件
++ 键盘事件
++ 合成事件
++ 变动事件
++ 变动名称事件
+
+#### 13.4.1 UI 事件
+
+现有UI事件如下：
++ load
++ unload
++ abort
++ error
++ select
++ resize
++ scroll
+
+1. load
+
+    当页面加载完成后就会触发 window 上的load事件
+    
+2. unload
+3. resize
+4. scroll

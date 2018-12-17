@@ -91,6 +91,11 @@ Object.prototype.hasOwnProperty.call(foo, 'bar'); // true
 ---
 
 ## 异步
+
+**实际上 `await` 是一个让出线程的标志。** `await` 后面的函数会先执行一遍，然后就会跳出整个 `async` 函数来执行后面js栈的代码
+
+node 遇到 await 先执行后面的函数，将 resolve 压进回调队列再让出线程  
+chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 压进回调队列
 ```js
 /**
  * 异步试题
@@ -214,3 +219,33 @@ So what really determines if a document is HTML or XHTML? The one and only thing
 ---
 
 ## promise 错误能不能上抛 当有一个函数返回 promise 这个函数内部再调用另一个函数，这个函数也会返回 promise, 这个 promise 被 reject，那么上级 promise 会不会被reject 
+
+```js
+(async function () {
+  function async1() {
+    return new Promise((resolve, reject) => {
+      reject('async1 error');
+    })
+  }
+
+  function async2() {
+    return new Promise((resolve, reject)=>{
+      resolve('async2 success');
+    })
+  }
+
+  async function async3() {
+    await async2()
+    await async1()
+  }
+
+  const promises = [];
+  promises.push(async3());
+  try {
+    await Promise.all(promises);
+  } catch (e) {
+    console.log(e);
+  }
+})()
+```
+**结论上级会被reject**
