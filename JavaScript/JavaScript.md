@@ -1932,21 +1932,21 @@ click + click = dblclick
 
 6. 鼠标按钮
 
-    event.button 0表示主鼠标按钮 1表示中间的鼠标按钮 2表示次鼠标按钮
+    `event.button` 0表示主鼠标按钮 1表示中间的鼠标按钮 2表示次鼠标按钮
 
 7. 更多的事件信息
 
-    event.detail 中包含了一个数值，表示在给定位置上发生了多少次单击
+    `event.detail` 中包含了一个数值，表示在给定位置上发生了多少次单击
 
 8. 鼠标滚轮事件
 
     wheeldelta 事件  
-    event.wheelDelta 表示滚轮滚动方向
+    `event.wheelDelta` 表示滚轮滚动方向
 
 9.  触摸设备
 
     + 不支持 dblclick 双击窗口放大
-    + 轻击可单击元素会触发mouseove事件。如果此操作会导致内容变化，则不再有其他事件发生。若屏幕没有变化，会依次发生 mousedown, mouseup, click事件
+    + 轻击可单击元素会触发 mouseove 事件。如果此操作会导致内容变化，则不再有其他事件发生。若屏幕没有变化，会依次发生 mousedown, mouseup, click事件
     + 两个个手指滚动页面会触发 mousewheel 和 scroll 事件
 
 10. 无障碍性问题
@@ -1958,28 +1958,59 @@ click + click = dblclick
 #### 13.4.4 键盘与文本事件
 
 键盘事件有三个：
+
 + keydown 按下任意键触发，按住不放重复触发
 + keypress 按下字符键触发，按住不放重复触发
 + keyup 释放按键触发
 
 文本事件：
+
 + textInput 文本插入文本框之前触发
 
 1. 键码
 
-    event.keyCode 属性值与 ASCII 码中对应小写字母或数字的编码相同
+    `event.keyCode` 属性值与 ASCII 码中对应小写字母或数字的编码相同
 
 2. 字符编码
 
     keypress 事件意味着按下会影响到屏幕中显示的文本
 
-    keypress 事件才有的属性 event.charCode 表示按下那个键所代表字符的 ASCII 编码
+    keypress 事件才有的属性 `event.charCode` 表示按下那个键所代表字符的 ASCII 编码
 
 3. DOM3 变化
 
-    DOM3 级事件中的键盘事件，不再包含 charCode 属性，而是包含两个新属性：key 和 char。key 属性是按下键相应的文本字符 char 属性在按下字符键时与 key 值一样
+    DOM3 事件中的键盘事件，不再包含 `charCode` 属性，而是包含两个新属性：`key` 和 `char`。`key` 属性是按下键相应的文本字符， `char` 属性是按下那个键所代表字符的 ASCII 编码（自测chrome既有 `charCode` 也有 `key` 和 `char`）
 
-    DOM3 还添加了 location 的属性，这是一个数值，表示按下了什么位置的键。0表示键盘，1表示左侧键（左 alt），2表示右侧位置，3表示数字小键盘，4表示移动设备键盘，5表示手柄
+    DOM3 还添加了 `location` 的属性，这是一个数值，表示按下了什么位置的键。0表示键盘，1表示左侧键（左 alt），2表示右侧位置，3表示数字小键盘，4表示移动设备键盘，5表示手柄（浏览器支持不多，自测chrome支持）
+    
+    DOM3 添加 `event.getModifierState()` 但只有 IE9 支持（自测chrome支持） 
 
 4. textInput 事件
+
+    “DOM3 事件”引入的新事件，名叫 textInput。该事件与 keypress 事件的区别在于：
+    1. 任何可以获得焦点的元素都可以触发 keypress 事件，而 textInput 只有在可编辑区域才能触发
+    2. textInput 事件只会在用户按下能够输入实际字符键时才能够触发，keypress 是在能够影响文本显示就会触发（例如退格键）
+
+    `event.inputMethod` 目前只有 IE 实现（自测确实）
+
 5. 设备中的键盘事件
+
+#### 13.4.5 复合事件
+
+复合事件用于处理 IME 的输入序列。IME（Input Method Editor，输入法编辑器）可以让用户输入在物理键盘上找不到的字符。（仅 IE9 支持）
+
+#### 13.4.6 事件变动
+
++ DOMSubtreeModified：DOM 结构发生变化，这个事件在其他任何事件触发后都会触发
++ DOMNodeInserted
++ DOMNodeRemoved
++ DOMNodeInsertedIntoDocument：这个事件在 DOMNodeInserted 事件之后触发
++ DOMNodeRemovedFromDocument：这个事件在 DOMNodeRemoved 事件之后触发
++ DOMAttrModified
++ DOMCharacterDataModified：文本节点的值发生变化时触发
+
+1. 删除节点
+
+    在使用 `removeChild()` 和 `replaceChild()` 从 DOM 中删除节点时，会首先触发 DOMNodeRemoved 事件
+
+2. 插入节点

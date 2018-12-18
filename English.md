@@ -75,17 +75,20 @@
 + contains
 + compare
 + horizontal
+### Dec 16th, 2018
 + vertical
 + generates
 + integer
 + prefix
 + tag
+### Dec 17th, 2018
 + referred to
 + meta
 + note about
 + lenient
   + lenient error handling
 + simplifies
+### Dec 18th, 2018
 + encounter
 + parsers
 + contrast to
@@ -99,3 +102,12 @@
 + attach
 + detach
 + bubble
++ assign
+  + 'a' is assigned a value but never used
++ incorrect
+  + Examples of incorrect code for the default `{ "args": "after-used" }` option
++ correct
+  + Examples of correct code for `/* exported variableName */` operation
++ triggered
+  + "error" or 2 - turn the rule on as an error (exit code is 1 when triggered)
++ sync/async
