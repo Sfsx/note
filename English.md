@@ -111,3 +111,5 @@
 + triggered
   + "error" or 2 - turn the rule on as an error (exit code is 1 when triggered)
 + sync/async
++ persisted
++ orientation

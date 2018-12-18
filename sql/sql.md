@@ -22,7 +22,7 @@
     select * from behavior_record_sync 
     where code in(
         select access_code from people_info_sync
-        where people_name like '陈吉仁'
+        where people_name like 'jiayiWu'
     )
     ORDER BY access_time DESC LIMIT 0,30
     ) be 

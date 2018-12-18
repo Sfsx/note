@@ -1854,7 +1854,7 @@ IE event 都具有的属性和方法：
 
 1. load
 
-    当页面加载完成后就会触发 window 上的load事件
+    当页面完全加载后就会触发 window 上的 load 事件
 
     在向文档添加新图像元素时，新图像元素不一定要从添加到文档后才开始 下载，只要设置了 src 属性就会开始下载
     
@@ -2013,4 +2013,90 @@ click + click = dblclick
 
     在使用 `removeChild()` 和 `replaceChild()` 从 DOM 中删除节点时，会首先触发 DOMNodeRemoved 事件
 
+    如果删除的节点包含子节点，则子节点触发 DOMNodeRemovedFromDocument 事件。不会冒泡且事件的目标是相应的子节点或者那个被移除的节点，除此之外 event 对象中不包含其他内容
+
 2. 插入节点
+
+    在使用 `appendChild()`，`replaceChild()`和`insertBefor()` 向 DOM 中插入节时，首先会触发 DOMNodeInserted 事件。这个事件的目标是被插入的节点，事件触发时节点已经被插到了新的父节点中。这个事件是冒泡的
+
+    紧接着，会在插入的节点上触发 DOMNodeInsertedDocument 事件，该事件不冒泡，事件的目标是被插入的节点，除此之外 event 不包含任何对象
+
+#### 13.4.7 HTML5 事件
+
+1. contextmenu 事件
+
+    鼠标右键单机在调出上下文菜单之前触发的事件，可阻止事件冒泡，并设置自定义右键菜单菜单
+
+2. beforunload 事件
+
+    不能取消该事件，只是在页面卸载之前，显示的消息告知用户页面行将被卸载，询问用户是否真的要关闭页面，还是希望继续留下来
+
+3. DOMContentLoaded 事件
+
+    window 的 load 表示页面一切都加载完成时触发。而 DOMContentLoaded 事件则会在形成完整的 DOM 树时触发
+
+4. readyStateChange 事件
+
+    支持 readyStateChange 事件的每一个对象都有一个 `readyState` 属性，该属性有5个可能值：
+    + uninitialized（未初始化）：对象存在但未初始化。
+    + loading
+    + loaded
+    + interactive （交互）：可以操作对象了，但还没有完全加载。
+    + complete
+
+    redayStateChange 事件的 interactive 状态会与 DOMContentChange 事件大致相同时间发生。
+
+5. pageshow 和 pagehide 事件
+
+    使用浏览器后退按钮，页面从bfcache加载时不会触发 load 事件。
+    
+    pageshow 事件页面显示时触发。如果页面从 bfcache 加载，页面状态完全恢复的那一刻触发。如果页面重新加载，则在 load 事件后触发。该事件 evnet.persisted 标志页面是否从 bfcache 加载。
+
+    pagehide 事件会在浏览器卸载页面时触发，而且是在 unload 事件前触发。其 evnet.persisted 表示卸载页面是否会存入缓存。
+
+6. hashchange 事件
+
+    在 URL 的参数列表（及 URL 中 "#" 号后面的字符串）发生变化时通知开发人员。
+
+    必须把 hashchange 事件处理函数添加到 window 对象。其 event 包含两个属性 `oldURL` 和 `newURL`。
+
+#### 13.4.8 设备事件
+
+1. orientationchange 事件 
+
+    设备切换横纵向查看模式时触发。 其中 `window.orientation` 值区别横纵方向
+ 
+2. Mozorientation 事件
+
+    当设备的加速计检测到设备方向改变时，就会触发这个事 件
+
+3. deviceorientation 事件 
+
+    在加速计检测到设备方向变化时在 window 对象上触发，事件的意图是告诉开发人员设备在空间中朝向哪儿，而不是如何移动。
+
+4. devicemotion 事件
+
+    通过 devicemotion 能够检测到设备是不是正在 往下掉，或者是不是被走着的人拿在手里。
+
+#### 13.4.9 触摸与手势事件
+
+1. 触摸事件
+
+    + touchstart
+    + touchmove
+    + touchcancel
+    + touches
+    + targetTouchs
+    + changeTouches
+
+    touch对象包含以下属性
+    + clientX
+    + clientY
+    + identifier
+    + pageX
+    + pageY
+    + screenX
+    + screenY
+    + target
+
+2. 手势事件
