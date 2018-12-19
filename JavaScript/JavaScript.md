@@ -2208,8 +2208,33 @@ HTML 标签的 `<form>` 在 JavaScript 中，对应的是 HTMLFormElement 类型
     + change 对于 `<input>` 和 `<textarea>` 元素，在他们**失去焦点**且 **`value` 值改变**时触发
     + focus
 
-#### 14.2 文本框脚本
+### 14.2 文本框脚本
 
 `<textarea>` 不能设置最大字符数
 
-对 value 修改，不一定会反映在 DOM 中，在处理文本框值时，最好不要使用 DOM 方法
+不要使用 `setAttribut()` 设置 `<input>` 元素的 value 特性，也不要去修改 `<textarea>` 元素的第一个子节点。原因是：对 value 修改，不一定会反映在 DOM 中，在处理文本框值时，最好不要使用 DOM 方法
+
+#### 14.2.1 选择文本
+
+`select()` 方法选择文本框中所有文本
+
+1. 选择（select）事件
+2. 取得选择的文本
+
+    HTML5 给文本框元素添加了两个属性 `selectionStart` 和 `selectionEnd`
+    ```js
+    function getSelectedText(textDom) {
+      return textDom.value.substring(text.selectionStart, text.selectionEnd);
+    }
+    ```
+
+3. 选择部分文本
+
+    HTML5 为文本框添加的 `setSelectionRange()` 方法。该方法接受两个参数：要选择的第一个字符的索引和要选择的最后一个字符的索引。
+
+    ```js
+    // 选择所有文本
+    textDom.setSelectionRange(0, textDom.value.length);
+    ```
+
+#### 14.2.2 过滤输入 
