@@ -1,25 +1,3 @@
-# JavaScript
-
-## 异步循环
-
-```javascript
-// 并发异步循环
-let tasks = data.map(item => {
-  // 一些步骤....
-  return promise;
-})
-await Promise.all(tasks);
-
-// 继发异步循环
-for (let item of data) {
-  await promise;
-}
-```
-
-## 内存
-
-    JavaScript
-
 
 # JavaScript高级程序设计
 
@@ -1798,7 +1776,7 @@ event 对象
 
 #### 13.3.1 DOM中的事件对象
 
-event 都具有的属性和方法：
+event 都具有的属性和方法（以下属性均为只读不可修改）：
 + bubbles 事件是否冒泡
 + cancelable 是否取消事件默认行为
 + cuurentTarget 处理事件的那个元素
@@ -1806,8 +1784,8 @@ event 都具有的属性和方法：
 + detail
 + eventPhase 事件处理的阶段 1表示捕获 2表示处于目标 3表示冒泡
 + preventDefault() 取消事件默认行为
-+ stopImmediatePropagation() 取消事件进一步捕获或者冒泡
-+ stopPropagation() 
++ stopImmediatePropagation() 取消事件进一步捕获或者冒泡，同事阻止任何事件处理函数
++ stopPropagation() 取消事件冒泡
 + target
 + trusted 事件是浏览器生成 还是 JavaScript 创建
 + type
@@ -1830,7 +1808,8 @@ IE event 都具有的属性和方法：
 
 ### 13.4 事件类型
 
-“DOM3 事件”模块定义一下事件类型
+“DOM3 事件”模块定义一下事件类型：
+
 + UI 当用户与页面上的元素交互时发生
 + 焦点事件
 + 鼠标事件
@@ -1844,6 +1823,7 @@ IE event 都具有的属性和方法：
 #### 13.4.1 UI 事件
 
 现有UI事件如下：
+
 + load
 + unload
 + abort
@@ -1854,7 +1834,7 @@ IE event 都具有的属性和方法：
 
 1. load
 
-    当页面完全加载后就会触发 window 上的 load 事件
+    当页面 **完全** 加载后就会触发 window 上的 load 事件
 
     在向文档添加新图像元素时，新图像元素不一定要从添加到文档后才开始 下载，只要设置了 src 属性就会开始下载
     
@@ -1928,7 +1908,7 @@ click + click = dblclick
 
 5. 相关元素
 
-    mouseover mouseout
+    mouseover mouseout 这两事件发生时会有相关元素
 
 6. 鼠标按钮
 
@@ -1936,7 +1916,7 @@ click + click = dblclick
 
 7. 更多的事件信息
 
-    `event.detail` 中包含了一个数值，表示在给定位置上发生了多少次单击
+    `event.detail` 中包含了一个数值，表示在给定位置上发生了多少次单击（移动鼠标则计数请零）
 
 8. 鼠标滚轮事件
 
@@ -2165,3 +2145,71 @@ document 对象上使用 `createEvent()` 方法创建事件
 #### 13.6.2 IE 中的事件模拟
 
 ## 第14章 表单脚本
+
++ 理解表单
++ 文本框验证与交互
++ 使用其他表单控制
+
+### 14.1 表单的基础知识
+
+HTML 标签的 `<form>` 在 JavaScript 中，对应的是 HTMLFormElement 类型。 HTMLFromElement 继承了 HTMLElement，因此与 HTML 元素具有相同的属性。但本身还有以下独特的属性和方法：
++ accetpCharset -> HTML accept-charset 属性
++ action -> HTML action 属性
++ elements -> 表单中所有控件的集合
++ enctype -> HTML enctype 属性
++ length -> 表单中控件的数量
++ method -> HTML method 属性
++ name -> HTML name 属性
++ reset() -> 将表单域重置为默认值
++ submit() -> 提交表单
++ target -> HTML target 属性
+
+#### 14.1.1 提交表单
+
+避免重复提交：在第一次提交后禁用表单按钮，或者利用 onsubmit 事件处理程序取消后续的表单操作
+
+#### 14.1.2 重置表单
+
+```html
+<!-- 通用重置按钮 -->
+<input type="reset" value="Reset Form"> 
+ 
+<!-- 自定义重置按钮 -->
+<button type="reset">Reset Form</button>
+```
+
+#### 14.1.3 表单字段
+
+`form.elements` 该属性是表单中所有表单元素（字段）的集合
+
+1. 共有的表单字段属性
+
+    除了 `<fieldset>` 元素，所有的表单字段都拥有相同的属性。
+
+    + disabled
+    + form
+    + name
+    + readOnly
+    + tabIndex tab键切换的序号
+    + type
+    + value
+
+    `<select>` 元素的 `type` 属性可以是 `"select-one"`，`"select-multipe"`
+
+2. 共有的表单字段方法
+
+    `focus()` 和 `blur()`。其中 `bler()` 会将焦点从元素上移走。
+
+    HTML5 新增 `autofocus` 属性。自动将焦点移动到表单相应字段。
+
+3. 共有的表单字段事件
+
+    + blur
+    + change 对于 `<input>` 和 `<textarea>` 元素，在他们**失去焦点**且 **`value` 值改变**时触发
+    + focus
+
+#### 14.2 文本框脚本
+
+`<textarea>` 不能设置最大字符数
+
+对 value 修改，不一定会反映在 DOM 中，在处理文本框值时，最好不要使用 DOM 方法

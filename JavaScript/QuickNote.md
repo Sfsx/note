@@ -1,5 +1,25 @@
 # QucikNote
 
+## 异步循环
+
+```javascript
+// 并发异步循环
+let tasks = data.map(item => {
+  // 一些步骤....
+  return promise;
+})
+await Promise.all(tasks);
+
+// 继发异步循环
+for (let item of data) {
+  await promise;
+}
+```
+
+## 内存
+
+    JavaScript
+    
 ## koa源码有感
 ```js
 function createServer(res, req) {

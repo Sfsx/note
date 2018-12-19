@@ -113,3 +113,4 @@
 + sync/async
 + persisted
 + orientation
++ multipe
