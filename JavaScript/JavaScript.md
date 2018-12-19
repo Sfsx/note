@@ -2090,6 +2090,7 @@ click + click = dblclick
     + changeTouches
 
     touch对象包含以下属性
+
     + clientX
     + clientY
     + identifier
@@ -2100,3 +2101,67 @@ click + click = dblclick
     + target
 
 2. 手势事件
+
+### 13.5 内存和性能
+
+在 JavaScript 中，添加到页面上的事件处理程序数量将直接影响页面的整体性能。首先，每个函数都是对象，都会占用内存；内存占用越多，性能越差。其次，必须事先指定所有事件的处理程序而导致 DOM 访问次数增多，会延迟整个页面的交互就绪时间。
+
+#### 13.5.1 事件委托
+
+对 “事件处理程序过多” 问题的解决方案就是**事件委托**。利用事件冒泡，可以只在 document 层次处理事件。优点有下
++ document 对象很快能够访问，可以在页面生命周期任何事件点添加事件处理程序
++ 在页面中设置处理程序的所需的时间更少。
++ 整个页面占用内存空间更少
+
+#### 13.5.2 移除事件处理程序
+
+先移除元素上的事件在移除元素
+
+### 13.6 事件模拟
+
+#### 13.6.1 DOM中的事件模拟
+
+document 对象上使用 `createEvent()` 方法创建事件
+
++ UIEvent
++ MouseEvent
++ MutationEvents
++ HTMLEvents
+
+1. 模拟鼠标事件
+
+    ```js
+    var btn = document.getElementById("myBtn"); 
+ 
+    //创建事件对象
+    var event = document.createEvent("MouseEvents");
+    //初始化事件对象
+    event.initMouseEvent("click", true, true, document.defaultView, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    //触发事件
+    btn.dispatchEvent(event);
+    ```
+
+2. 模拟键盘事件
+
+    ```js
+    var event = document.createEvent("KeyboardEvent"); 
+ 
+    //初始化事件对象     
+    event.initKeyboardEvent("keydown", true, true, document.defaultView, "a", 0, "Shift", 0); 
+    ```
+
+3. 模拟其他事件
+
+    `createEvent("MutationEvents")` 创建一个包含 `initMutationEvent()` 方法的变动事件对象。
+
+4. 自定义DOM事件
+
+    `createEvent("CustomEvent")` 返回的对象有一个名为 `initCustomEvent()` 的方法，接收如下 4个参数
+    + type
+    + bubbles
+    + cancelable
+    + detail
+
+#### 13.6.2 IE 中的事件模拟
+
+## 第14章 表单脚本
