@@ -2238,3 +2238,134 @@ HTML 标签的 `<form>` 在 JavaScript 中，对应的是 HTMLFormElement 类型
     ```
 
 #### 14.2.2 过滤输入 
+
+1. 屏蔽字符
+2. 操作剪贴板
+
++ beforecopy
++ copy
++ beforecut
++ cut
++ beforepaste
++ paste
+
+取消 before 开头这些事件并不会取消对剪贴板的操作——只有取消 copy，cut和paste 事件
+
+可以通过 window.clipboardData 对象访问剪贴板数据，最好只在发生剪贴板事件期间使用这个对象
+
+该对象有三个方法：
++ getData()：只有一个参数为取得的数据格式：`"text/plain"`
++ setData()：只有一个参数也是数据类型，返回 `boolean` 判断操作是否成功
++ clearData()
+
+#### 14.2.3 自动切换焦点
+
+只是在输入框达到既定数据的最大长度时自动切换焦点，使用方法为 `from.element[i].focus()`
+
+#### 14.2.4 HTML5 约束验证API
+
+1. 必填字段
+
+    表单元素的 `required` 属性
+
+2. 其他输入字段
+
+    input 元素的 type 新增 `"email"` 和 `"url"`
+
+3. 数值范围
+
+    数值类型输入的元素：number，range，datetime，datetime-local，date，month，week，time。这些元素可以指定 max 和 min 属性
+
+4. 输入模式
+
+    HTML5 为文本字段新增了pattern属性。这个属性的值是一个正则表达式，用于匹配文本框中的值。
+
+5. 检测有消性
+
+    使用元素的 `checkValidity()` 返回值 `boolean` 表示是是否通过前面所介绍的表单校验
+
+    `checkValidity()` 方法告诉你字段是否有效，而 validity 属性则会告诉你为什么字段有效或无效。这个对象包含一些属性，每个属性都会返回一个`boolean` 值
+    + customError： 如果设置了 `setCustomValidity()` 则返回 `true`
+    + patternMismatch
+    + rangeOverflow： 是否比 max 大
+    + rangeUnderflow： 是否比 min 小
+    + stepMisMatch： mix 和 max 之间的步长值合不合理
+    + tooLong
+    + typeMismatch
+    + valid： 与 `checkValidity()` 返回值相同
+    + valueMissing：required 字段是否没有值
+
+6. 禁用验证
+
+    novalidate 属性
+
+#### 14.3 选择脚本
+
+选择框是通过 `<select>` 和 `<option>` 元素创建的。属于 HTMLSelectElement 类型，该类型提供了下列属性和方法：
++ `add(newOption, relOption)`：向元素的 reloption（选项）之前插入新的 `<option>` 
++ multiple
++ options： 控件中所有 `<option>` 元素的 HTMLCollection
++ `remove(index)`
++ selectedIndex
++ size：选择框中可见行数
++ value
+  + 未选择 空字符串
+  + 有一个选中的项
+    + 且该项的 value 特性已经在 HTML 中指定，则value 等于选中项的 value 特性
+    + 若该项的 value 特性未指定，则 value 属性等于该项文本
+  + 有多个选择项，则 value 会根据之前的规则取得第一个选项中的值
+
+`<option>` 元素都有一个 HTMLOptionElement 对象表示。该对象具有以下属性：
++ index
++ label
++ selected 表示是否被选中
++ text
++ value
+
+其他表单的 change 事件是在值被修改且焦点离开当前字段时触发。而选择框的  change 事件只要选中了选项就会触发。
+
+#### 14.3.1 选择选项
+
+对于只允许选择一项的选择框，直接访问选择框的 selectedIndex 属性，即可访问选择选项。
+
+对于允许多选的选择框，循环访问每个选项的 `select.options[i].selected` 即可得到选中选项的一个数组
+
+#### 14.3.2 添加选项
+
+```js
+// 第一种方案
+var newOption = document.createElement("option");
+newOption.appendChild(documnet.createTextNode("Option text"));
+newOption.setAttribute("value", "Option value");
+
+selectBox.appendChild(newOption);
+
+// 第二种方案
+var newOption = new Option("Option text", "Option value"); selectbox.add(newOption, undefined); //最佳方案
+```
+
+#### 14.3.3 移除选项
+
+DOM 的 `removeChild(optionDom)` 或者选择框的 `remove(index)` 方法
+
+#### 14.3.4 移动和重排选项
+
+```js
+var optionToMove = selectbox.options[1];
+selectbox.insertBefore(optionToMove, selectbox.options[optionToMove.index+2]);
+```
+
+### 14.4 表单序列化
+
+在 JavaScript 中利用表单字段的type属性，连同 name 和 value 属性一起实现对表单的序列化，然后通过 http 请求发送给服务器
+
+### 14.5 富文本编辑器
+
+在页面中嵌入一个包含空 HTML 页面的 iframe。通过设置 designMode 属性，这个空白的 HTML 页面可被编辑，而编辑对象则是该页面 `<body>` 元素的 HTML 代码
+
+#### 14.5.1 使用 `contenteditable` 属性
+
+另一种编辑富文本内容的方式是使用名为 contenteditable 的特殊属性。IE 最早实现。可以把 contenteditable 属性应用给页面中的任何元素，然后用户立即就可以编辑该元素。
+
+#### 14.5.2 操作富文本
+
