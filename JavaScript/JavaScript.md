@@ -2238,3 +2238,10 @@ HTML 标签的 `<form>` 在 JavaScript 中，对应的是 HTMLFormElement 类型
     ```
 
 #### 14.2.2 过滤输入 
+
+1. 屏蔽字符
+2. 操作剪贴板
+  
+    + beforrecopy
+    + copy
+    + befor
