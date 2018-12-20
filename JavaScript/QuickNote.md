@@ -19,7 +19,7 @@ for (let item of data) {
 ## 内存
 
     JavaScript
-    
+
 ## koa源码有感
 ```js
 function createServer(res, req) {
@@ -268,4 +268,15 @@ So what really determines if a document is HTML or XHTML? The one and only thing
   }
 })()
 ```
-**结论上级会被reject**
+**结论上级会被 reject**
+
+## V8实现中，两个队列各包含不同的任务
+
+```js
+macrotasks: script(整体代码),setTimeout, setInterval, setImmediate, I/O, UI rendering
+
+microtasks: process.nextTick, Promises, Object.observe, MutationObserver
+```
+[js运行机制](https://zhuanlan.zhihu.com/p/52000508)
+
+[原文链接](https://www.jianshu.com/p/3ed992529cfc)
