@@ -834,6 +834,8 @@ delete window.age; // 报错
 
 #### 8.1.2 窗口关系及框架
 
+`window.frame[0]` 或者 `window.frame["frameName"]`
+
 #### 8.1.3 窗口位置
 
 #### 8.1.4 窗口大小
@@ -1003,7 +1005,9 @@ http herader User-Agent
 
 #### 10.1.1 Node 类型
 
-`DOM1` 定义了一个 `Node` 接口，该接口将由 `DOM` 中的所有节点类型实现。`Node` 对象是整个 `DOM` 的主要数据类型。这个 `Node` 接口在 `JavaScript` 中是作为node类型实；除IE外所有浏览器都可以访问这个类型。`JavaScritp` 中的所有节点类型都继承自 `node` 接口，所以他们都共享着相同的属性和方法
+`DOM1` 定义了一个 `Node` 接口，许多 `DOM` 类型从这个接口**对象**继承。`Node` 的父类为 `EventTarget` 类型（也是一个对象，参考第6章的知识点）
+
+`Node` 对象是整个 `DOM` 的主要数据类型。这个 `Node` 接口在 `JavaScript` 中是作为 `node` 类型实；除 IE 外所有浏览器都可以访问这个类型。`JavaScritp` 中的所有节点类型都继承自 `node` 接口，所以他们都共享着相同的属性和方法
 
 + `Node.ELEMENT_NODE(1)`
 + `Node.ATTRIBUTE_NODE(2)`
@@ -1027,6 +1031,8 @@ http herader User-Agent
     + `replaceChild(newNode, someNode)`
 
 4. 其他方法
+    
+    `cloneNode()`
 
 #### 10.1.2 Document 类型
 
@@ -1036,6 +1042,12 @@ http herader User-Agent
 + nodeName `"#document"`
 + nodeValue `null`
 + parentNode `null`
++ ownerDocument `null`
++ 子节点：
+  + DocumentType（最多一个）
+  + Element（最多一个）
+  + ProcessingInstruction （XML 声明，XML 声明包含了准备 XML 处理器解析 XML 文档的详细信息。它是可选的，但在使用时，它必须出现在 XML 文档中的第一行）
+  + Comment （html注释）
 
 1. 文档的子节点
 
@@ -1060,25 +1072,36 @@ http herader User-Agent
     + `getElementById()`
     + `getElementsByTagName()`
     + `getElementsByName()`
-    
+
 4. 特殊集合
 
     除了属性和方法，`document` 对象还有一些特殊的集合。这些集合都是 `HTMLCollection` 对象， 为访问文档常用的部分提供了快捷方式
 
 5. `DOM` 一致性检测
 
-    由于 `DOM` 分为多个级别，也包含多个部分，因此检测浏览器实现了 `DOM` 的哪些部分就十分必要 了。`document.implementation` 属性就是为此提供相应信息和功能的对象，与浏览器对 DOM的实现 直接对应。DOM1级只为 `document.implementation` 规定了一个方法，即 `hasFeature()`。这个方 法接受两个参数：要检测的 DOM功能的名称及版本号。如果浏览器支持给定名称和版本的功能，则该 方法返回 `true`，如下面的例子所示
+    由于 `DOM` 分为多个级别，也包含多个部分。需要检测浏览器 DOM 具体实现。即使用 `document.implementation` 属性的 `hasFeature()` 方法，有两个参数：要检测的 DOM 功能的名称及版本号。下面是一个例子：
+
+    ```js
+    var hasXmlDom = document.implementation.hasFeature("XML", "1.0");
+    ```
 
 6. 文档写入
 
 #### 10.1.3 Element 类型
 
-`Element` 类型用于表现XML或HTML元素，提供了对元素标签和子节点特性的访问。`Element` 具有以下特征：
+Element 是非常通用的基类，所有 `Document` 对象下的对象都继承它. 这个接口描述了所有相同种类的元素所普遍具有的方法和属性。`Element` 具有以下特征：
 
 + nodeType `1`
 + nodeName 元素标签名
 + nodeValue `null`
-+ parentNode `Document` 或 `Element` 
++ parentNode `Document` 或 `Element`
++ 子节点
+  + Element
+  + Text
+  + Comment
+  + ProcessingInstruction
+  + CDATASection
+  + EntityReference （`<!ENTITY name "value">`）
 
 1. HTML 元素
 
@@ -1159,7 +1182,7 @@ http herader User-Agent
 + parentNode Element 或者 Document
 + 没有子节点
 
-`Comment` 类型与 `Text` 类型继承自相同的基类
+`Comment` 类型与 `Text` 类型继承自相同的基类 `CharacterData`
 
 `document.createComment()` 并为其传递注释文本也可以创建注释节点
 

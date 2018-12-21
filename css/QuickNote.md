@@ -23,3 +23,13 @@
 [原文链接](https://developer.mozilla.org/zh-CN/docs/Web/CSS/Specificity)
 
 ---
+
+## 脱离文档流
+
+### float
+### position absolute
+    
+    可以使用 top left 相对浏览器窗口进行定位
+    可以使用 margin-top margin-left 相对父节点进行定位
+
+### position fixed

@@ -269,3 +269,47 @@ So what really determines if a document is HTML or XHTML? The one and only thing
 })()
 ```
 **结论上级会被reject**
+
+## DOM 相关知识点
+
+### CharacterData
+
+翻译：  
+CharacterData 抽象接口（abstract interface）代表 Node 对象包含的字符。这是一个抽象接口，意味着没有 CharacterData 类型的对象。 它是在其他接口中被实现的，如 Text、Comment 或 ProcessingInstruction 这些非抽象接口。
+
+原文：   
+The CharacterData abstract interface represents a Node object that contains characters. This is an abstract interface, meaning there aren't any object of type CharacterData: it is implemented by other interfaces, like Text, Comment, or ProcessingInstruction which aren't abstract.
+
+### ProcessingInstruction
+
+原文：  
+A processing instruction embeds application-specific instructions in XML which can be ignored by other applications that don't recognize them. Even if an XML processor ignores processing instructions, it will give them a place in the DOM.
+
+A processing instruction is different from the XML declaration, which supplies information about the document such as character encoding, and can only appear as the first item in a document.
+
+User-defined processing instructions cannot begin with 'xml', as these are reserved (such as `<?xml-stylesheet ?>`).
+
+Processing instructions inherit methods and properties from `Node`.
+
+### XSTL
+
+样式转换标记语言。可以将XML数据档转换为另外的XML或其它格式，如HTML网页，纯文字。
+
+Use XSLT to transform XML into HTML
+XSLT (eXtensible Stylesheet Language Transformations) is the recommended style sheet language for XML.
+
+XSLT is far more sophisticated than CSS. With XSLT you can add/remove elements and attributes to or from the output file. You can also rearrange and sort elements, perform tests and make decisions about which elements to hide and display, and a lot more.
+
+XSLT uses XPath to find information in an XML document.
+
+```xml
+<?xml-stylesheet type="text/xsl" href="example.xsl"?>
+```
+
+### Comment
+
+翻译：  
+Comment 接口代表标签（markup）之间的文本符号（textual notations）。尽管它通常不显示出来，但是在查看源码里面可以看到。在 HTML 和 XML 里，注释（Comments）为 `'<!--' 和 '-->'` 之间的内容。在 XML 里，字符序列 `'--'` 不能用于一个注释中。
+
+原文：  
+The Comment interface represents textual notations within markup; although it is generally not visually shown, such comments are available to be read in the source view. Comments are represented in HTML and XML as content between `'<!--' and '-->'`. In XML, the character sequence `'--'` cannot be used within a comment.
