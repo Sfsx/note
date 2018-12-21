@@ -2361,7 +2361,7 @@ selectbox.insertBefore(optionToMove, selectbox.options[optionToMove.index+2]);
 
 ### 14.5 富文本编辑器
 
-在页面中嵌入一个包含空 HTML 页面的 iframe。通过设置 designMode 属性，这个空白的 HTML 页面可被编辑，而编辑对象则是该页面 `<body>` 元素的 HTML 代码
+在页面中嵌入一个包含**空 HTML 页面**的 iframe。通过设置 designMode 属性，这个空白的 HTML 页面可被编辑，而编辑对象则是该页面 `<body>` 元素的 HTML 代码
 
 #### 14.5.1 使用 `contenteditable` 属性
 
@@ -2369,3 +2369,67 @@ selectbox.insertBefore(optionToMove, selectbox.options[optionToMove.index+2]);
 
 #### 14.5.2 操作富文本
 
+使用 `document.execCommand()` 方法，参数有三个：要执行的命令名称，表示浏览器是否应该为当前命令提供用户界面的一个布尔值和执行命令必须的一个值（如果不需要值，则传递 `null` ）
+
++ backcolor
++ bold
++ copy
++ createlink
+  + 第三参数 URL 字符串
++ cut
++ delete
++ fontname
++ fontsize
++ forecolor
++ formatblock
+  + 第三参数 HTML 标签
+  + 使用指定标签来格式化字符串
++ indent
+
+`document.queryCommandEnabled()` 参数为命令，返回值为命令是否可用
+`document.queryCommandState()` 参数为命令，返回值为命令是否成功
+`document.queryCommandValue()` 参数为命令，返回值为命令执行函数的第三个参数
+
+#### 14.5.3 富文本选区
+
+`iframe.getSelection()` 这个方法是 window 对象和 document 对象的属性，调用会返回一个表示当前选择文本的 Selection 对象。该对象具有以下属性：
+
++ anchorNode：选区起点所在的节点
++ anchorOffset：偏移节点的量
++ focusNode：选区终点所在的节点
++ focusOffset：focusNode 中包含在选区之内的数量
++ isCollapsed：布尔值，选区起点和终点是否重合
++ rangeCount：选区中包含的 DOM 范围的数量
++ `addRange(range)`：将指定的 DOM 范围添加到选区中
++ `collapse(node, offset)`：
++ `collapseToEnd()`：将选区折叠到重点位置
++ `collapseToStart()`：将选取折叠到指定节点的相应文本偏移位置
++ `containsNode(node)`：确定节点是否包含在选区中
++ `deleteFromDocument()`
++ `extend(node, offset)`：通过将 focusNode 和 focusOffset 移动到指定的值来扩展选区。
++ `getRangeAt(index)`：返回索引对应的选区中的 DOM 范围
++ `removeAllRanges()`
++ `removeRange(range)`
++ `selectAllChildren(node)`：清除选区并选择指定节点的所有子节点
++ `toString()`
+
+#### 14.5.4 表单与富文本
+
+在表单提交前将富文本中的 HTML 插入表单的隐藏字段，同样适用于 contenteditable 元素
+```js
+EventUtil.addHandler(form, "submit", function(event){
+    event = EventUtil.getEvent(event);
+    var target = EventUtil.getTarget(event); 
+ 
+    target.elements["comments"].value = frames["richedit"].document.body.innerHTML;
+
+    // contenteditable
+    target.elemnets["comments"].value = document.getElementById("richehit").innerHTML;
+});
+```
+
+## 第15章 使用 Canvas 绘图
+
++ 理解 `<canvas>` 元素
++ 绘制简单2D图形
++ 使用 WebGl 绘制3D图形
