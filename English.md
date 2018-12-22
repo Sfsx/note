@@ -118,3 +118,12 @@
 + multiple
 + anchor
 + collapse
++ draw
++ rect
++ stroke
++ radius
++ angle
++ gradient
++ pattern
++ alpha
++ destination
