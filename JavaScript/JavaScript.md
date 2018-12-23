@@ -1429,6 +1429,8 @@ alert(document.documentElement.contains(document.body));    //true
 
 注意 `scrollIntoView()` 和 `scrollIntoViewIfNeeded()` 的作用对象是元素的容器，而 `scrollByLines()` 和 `scrollByPages()` 影响的则是元素自身。
 
+---
+
 ## 第12章 DOM2 和 DOM3
 
 + DOM2 和 DOM3 的变化
@@ -1698,6 +1700,8 @@ DOM2 在 `Document` 类型中定义了 `createRange()` 方法
 5. 比较 IE 范围
 6. 复制 IE 范围
 
+---
+
 ## 第13章 事件
 
 + 理解事件流
@@ -1873,6 +1877,7 @@ IE event 都具有的属性和方法：
 + focusout 在元素获得焦点时触发，这个事件与 HTML 的 focus 等价，会冒泡
 
 当焦点从页面一个元素移动到另一个元素会触发以下事件
+
 1. focusout 失去焦点的元素
 2. focusin 获得焦点的元素
 3. blur 失去焦点的元素
@@ -1881,6 +1886,7 @@ IE event 都具有的属性和方法：
 #### 13.4.3 鼠标与滚轮事件
 
 鼠标事件如下：
+
 + click
 + dblclick
 + mousedown
@@ -2153,6 +2159,8 @@ document 对象上使用 `createEvent()` 方法创建事件
 
 #### 13.6.2 IE 中的事件模拟
 
+---
+
 ## 第14章 表单脚本
 
 + 理解表单
@@ -2250,6 +2258,8 @@ HTML 标签的 `<form>` 在 JavaScript 中，对应的是 HTMLFormElement 类型
 
 1. 屏蔽字符
 2. 操作剪贴板
+
+剪贴板事件：
 
 + beforecopy
 + copy
@@ -2366,7 +2376,7 @@ selectbox.insertBefore(optionToMove, selectbox.options[optionToMove.index+2]);
 
 ### 14.4 表单序列化
 
-在 JavaScript 中利用表单字段的type属性，连同 name 和 value 属性一起实现对表单的序列化，然后通过 http 请求发送给服务器
+在 JavaScript 中利用表单字段的 type 属性，连同 name 和 value 属性一起实现对表单的序列化，然后通过 http 请求发送给服务器
 
 ### 14.5 富文本编辑器
 
@@ -2436,6 +2446,8 @@ EventUtil.addHandler(form, "submit", function(event){
     target.elemnets["comments"].value = document.getElementById("richehit").innerHTML;
 });
 ```
+
+---
 
 ## 第15章 使用 Canvas 绘图
 
@@ -2613,11 +2625,225 @@ WebGL 是针对 `<canvas>` 的 3D 上下文。是基于 OpenGL ES 2.0 制定的�
 WebGL 涉及复杂的计算需要提前知道数值的精度，而标准 JavaScript 数值无法满足要求。所以引入**类型化数组**。这是元素被设置为特定类型的值的数组。是 ArrayBuffer 类型。
 
 ```js
+// 这段代码会分配20B的内存空间
 var buffer = new ArrayBuffer(20); 
 ```
 
 1. 视图
 
     `DataView(ArrayBuffer, offset, length)`
+    ```js
+    //创建一个从字节 9 开始到字节 18 的新视图
+    var view = new DataView(buffer, 9, 10);
+
+    alert(view.byteOffset); // 输出 9
+    alert(view.byteLength); // 输出 10
+
+    var buffer = new ArrayBuffer(20),
+        view = new DataView(buffer),
+        value; 
+ 
+    view.setUint16(0, 25);
+    value = view.getInt8(0); 
+    
+    alert(value); //0 
+    ``` 
+
+    虽然 DataView 能让我们在字节级别上读写数组缓冲器中的数据，但我们必须自己记住要将数据保存到哪里，需要占多少子节
 
 2. 类型化视图
+
+    类型化视图也被称作类型化数组。继承于 DataView，除了必须规定元素是某种特定的数据类型之外与常规数组无异。以下就是各种类型化数组
+
+    + Int8Array
+    + Uint8Array
+    + Int16Array
+    + Uint16Array
+    + Int32Array
+    + Float32Array
+    + Float64Array
+
+    以上每个视图的构造函数都有一个名为 `BYTES_PRE_ELEMENT` 的属性，表示该类型化数组一个元素需要多少字节。
+
+    还有一个 `subarray(startIndex, endIndex)` 方法基于底层数组缓冲器的子集创建一个新视图。其中第二个参数可选。
+    
+    ```js
+    //需要 10 个元素空间
+    var int8s = new Int8Array(buffer, 0, 10 * Int8Array.BYTES_PER_ELEMENT); 
+ 
+    //需要 5 个元素空间
+    var uint16s = new Uint16Array(
+      buffer, 
+      int8s.byteOffset + int8s.byteLength,
+      5 * Uint16Array.BYTES_PER_ELEMENT
+    );
+
+    //创建一个数组保存 10 个 16 位整数（20 字节）
+    var int16s = new Int16Array(10);
+
+    //创建一个数组保存 5 个 8 位整数（10 字节）
+    var int8s = new Int8Array([10, 20, 30, 40, 50]);
+    ```
+
+#### 15.3.2 WebGL 上下文
+
+```js
+var gl = drawing.getContext("experimental-webgl");
+```
+
+通过给 `getContext()` 传递第二个参数，可以为 WebGL 上下文设置一些选项。
++ alpha：为上下文创建一个 alpha 缓冲区。默认 true
++ depth：可以使用16位深缓冲区。默认 true
++ stencil：可以使用8位缓冲区。默认 true
++ antialias：使用默认机制执行抗锯齿操作。默认 true
++ premultipliedAlpha：绘图缓冲区有预乘 Alpha。默认 true
++ preserverDrawingBuffer：在绘制完成后是否保留绘图缓冲区。默认 false
+
+1. 常量
+
+    与 OpenGL 对比 WebGL 的常量去掉 `GL_` 开头。
+
+2. 方法命名
+3. 准备绘图
+
+    ```js
+    // 用黑色清理缓冲区
+    gl.clearColor(0,0,0,1);   //black
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    ```
+
+4. 视口与坐标
+
+    这里的视口坐标原点在 `<canvas>` 左下角
+    ```js
+    gl.viewport(0, 0, drawing.width, drawing.height);
+    ```
+    而视口内部的坐标原点 (0, 0) 为视口中心点
+ 
+5. 缓冲区
+
+    ```js
+    var buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0.5, 1]), gl.STATIC_DRAW);
+    ```
+    `gl.bufferData()` 的最后一个参数用于指定使用缓冲区的方式。
+    + gl.STATIC_DRAW 数据只加载一次，在多次绘图中使用
+    + gl.STREAM_DRAW 数据只加载一次，在几次绘图中使用
+    + gl.DYNAMIC_DRAW 数据动态改变，在多次绘图中使用
+
+    `gl.deleteBuffer(buffer)` 释放缓冲区
+
+6. 错误
+
+    JavaScript 与 WebGL 之间最大的区别就是，WebGL 不会抛出错误。所以需要在调用 WebGL 方法后，手工调用 gl.getError() 方法。该方法返回一个表示错误类型的常量。
+    + gl.NO_ERROR
+    + gl.INVALID_ENUM 应该传入 WebGL 常量，却传错了参数
+    + gl.INVALID_VALUE 在需要无符号数的地方传入负值
+    + gl.INVALID_OPERATION 在当前状态下不能完成操作
+    + gl.OUT_OF_MEMORY 没有足够的内存
+    + gl.CONTEXT_LOST_WEBGL 由于外部事件（如断电）干扰丢失当前上下文
+
+7. 着色器
+
+    WebGL 的着色器并不是用 JavaScript 写的，是用 GLSL 写的。
+
+8. 编写着色器
+9.  编写着色器程序
+10. 为着色器传入值
+11. 调试着色器和程序
+12. 绘图
+13. 纹理
+
+---
+
+## 第16章 HTML5 编程脚本
+
++ 使用跨文档消息传递
++ 拖放 API
++ 音频与视频
+
+### 16.1 跨文档消息传递
+
+跨文档消息传递简称 XDM。主要是向当前页面中的 `<iframe>` 元素发送消息。
+
+`postMessage(message, domain)` 该方法接受两个参数：一条消息和一个表示消息接收方来自哪个域的字符串
+
+```js
+var iframeWindow = document.getElementById("myframe").contentWindow;
+iframeWindow.postMessage("A secret", "http://www.wrox.com"); 
+```
+
+```js
+EventUtil.addHandler(window, "message", function(event){ 
+ 
+  //确保发送消息的域是已知的域
+  if (event.origin == "http://www.wrox.com"){ 
+
+    //处理接收到的数据
+    processMessage(event.data); 
+
+    //可选：向来源窗口发送回执
+    event.source.postMessage("Received!", "http://p2p.wrox.com");
+  }
+}); 
+```
+### 16.2 原生托放
+
+#### 16.2.1 托放事件
+
+托动某元素时依次触发以下事件：
++ dragstart
++ drag
++ dragend
+
+dragstart 触发后会持续触发 drag 事件
+
+当某个元素被拖动到一个有效的放置目标上时，下列事件会依次发生： 
++ dragenter
++ dragover
++ dragleave
+
+只要有元素被拖动到放置目标上，就会触发 dragenter 事件，然后是持续的 dragover 事件，当目标被移出放置目标时，会触发dragleave
+
+#### 16.2.2 自定义托放目标
+
+重写目标的 dragenter 和 dragover 事件阻止其默认行为即可将目标变成有效放置对象。
+
+#### 16.2.3 dataTransfer 对象
+
+通过 dataTransfer 对象，实现数据交换
++ `dataTransfer.setData()`
++ `dataTransfer.getData()`
+
+其中 `setData()` 的第一个参数也是 `getData()` 方法唯一的一个参数，是 一个字符串，表示保存的数据类型，可以指定各种 MIME 类型。
+
+#### 16.2.4 dorpEffect 和 effectAllowed
+
+`dataTransfer.dorpEffect` 被拖动元素能够执行哪种放置行为
++ `"none"`：不能把拖动元素放在这里，这是除文本框之外所有元素的默认值。
++ `"move"`：应该把目标元素移动到放置目标
++ `"copy"`：应该把目标元素复制到放置目标
++ `"link"`：表示放置目标会打开拖动的元素(拖动元素必须是一个 url )
+
+`dataTransfer.effectAllowed` 表示允许被拖动元素的哪种 `dorpEffect`
++ "uninitialized"：没有给被拖动的元素设置任何放置行为。
++ "none"：被拖动的元素不能有任何行为。
++ "copy"：只允许值为"copy"的 dropEffect。
++ "link"：只允许值为"link"的 dropEffect。
++ "move"：只允许值为"move"的 dropEffect。
++ "copyLink"：允许值为"copy"和"link"的 dropEffect。
++ "copyMove"：允许值为"copy"和"move"的 dropEffect。
++ "linkMove"：允许值为"link"和"move"的 dropEffect。 
++ "all"：允许任意 dropEffect。
+
+#### 16.2.5 可被拖动
+
+HTML5 为所有 HTML 元素规定了一个 `draggable` 属性，表示元素是否可以拖动。图像和链接的 `draggable` 属性自动被设置成了 `true`，而其他元素这个属性的默认值都是 `false`。
+
+#### 16.2.6 其他成员
+
++ `addElement(element)`
++ `clearData(formt)`
++ `setDragImage(element, x, y)`
++ `types`

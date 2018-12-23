@@ -127,3 +127,7 @@
 + pattern
 + alpha
 + destination
++ inspect
++ cardinal system
++ dynamic
++ enum
