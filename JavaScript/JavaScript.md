@@ -1381,6 +1381,15 @@ HTML5 扩展了 HTMLDocument, 增加了新功能
 3. `insertAdjacentHTML()` 方法
 
     两个参数：插入位置和要插入的 HTML 文本
+    第一个参数可选值：
+    + `"beforebegin"`：在当前元素之前插入一个紧邻的同辈元素
+    + `"afterbegin"`：作为当前元素的第一个子元素插入
+    + `"beforeend"`：作为当前元素的最后一个子元素插入
+    + `"afterend"`：在当前元素之后插入一个紧邻的同辈元素
+
+    ```js
+    element.insertAdjacentHTML("beforebegin", "<p>Hello world!</p>");
+    ```
 
 4. 内存与性能问题
 
@@ -1442,6 +1451,8 @@ alert(document.documentElement.contains(document.body));    //true
   将元素的内容滚动指定的页面高度，具体高度由元素而定。
 
 注意 `scrollIntoView()` 和 `scrollIntoViewIfNeeded()` 的作用对象是元素的容器，而 `scrollByLines()` 和 `scrollByPages()` 影响的则是元素自身。
+
+---
 
 ## 第12章 DOM2 和 DOM3
 
@@ -1712,6 +1723,8 @@ DOM2 在 `Document` 类型中定义了 `createRange()` 方法
 5. 比较 IE 范围
 6. 复制 IE 范围
 
+---
+
 ## 第13章 事件
 
 + 理解事件流
@@ -1887,6 +1900,7 @@ IE event 都具有的属性和方法：
 + focusout 在元素获得焦点时触发，这个事件与 HTML 的 focus 等价，会冒泡
 
 当焦点从页面一个元素移动到另一个元素会触发以下事件
+
 1. focusout 失去焦点的元素
 2. focusin 获得焦点的元素
 3. blur 失去焦点的元素
@@ -1895,6 +1909,7 @@ IE event 都具有的属性和方法：
 #### 13.4.3 鼠标与滚轮事件
 
 鼠标事件如下：
+
 + click
 + dblclick
 + mousedown
@@ -2167,6 +2182,8 @@ document 对象上使用 `createEvent()` 方法创建事件
 
 #### 13.6.2 IE 中的事件模拟
 
+---
+
 ## 第14章 表单脚本
 
 + 理解表单
@@ -2264,6 +2281,8 @@ HTML 标签的 `<form>` 在 JavaScript 中，对应的是 HTMLFormElement 类型
 
 1. 屏蔽字符
 2. 操作剪贴板
+
+剪贴板事件：
 
 + beforecopy
 + copy
@@ -2380,11 +2399,11 @@ selectbox.insertBefore(optionToMove, selectbox.options[optionToMove.index+2]);
 
 ### 14.4 表单序列化
 
-在 JavaScript 中利用表单字段的type属性，连同 name 和 value 属性一起实现对表单的序列化，然后通过 http 请求发送给服务器
+在 JavaScript 中利用表单字段的 type 属性，连同 name 和 value 属性一起实现对表单的序列化，然后通过 http 请求发送给服务器
 
 ### 14.5 富文本编辑器
 
-在页面中嵌入一个包含空 HTML 页面的 iframe。通过设置 designMode 属性，这个空白的 HTML 页面可被编辑，而编辑对象则是该页面 `<body>` 元素的 HTML 代码
+在页面中嵌入一个包含**空 HTML 页面**的 iframe。通过设置 designMode 属性，这个空白的 HTML 页面可被编辑，而编辑对象则是该页面 `<body>` 元素的 HTML 代码
 
 #### 14.5.1 使用 `contenteditable` 属性
 
@@ -2392,3 +2411,462 @@ selectbox.insertBefore(optionToMove, selectbox.options[optionToMove.index+2]);
 
 #### 14.5.2 操作富文本
 
+使用 `document.execCommand()` 方法，参数有三个：要执行的命令名称，表示浏览器是否应该为当前命令提供用户界面的一个布尔值和执行命令必须的一个值（如果不需要值，则传递 `null` ）
+
++ backcolor
++ bold
++ copy
++ createlink
+  + 第三参数 URL 字符串
++ cut
++ delete
++ fontname
++ fontsize
++ forecolor
++ formatblock
+  + 第三参数 HTML 标签
+  + 使用指定标签来格式化字符串
++ indent
+
+`document.queryCommandEnabled()` 参数为命令，返回值为命令是否可用
+`document.queryCommandState()` 参数为命令，返回值为命令是否成功
+`document.queryCommandValue()` 参数为命令，返回值为命令执行函数的第三个参数
+
+#### 14.5.3 富文本选区
+
+`iframe.getSelection()` 这个方法是 window 对象和 document 对象的属性，调用会返回一个表示当前选择文本的 Selection 对象。该对象具有以下属性：
+
++ anchorNode：选区起点所在的节点
++ anchorOffset：偏移节点的量
++ focusNode：选区终点所在的节点
++ focusOffset：focusNode 中包含在选区之内的数量
++ isCollapsed：布尔值，选区起点和终点是否重合
++ rangeCount：选区中包含的 DOM 范围的数量
++ `addRange(range)`：将指定的 DOM 范围添加到选区中
++ `collapse(node, offset)`：
++ `collapseToEnd()`：将选区折叠到重点位置
++ `collapseToStart()`：将选取折叠到指定节点的相应文本偏移位置
++ `containsNode(node)`：确定节点是否包含在选区中
++ `deleteFromDocument()`
++ `extend(node, offset)`：通过将 focusNode 和 focusOffset 移动到指定的值来扩展选区。
++ `getRangeAt(index)`：返回索引对应的选区中的 DOM 范围
++ `removeAllRanges()`
++ `removeRange(range)`
++ `selectAllChildren(node)`：清除选区并选择指定节点的所有子节点
++ `toString()`
+
+#### 14.5.4 表单与富文本
+
+在表单提交前将富文本中的 HTML 插入表单的隐藏字段，同样适用于 contenteditable 元素
+```js
+EventUtil.addHandler(form, "submit", function(event){
+    event = EventUtil.getEvent(event);
+    var target = EventUtil.getTarget(event); 
+ 
+    target.elements["comments"].value = frames["richedit"].document.body.innerHTML;
+
+    // contenteditable
+    target.elemnets["comments"].value = document.getElementById("richehit").innerHTML;
+});
+```
+
+---
+
+## 第15章 使用 Canvas 绘图
+
++ 理解 `<canvas>` 元素
++ 绘制简单2D图形
++ 使用 WebGl 绘制3D图形
+
+HTML5 中添加的元素中最受欢迎的元素就是 `<canves>` 元素。`<canvas>` 除了具备基本绘图能力的2D上下文，还建议了一个名为 WebGL 的3D上下文，但只有很少的浏览器支持。
+
+### 15.1 基本用法
+
+在 `<canvas>` 的开始标签和结束标签设置内容，若浏览器不支持 `<canvas>` 则会显示该段内容。
+
+`getContex()` 无参。获取2D上下文。
+
+`toDataURL()` 参数为图像 MIME 类型。例如，`var imgURI = drawing.toDataURL("image/png"); `
+
+### 15.2 2D上下文
+
+`<canvas>` 左上角为坐标原点(0,0)。
+
+#### 15.2.1 填充和描边
+
+`ctx.strokStyle` 设置描边颜色
+
+`ctx.fillStyle` 设置填充颜色
+
+#### 15.2.2 绘制矩形
+
+`ctx.strokRect(x, y, width, height)`
+`ctx.clearRect(x, y, width, height)`
+`ctx.fillRect(x, y, width, heigth)`
+
+#### 15.2.3 绘制路径
+
+要绘制路径首先要调用 `beginPath()` 方法。然后调用以下方法：
+
++ `arc(x, y, radius, startAngle, endAngle, counterclockwise)`：以 (x，y) 为圆心，radius 为半径，startAngle为起始弧度，endAngle为结束弧度，counterclockwise为布尔值表示方向为顺时针还是逆时针。
++ `acrTo(x1, y1, x2, y2, radius)`：从上一点开始绘制一条弧线，到 (x2, y2) 为止，并且以给定半径 radius 穿过 (x1, y1)
++ `bezierCurveTo(c1x, c1y, c2x, c2y, x, y)`：从上一点开始绘制曲线，到(x,y)为止，并且以 (c1x, c1y) 和 (c2x, c2y) 为控制点。
++ `lineTo(x, y)`
++ `moveTo(x, y)`：将绘图游标移动到指定点
++ `quadraticCurveTo(cx, cy, x, y)`：从上一点开始绘制一条二次曲线，到 (x, y) 为止，(cx, cy) 作为控制点。
++ `rect(x, y, width, height)`：绘制矩形。
+
+#### 15.2.4 绘制文本
+
+`fillText()` 和 `strokText()` 这两个方法都接受4个参数：文本，x，y和可选的最大像素宽度。并基于以下三个属性 
++ font
++ textAlign
++ textBaseline
+  + 可能值："top"、"hanging"、"middle"、"alphabetic"、 "ideographic"和"bottom"。 
+
+```js
+context.font = "bold 14px Arial";
+context.textAlign = "center";
+context.textBaseline = "middle";
+context.fillText("12", 100, 20); 
+```
+
+#### 15.2.5 变换
+
++ `rotate(angle)`：围绕远点旋转图像 angle 弧度
++ `scale(scaleX, scaleY)`：缩放图像，`x*scaleX`， `y*csaleY`
++ `translate(x, y)`：将坐标原点移动到 (x, y)。
++ `transform(m11, m12, m21, m22, dx, dy)`：直接修改变换矩阵，方式是矩阵相乘：  
+$$
+  \begin{matrix}
+  m11 & m12 & dx \\
+  m21 & m22 & dy \\
+  0 & 0 & 1
+  \end{matrix} \tag{1}
+$$
++ `setTransform(m1_1, m1_2, m2_1, m2_2, dx, dy)`：将变化矩阵重置为默认状态在调用 `transform()`
+
+`save()` 将当前上下文中的变化与属性压栈保存
+
+`restore()` 将之前保存的上午中的变化与属性出栈使用
+
+#### 15.2.6 绘制图像
+
+```js
+var image = document.images[0];
+/**
+ * @param 图像
+ * @param x
+ * @param y
+ */  
+context.drawImage(image, 10, 10);
+
+/**
+ * @param 图像
+ * @param x
+ * @param y
+ * @param 目标图像的宽度
+ * @param 目标图像的高度
+ */ 
+context.drawImage(image, 50, 10, 20, 30);
+
+/**
+ * @param 图像
+ * @param 源图像的x坐标 
+ * @param 源图像的y坐标
+ * @param 源图像的宽度
+ * @param 源图像的高度
+ * @param 目标图像的x坐标
+ * @param 目标图像的y坐标
+ * @param 目标图像的宽度
+ * @param 目标图像的高度
+ */
+context.drawImage(image, 0, 10, 50, 50, 0, 100, 40, 60);
+```
+
+#### 15.2.7 阴影
+
+以下属性用于绘制阴影：
++ shadowColor
++ shadowOffsetX：阴影x方向偏移量
++ shadowOffsetY
++ shadowBlur：模糊的像素
+
+#### 15.2.8 渐变
+
+线性渐变：
+
+`createLinearGradient(startX, startY, endX, endY)` 返回`CanvasGradient` 对象。然后用 `addColorStop()` 方法来指定色标。该方法接受2个参数：色标位置和 CSS 颜色。位置是 0（开始位置） ~ 1 （结束位置）之间的数字。
+
+```js
+var gradient = context.createLinearGradient(30, 30, 70, 70); 
+ 
+gradient.addColorStop(0, "white");
+gradient.addColorStop(1, "black");
+
+context.fillStyle = gradient;
+context.storkStyle = gradient;
+```
+
+径向渐变：
+
+`createRadialGradient(x1, y1, r1, x2, y2, r2)` 前三个参数为起点圆心 (x, y) 和半径r。后三个参数为终点圆心 (x2, y2) 和半径r2
+
+#### 15.2.9 模式
+
+`createPattern(image, repeat)` 其中第二个参数与 CSS 的 background-repeat 属性相同，包括"repeat"、"repeat-x"、 "repeat-y"和"no-repeat"。
+
+#### 15.2.10 使用图像数据
+
+`getImageData(x, y, width, height)` 方法获取原始图像数据。方法返回 ImageData 类型的实例，每个 ImageData 对象有三个属性：width，height和data。其中data是数组保存图像每一个像素的数据。每一个像素用4个元素来保存，分别是红，绿，蓝和透明度。data的数据是可以修改的
+
+`putImageData(ImageData, x, y)` 方法将 ImageData 实例绘制在画布上。
+
+#### 15.2.11 合成
+
+`globalAlpha`： 0 ~ 1 之间的值指定所有绘制的透明度，可修改
+
+`globalCompositionOperation`：表示后绘制的图形怎么样与先绘制的图形结合。可能值如下
++ source-over：后者位于前者上方
++ source-in：两者重叠可见，其他部分透明
++ source-out：两者不重叠部分可见，前者透明
++ source-atop：后者与前者重叠部分可见，后者其他部分透明
++ destination-over：后者位于前者下方
++ destination-in：后者位于前者下方，重叠可见，其他透明
++ destination-out：后者擦除与前者重叠部分
++ destination-atop：后者位于下方，重叠可见，前者其他部分透明
++ lighter：后者于前者重叠部分的值相加，使该部分变亮
++ copy：后者完全代替与之重叠的前者
++ xor：后者与前者重叠部分执行“异或”操作。
+
+### 15.3 WebGL
+
+WebGL 是针对 `<canvas>` 的 3D 上下文。是基于 OpenGL ES 2.0 制定的。
+
+#### 15.3.1 类型化数组
+
+WebGL 涉及复杂的计算需要提前知道数值的精度，而标准 JavaScript 数值无法满足要求。所以引入**类型化数组**。这是元素被设置为特定类型的值的数组。是 ArrayBuffer 类型。
+
+```js
+// 这段代码会分配20B的内存空间
+var buffer = new ArrayBuffer(20); 
+```
+
+1. 视图
+
+    `DataView(ArrayBuffer, offset, length)`
+    ```js
+    //创建一个从字节 9 开始到字节 18 的新视图
+    var view = new DataView(buffer, 9, 10);
+
+    alert(view.byteOffset); // 输出 9
+    alert(view.byteLength); // 输出 10
+
+    var buffer = new ArrayBuffer(20),
+        view = new DataView(buffer),
+        value; 
+ 
+    view.setUint16(0, 25);
+    value = view.getInt8(0); 
+    
+    alert(value); //0 
+    ``` 
+
+    虽然 DataView 能让我们在字节级别上读写数组缓冲器中的数据，但我们必须自己记住要将数据保存到哪里，需要占多少子节
+
+2. 类型化视图
+
+    类型化视图也被称作类型化数组。继承于 DataView，除了必须规定元素是某种特定的数据类型之外与常规数组无异。以下就是各种类型化数组
+
+    + Int8Array
+    + Uint8Array
+    + Int16Array
+    + Uint16Array
+    + Int32Array
+    + Float32Array
+    + Float64Array
+
+    以上每个视图的构造函数都有一个名为 `BYTES_PRE_ELEMENT` 的属性，表示该类型化数组一个元素需要多少字节。
+
+    还有一个 `subarray(startIndex, endIndex)` 方法基于底层数组缓冲器的子集创建一个新视图。其中第二个参数可选。
+    
+    ```js
+    //需要 10 个元素空间
+    var int8s = new Int8Array(buffer, 0, 10 * Int8Array.BYTES_PER_ELEMENT); 
+ 
+    //需要 5 个元素空间
+    var uint16s = new Uint16Array(
+      buffer, 
+      int8s.byteOffset + int8s.byteLength,
+      5 * Uint16Array.BYTES_PER_ELEMENT
+    );
+
+    //创建一个数组保存 10 个 16 位整数（20 字节）
+    var int16s = new Int16Array(10);
+
+    //创建一个数组保存 5 个 8 位整数（10 字节）
+    var int8s = new Int8Array([10, 20, 30, 40, 50]);
+    ```
+
+#### 15.3.2 WebGL 上下文
+
+```js
+var gl = drawing.getContext("experimental-webgl");
+```
+
+通过给 `getContext()` 传递第二个参数，可以为 WebGL 上下文设置一些选项。
++ alpha：为上下文创建一个 alpha 缓冲区。默认 true
++ depth：可以使用16位深缓冲区。默认 true
++ stencil：可以使用8位缓冲区。默认 true
++ antialias：使用默认机制执行抗锯齿操作。默认 true
++ premultipliedAlpha：绘图缓冲区有预乘 Alpha。默认 true
++ preserverDrawingBuffer：在绘制完成后是否保留绘图缓冲区。默认 false
+
+1. 常量
+
+    与 OpenGL 对比 WebGL 的常量去掉 `GL_` 开头。
+
+2. 方法命名
+3. 准备绘图
+
+    ```js
+    // 用黑色清理缓冲区
+    gl.clearColor(0,0,0,1);   //black
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    ```
+
+4. 视口与坐标
+
+    这里的视口坐标原点在 `<canvas>` 左下角
+    ```js
+    gl.viewport(0, 0, drawing.width, drawing.height);
+    ```
+    而视口内部的坐标原点 (0, 0) 为视口中心点
+ 
+5. 缓冲区
+
+    ```js
+    var buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0.5, 1]), gl.STATIC_DRAW);
+    ```
+    `gl.bufferData()` 的最后一个参数用于指定使用缓冲区的方式。
+    + gl.STATIC_DRAW 数据只加载一次，在多次绘图中使用
+    + gl.STREAM_DRAW 数据只加载一次，在几次绘图中使用
+    + gl.DYNAMIC_DRAW 数据动态改变，在多次绘图中使用
+
+    `gl.deleteBuffer(buffer)` 释放缓冲区
+
+6. 错误
+
+    JavaScript 与 WebGL 之间最大的区别就是，WebGL 不会抛出错误。所以需要在调用 WebGL 方法后，手工调用 gl.getError() 方法。该方法返回一个表示错误类型的常量。
+    + gl.NO_ERROR
+    + gl.INVALID_ENUM 应该传入 WebGL 常量，却传错了参数
+    + gl.INVALID_VALUE 在需要无符号数的地方传入负值
+    + gl.INVALID_OPERATION 在当前状态下不能完成操作
+    + gl.OUT_OF_MEMORY 没有足够的内存
+    + gl.CONTEXT_LOST_WEBGL 由于外部事件（如断电）干扰丢失当前上下文
+
+7. 着色器
+
+    WebGL 的着色器并不是用 JavaScript 写的，是用 GLSL 写的。
+
+8. 编写着色器
+9.  编写着色器程序
+10. 为着色器传入值
+11. 调试着色器和程序
+12. 绘图
+13. 纹理
+
+---
+
+## 第16章 HTML5 编程脚本
+
++ 使用跨文档消息传递
++ 拖放 API
++ 音频与视频
+
+### 16.1 跨文档消息传递
+
+跨文档消息传递简称 XDM。主要是向当前页面中的 `<iframe>` 元素发送消息。
+
+`postMessage(message, domain)` 该方法接受两个参数：一条消息和一个表示消息接收方来自哪个域的字符串
+
+```js
+var iframeWindow = document.getElementById("myframe").contentWindow;
+iframeWindow.postMessage("A secret", "http://www.wrox.com"); 
+```
+
+```js
+EventUtil.addHandler(window, "message", function(event){ 
+ 
+  //确保发送消息的域是已知的域
+  if (event.origin == "http://www.wrox.com"){ 
+
+    //处理接收到的数据
+    processMessage(event.data); 
+
+    //可选：向来源窗口发送回执
+    event.source.postMessage("Received!", "http://p2p.wrox.com");
+  }
+}); 
+```
+### 16.2 原生托放
+
+#### 16.2.1 托放事件
+
+托动某元素时依次触发以下事件：
++ dragstart
++ drag
++ dragend
+
+dragstart 触发后会持续触发 drag 事件
+
+当某个元素被拖动到一个有效的放置目标上时，下列事件会依次发生： 
++ dragenter
++ dragover
++ dragleave
+
+只要有元素被拖动到放置目标上，就会触发 dragenter 事件，然后是持续的 dragover 事件，当目标被移出放置目标时，会触发dragleave
+
+#### 16.2.2 自定义托放目标
+
+重写目标的 dragenter 和 dragover 事件阻止其默认行为即可将目标变成有效放置对象。
+
+#### 16.2.3 dataTransfer 对象
+
+通过 dataTransfer 对象，实现数据交换
++ `dataTransfer.setData()`
++ `dataTransfer.getData()`
+
+其中 `setData()` 的第一个参数也是 `getData()` 方法唯一的一个参数，是 一个字符串，表示保存的数据类型，可以指定各种 MIME 类型。
+
+#### 16.2.4 dorpEffect 和 effectAllowed
+
+`dataTransfer.dorpEffect` 被拖动元素能够执行哪种放置行为
++ `"none"`：不能把拖动元素放在这里，这是除文本框之外所有元素的默认值。
++ `"move"`：应该把目标元素移动到放置目标
++ `"copy"`：应该把目标元素复制到放置目标
++ `"link"`：表示放置目标会打开拖动的元素(拖动元素必须是一个 url )
+
+`dataTransfer.effectAllowed` 表示允许被拖动元素的哪种 `dorpEffect`
++ "uninitialized"：没有给被拖动的元素设置任何放置行为。
++ "none"：被拖动的元素不能有任何行为。
++ "copy"：只允许值为"copy"的 dropEffect。
++ "link"：只允许值为"link"的 dropEffect。
++ "move"：只允许值为"move"的 dropEffect。
++ "copyLink"：允许值为"copy"和"link"的 dropEffect。
++ "copyMove"：允许值为"copy"和"move"的 dropEffect。
++ "linkMove"：允许值为"link"和"move"的 dropEffect。 
++ "all"：允许任意 dropEffect。
+
+#### 16.2.5 可被拖动
+
+HTML5 为所有 HTML 元素规定了一个 `draggable` 属性，表示元素是否可以拖动。图像和链接的 `draggable` 属性自动被设置成了 `true`，而其他元素这个属性的默认值都是 `false`。
+
+#### 16.2.6 其他成员
+
++ `addElement(element)`
++ `clearData(formt)`
++ `setDragImage(element, x, y)`
++ `types`
