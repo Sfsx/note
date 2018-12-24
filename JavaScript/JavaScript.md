@@ -2870,3 +2870,56 @@ HTML5 为所有 HTML 元素规定了一个 `draggable` 属性，表示元素是�
 + `clearData(formt)`
 + `setDragImage(element, x, y)`
 + `types`
+
+### 16.3 媒体元素
+
+`<audio>` 和 `<video>`
+
+```html
+<!-- 嵌入视频 -->
+<video src="conference.mpg" id="myVideo">Video player not available.</video>
+<!-- 嵌入音频 -->
+<audio src="song.mp3" id="myAudio">Audio player not available.</audio>
+```
+
+#### 16.3.1 属性
+
+#### 16.3.2 事件
+
+#### 16.3.3 自定义媒体播放器
+
+#### 16.3.4 检测编码器的支持状情况
+
+`audio.canPlayType(MIME)` 将MIME 类型和编解码器作为参返回值有三种 `"probably"`， `"maybe"`， `""`(空字符串)
+```js
+//可能是"probably"
+if (audio.canPlayType("audio/ogg; codecs=\"vorbis\"")){
+//进一步处理
+}
+```
+|音频| 字符串|
+|----|-----|
+|AAC|audio/mp4; codecs="mp4a.40.2"|
+|MP3|audio/mpeg|
+|Vorbis|audio/ogg; codecs="vorbis"|
+|WAV|audio/wav; codecs="1"|
+
+|视频|字符串|
+|---|---|
+|H.264|video/mp4; codecs="avc1.42E01E, mp4a.40.2"|
+|Theora|video/ogg; codecs="theora"|
+|WebM|video/webm; codecs="vp8, vorbis"|
+
+#### 16.3.5 Audio类型
+
+`<audio>` 元素还有一个原生的 JavaScript 构造函数 Audio，可以在任何时候播放音频
+```js
+var audio = new Audio("sound.mp3");
+EventUtil.addHandler(audio, "canplaythrough", function(event) {
+    audio.play();
+});
+```
+
+### 16.4 历史状态管理
+
+不加载页面
