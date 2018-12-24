@@ -2897,18 +2897,19 @@ if (audio.canPlayType("audio/ogg; codecs=\"vorbis\"")){
 //进一步处理
 }
 ```
-|音频| 字符串|
-|----|-----|
-|AAC|audio/mp4; codecs="mp4a.40.2"|
-|MP3|audio/mpeg|
-|Vorbis|audio/ogg; codecs="vorbis"|
-|WAV|audio/wav; codecs="1"|
 
-|视频|字符串|
-|---|---|
-|H.264|video/mp4; codecs="avc1.42E01E, mp4a.40.2"|
-|Theora|video/ogg; codecs="theora"|
-|WebM|video/webm; codecs="vp8, vorbis"|
+| 音频   | 字符串                        |
+| ------ | ----------------------------- |
+| AAC    | audio/mp4; codecs="mp4a.40.2" |
+| MP3    | audio/mpeg                    |
+| Vorbis | audio/ogg; codecs="vorbis"    |
+| WAV    | audio/wav; codecs="1"         |
+
+| 视频   | 字符串                                     |
+| ------ | ------------------------------------------ |
+| H.264  | video/mp4; codecs="avc1.42E01E, mp4a.40.2" |
+| Theora | video/ogg; codecs="theora"                 |
+| WebM   | video/webm; codecs="vp8, vorbis"           |
 
 #### 16.3.5 Audio类型
 
@@ -2922,4 +2923,78 @@ EventUtil.addHandler(audio, "canplaythrough", function(event) {
 
 ### 16.4 历史状态管理
 
-不加载页面
+不加载新页面的情况下改变浏览器的 URL，可以使用`history.pushState()` 方法。该方法接受三个参数状态对象，新状态的标题和可选的相对 URL。
+
+```js
+history.pushState({name: "Sfsx"}, "Sfsx page", "sfsx.html");
+```
+
+因为pushState()会创建新的历史状态，所以按下后退会触发 window 的 popstate 事件
+
+```js
+EventUtil.addHandler(window, "popstate", function(event){
+  var state = event.state;
+  if (state){   //第一个页面加载时 state 为空
+    processState(state);
+  }
+}); 
+```
+
+`replaceState()` 方法重写当前状态，参数为 `pushState()` 方法的前两个参数。
+
+---
+
+## 第17章 错误处理与调试
+
++ 理解浏览器报告的错误
++ 处理错误
++ 调试 JavaScript 代码
+
+### 17.1 浏览器报告的错误
+
+#### 17.1.1 IE
+
+#### 17.1.2 Firefox
+
+#### 17.1.3 Safari
+
+#### 17.1.4 Opera
+
+#### 17.1.5 Chrome
+
+### 17.2 错误处理
+
+#### 17.2.1 try-catch 语句
+
+1. finally
+
+    finally 子句一经使用，其代码无论如何都会执行
+
+2. 错误类型
+
+    + Error
+    + EvalError
+    + RangeError
+    + ReferenceError
+    + SytnaxError
+    + TypeError
+    + URIError
+  
+    其中Error是基类，其他错误类型都继承自该类型。
+
+3. 合理使用 try-catch
+
+#### 17.2.2 抛出错误
+
+1. 抛出错误的时机
+2. 抛出错误与使用 try-catch
+
+#### 17.2.3 错误（error）事件
+
+任何没有通过 try-catch 处理的错误都会触发 window 对象的 error 事件。
+
+```js
+window.onerror = function(message, url, line) {
+  alert(message);
+};
+```
