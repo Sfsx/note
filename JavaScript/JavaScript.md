@@ -2998,3 +2998,103 @@ window.onerror = function(message, url, line) {
   alert(message);
 };
 ```
+
+图像的 src 特性中的 url 不能返回可以被识别的图像格式，也会触发 error 事件
+
+#### 17.2.4 处理错误的策略
+
+1. 类型转换错误
+
+    建议使用 `===`  
+    `if` 条件判断时发生的自动类型转换
+
+2. 数据类型错误
+
+    使用 `typeof` 检测
+  
+3. 通讯错误
+
+#### 17.2.6 区分致命错误和非致命错误
+
+非致命错误
++ 不影响用户的主要任务
++ 只影响页面的一部分
++ 可以恢复
++ 重复相同操作可以消除错误
+
+致命错误
++ 程序无法运行
++ 用户无法操作
++ 会导致其他连带错误
+
+#### 17.2.7 把错误记录到服务器
+
+### 17.3 调试技术
+
+#### 17.3.1 将消息记录到控制台
+
+#### 17.3.2 将消息记录到当前页面
+
+#### 17.3.3 抛出错误
+
+### 17.4 常见IE错误
+
+#### 17.4.1 操作终止
+
+IE8 之前的版本在页面加载未完成时使用 `appendClhild()` 方法出错。
+
+#### 17.4.2 无效字符
+
+无效字符，就是 JavaScript 语法中未定义的字符。例如 `\u2013`
+
+#### 17.4.3 未找到成员
+
+IE 中的所有 DOM对象都是以 COM 对象，而非原生 JavaScript对象的形式实现的。
+
+在对象被销毁之后，又给该对象赋值，就会导致未找到成员错误。而导致这个错误的，一定是 COM 对象
+
+#### 17.4.4 未知运行时错误
+
+Unknown runtime error
+
+#### 17.4.5 语法错误
+
+#### 17.4.6 系统无法找到指定资源
+
+---
+
+## 第18章 JavaScript 与 XML
+
++ 检测浏览器对 XML DOM的支持
++ 理解 JavaScript 中的 XPath
++ 使用 XSTL 处理器
+
+### 18.1 浏览器对 XML DOM 的支持
+
+DOM2 是第一个提到动态创建 XML DOM 概念的规范，DOM3 进一步增强了 XML DOM，新增了解析和序列化的特性。
+
+#### 18.1.1 DOM2级核心
+
+```js
+var xmldom = document.implementation.createDocument(namespaceUri, root, doctype); 
+
+//  JavaScrip中管理命名空间比较困难，所以一般不用。root 表示根元素
+var xmldom = document.implementation.createDocument("", "root", null); 
+```
+
+#### 18.1.2 DOMParser 类型
+
+```js
+var parser = new DOMParser(); var xmldom = parser.parseFromString("<root><child/></root>", "text/xml"); 
+ 
+alert(xmldom.documentElement.tagName);    //"root"
+alert(xmldom.documentElement.firstChild.tagName);    //"child" 
+ 
+var anotherChild = xmldom.createElement("child"); xmldom.documentElement.appendChild(anotherChild); 
+ 
+var children = xmldom.getElementsByTagName("child"); alert(children.length);     //2
+```
+
+如果解析出错, 则仍然会返回一个 Document 对象，这个对象的文档元素是 `<parsererror>`
+
+#### 18.1.3 XMLSerializer
