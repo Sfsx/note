@@ -3124,6 +3124,11 @@ DOM3 的 XPath 规范定义的类型中，最重要的两个类型是 XPathEvalu
 + `createNSResolve(node)`：根据 node 的命名空间信息创建一个新的 XPathNSResolver 对象。
 + `evaluate(expression, context, nsresolver, type, result)`：在给定的上下文中， 基于特定的命名空间信息来对 XPath表达式求值。
 
+其中 `evaluate()` 是最常用的。这个方法接收 5 个参数：XPath 表达式、上下文节点、命名空间求解器、返回结果的类型和保存结果的 XPathResult 对象
+
+第四个参数（返 回结果的类型）的取值范围是 XPathResult 对象上定义的常量。
+
+
 ```js
 var result = xmldom.evaluate("employee/name", xmldom.documentElement, null,                                   XPathResult.ORDERED_NODE_ITERATOR_TYPE, null); 
  
@@ -3142,6 +3147,39 @@ if (result !== null) {
 ```
 
 1. 单节点结果
+
+```js
+var result = xmldom.evaluate("employee/name", xmldom.documentElement, null,                                   XPathResult.FIRST_ORDERED_NODE_TYPE, null); 
+ 
+if (result !== null) {
+  alert(result.singleNodeValue.tagName);
+} 
+```
 2. 简单类型结果
+
+  + XPathResult.BOOLEAN_TYPE
+    + result.booleanValue
+  + XPathResult.NUMBER_TYPE
+    + result.numberValue
+  + XPathResult.STRING_TYPE
+    + result.stringValue
+
 3. 默认类型结果
+
+    XPathResult.ANY_TYPE
+    检测结果的 resultType 属性，可能的结果是
+    + XPathResult.STRING_TYPE
+    + XPathResult.NUMBER_TYPE
+    + XPathResult.BOOLEAN_TYPE
+    + XPathResult.UNORDERED_NODE_ITERATOR_TYPE 节点集合，但顺序混乱
+
 4. 命名空间支持
+
+```js
+//  createNSResolver() 先创建一个 XPathNSResolver 对象，作为参数传递给 evaluate() 方法
+var nsresolver = xmldom.createNSResolver(xmldom.documentElement); 
+ 
+var result = xmldom.evaluate("wrox:book/wrox:author",                              xmldom.documentElement, nsresolver,                              XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null); 
+ 
+alert(result.snapshotLength);
+```
