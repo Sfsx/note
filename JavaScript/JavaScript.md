@@ -3098,3 +3098,50 @@ var children = xmldom.getElementsByTagName("child"); alert(children.length);    
 如果解析出错, 则仍然会返回一个 Document 对象，这个对象的文档元素是 `<parsererror>`
 
 #### 18.1.3 XMLSerializer
+
+将 DOM 文档序列化为 XML字符串。
+```js
+var serializer = new XMLSerializer();
+var xml = serializer.serializeToString(xmldom);
+alert(xml); 
+```
+
+#### 18.1.4 IE8 及之前版本中的XML
+
+1. 序列化 XML
+2. 加载 XML 文件
+
+#### 18.1.5 跨浏览器处理XML
+
+### 18.2 浏览器对 XPath 的支持
+
+XPath 是设计用来在 DOM 文档中查找节点的一种手段，因而对 XML 处理也很重要
+
+#### 18.2.1 DOM3 级XPath
+
+DOM3 的 XPath 规范定义的类型中，最重要的两个类型是 XPathEvaluator 和 XPathResult。
++ `createExpression(expression, nsresolver)`：XPath表达式及相应的命名空间信息转 换成一个 XPathExpression。
++ `createNSResolve(node)`：根据 node 的命名空间信息创建一个新的 XPathNSResolver 对象。
++ `evaluate(expression, context, nsresolver, type, result)`：在给定的上下文中， 基于特定的命名空间信息来对 XPath表达式求值。
+
+```js
+var result = xmldom.evaluate("employee/name", xmldom.documentElement, null,                                   XPathResult.ORDERED_NODE_ITERATOR_TYPE, null); 
+ 
+if (result !== null) {     
+  var node = result.iterateNext();     
+  while(node) {         
+    alert(node.tagName);        
+    node = node.iterateNext(); 
+  }
+}
+if (result !== null) {
+  for (var i = 0, len=result.snapshotLength; i < len; i++){
+    alert(result.snapshotItem(i).tagName);
+  }
+} 
+```
+
+1. 单节点结果
+2. 简单类型结果
+3. 默认类型结果
+4. 命名空间支持
