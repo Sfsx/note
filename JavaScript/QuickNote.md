@@ -125,23 +125,23 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
  * 的任务顺序，还是先进先出。
  */
 (async function() {
-async function async1() {
-    console.log('async1 start');
-    await async2();
-    console.log('async1 end');
-}
-async function async2() {
-    console.log('async2');
-}
+    async function async1() {
+        console.log('async1 start');
+        await async2();
+        console.log('async1 end');
+    }
+    async function async2() {
+        console.log('async2');
+    }
 
-async1();
+    async1();
 
-new Promise(function(resolve) {
-    console.log("promise1");
-    resolve();
-}).then(function() {
-    console.log("promise2");
-});
+    new Promise(function(resolve) {
+        console.log("promise1");
+        resolve();
+    }).then(function() {
+        console.log("promise2");
+    });
 })();
 ```
 
