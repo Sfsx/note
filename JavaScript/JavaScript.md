@@ -3183,3 +3183,139 @@ var result = xmldom.evaluate("wrox:book/wrox:author",                           
  
 alert(result.snapshotLength);
 ```
+
+#### 18.2.2 IE中的 XPath
+
+#### 18.2.3 跨浏览器使用 XPath
+
+### 18.3 浏览器对 XSLT 的支持
+
+XSLT 是与 XML 相关的一种技术，它利用 XPath 将文档从一种表现形式转换成另一种表现形式。
+
+#### 18.3.1 IE中的 XSLT
+
+#### 18.3.2 XSLTProcessor类型
+
+#### 18.3.3 跨浏览器使用XSLT
+
+---
+
+## 第19章 E4X
+
++ E4X 新增类型
++ 使用 E4X 操作XML
++ 语法的变化
+
+### 19.1 E4X 的类型
+
+作为对ECMAScript的扩展，E4X定义了如下几个新的全局类型
++ XML
++ XMLList
++ Namespace
++ QName
+
+#### 19.1.1 XML 类型
+
+XML 类型是 E4X 中定义的一个重要的新类型，可以用它来表现 XML 结构中任何独立的部分。XML 类型继承自 Object 类型。
+
+#### 19.1.2 XMLList 类型
+
+XMLList 类型表现 XML 的有序集合。XMLList 的 DOM对等类型是 NodeList，但与 Node 和 NodeList 之间的区别相比，XML 和 XMLList 之间的区别是有意设计得比较小的。
+
+#### 19.1.3 Namespace 类型
+
+E4X 中使用 Namespace 对象来表现命名空间。通常，Namespace 对象是用来映射命名空间前缀和 命名空间 URI 的，不过有时候并不需要前缀。
+
+#### 19.1.4 QName 类型
+
+QName 类型表现的是 XML 对象的限定名，即命名空间与内部名称的组合。
+
+### 19.2 一般用法
+
+```js
+var employee = <employee position="Software Engineer">
+                 <name>Nicholas C. Zakas</name>
+               </employee>;
+alert(employee.name); //"Nicholas C. Zakas"
+```
+#### 19.2.1 访问特性
+
+```js
+var employees = <employees>
+                  <employee position="Software Engineer">  
+                    <name>Nicholas C. Zakas</name>   
+                  </employee>  
+                  <employee position="Salesperson">   
+                    <name>Jim Smith</name>   
+                  </employee> 
+                </employees>; 
+// 访问特性在使用  @特性名称 的语法 
+alert(employees.employee[0].@position); //"Software Engineer"
+```
+
+#### 19.2.2 其他节点类型
+在默认情况上，E4X不会解 析注释或处理指令，因此这些部分不会出现在终的对象层次中。如果想让解析器解析这些部分，可以 像下面这样设置 XML构造函数的下列两个属性。 
+
+```js
+XML.ignoreComments = false;
+XML.ignoreProcessingInstructions = false;
+```
+
+XMLList 上可以调用以下方法
++ `attributes()`
++ `comments()`
++ `elements(tagName)`
++ `processingInstructions(name)`
++ `text()`
+
+#### 19.2.3 查询
+
+#### 19.2.4 构建和操作 XML
+
+```js
+var tagName = "color";
+var color = "red";
+var xml = <{tagName}>{color}</{tagName}>; 
+ 
+alert(xml.toXMLString());     //"<color>red</color>
+
+// 第二种构建方式
+var employees = <employees/>;
+employees.employee.name = "Nicholas C. Zakas"; 
+employees.employee.@position = "Software Engineer";
+```
+
+#### 19.2.5 解析和序列化
+
+```js
+var settings = XML.settings();
+alert(settings.ignoreWhitespace);     // true  默认忽略元素间的空格
+alert(settings.ignoreComments);       // true  默认忽略标记中的注释。
+alert(settings.ignoreProcessingInstructions);     // true  默认忽略标记中的处理指令。
+alert(settings.prettyIndent);         // 2     默认缩进
+alert(settings.prettyPrinting);       // true  默认每个元素重启一行 
+```
+
+#### 19.2.6 命名空间
+
+引入 for-each-in
+
+#### 19.4 全面启用 E4X
+
+```js
+<script type="text/javascript;e4x=1" src="e4x_file.js"></script> 
+```
+
+---
+
+## 第20章 JSON
+
++ 理解 JSON 语法
++ 解析 JSON
++ 序列化 JSON
+
+由于 XML 过于繁琐、冗长。提出一种新的解决方案 JSON。
+
+XML 创建必须创建 DOM 对象，而 JSON 不用。
+
+关于 JSON，重要的是要理解它是一种数据格式，不是一种编程语言。
