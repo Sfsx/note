@@ -3319,3 +3319,173 @@ alert(settings.prettyPrinting);       // true  默认每个元素重启一行
 XML 创建必须创建 DOM 对象，而 JSON 不用。
 
 关于 JSON，重要的是要理解它是一种数据格式，不是一种编程语言。
+
+### 20.1 语法
+
++ 简单值
++ 对象
++ 数组
+
+#### 20.1.1 简单值
+
+#### 20.1.2 对象
+
+JSON和对象的区别 1.属性名加引号 2.没有声明变量 3.末尾没有分号
+
+#### 20.1.3 数组
+
+### 20.2 解析与序列化
+
+#### 20.2.1 JSON对象
+
+`stringify()` 和 `parse()`
+
+#### 20.2.2 序列化选项
+
+`JSON.stringify()` 方法两个**可选**参数：第一个参数是个过滤器，可以是一个数组，也可以是一个函数；第二个参数是一个选项，表示是否在 JSON 字符串中保留缩进，这个参数可以是数字，也可以是特殊字符
+
+1. 过滤结果
+
+    单第二个参数为函数
+    ```js
+    var jsonText = JSON.stringify(book, function(key, value) {
+      // 表示忽略
+      return undefined;
+      // 表示返回值
+      return value
+    }); 
+    ```
+2. 字符串缩进
+
+    ```js
+    var jsonText = JSON.stringify(book, null, "--");  
+ 
+    { 
+    --"title": "Professional JavaScript",
+    --"authors": [ 
+    ----"Nicholas C. Zakas" 
+    --], 
+    --"edition": 3, 
+    --"year": 2011 
+    } 
+    ```
+
+3. `toJSON()`
+
+    给对象定义 `toJSON()` 方法，返回其自定义的 JSON 数据格式。可以让这个方法返回 `undefined`，此时如果包含它的对象嵌入在另一个对象中，会导致 它的值变成 `null`，而如果它是顶级对象，结果就是 `undefined`。 
+
+`JSON.stringify()` 序列化该对象的顺序如下：
+1. 如果存在 `toJSON()` 方法且能够通过它取得有效值，则调用该方法。否则，返回对象本身。
+2. 如果提供了第二个参数，应用这个函数过滤器，传入函数过滤器的值是第 1 步的返回值。
+3. 对第 2 步返回的每个值进行相应的序列化。
+4. 如果提供了第三个参数，执行相应的格式化。
+
+#### 20.2.3 解析选项
+
+`JSON.parse()` 方法也可以接收另一个参数，该参数是一个函数，将在每个键值对儿上调用。该函数接收两个参数，一个键和一个值，而且都需要返回一个值。 如果还原函数返回 `undefined`，则表示要从结果中删除相应的键；如果返回其他值，则将该值插入到结果中。
+
+---
+
+## 第21章 Ajax 与 Comet
+
++ 使用 XMLHttpRequest 对象
++ 使用 XMLHttpRequest 事件
++ 跨域 Ajax 通信的限制
+
+### 21.1 XMLHttpRequest 对象
+
+```js
+new ActiveXObject(versions); 
+```
+
+#### 21.1.1 XHR 的用法
+
+`open()` 方法接受3个参数，要发送的请求的类型 （"get"、"post"等）、请求的 URL和表示是否异步发送请求的布尔值。
+```js
+xhr.open("get", "example.php", false);
+xhr.send(null);
+```
+
+`send()` 该方法接受一个参数：作为请求主体发送的数据。
+
+收到响应后，响应数据会自动填充到XHR对象的属性
++ responseText
++ responseXML
++ status
++ statusText
+
+异步发送时检测 XHR 的 readyState 属性，该属性可取值如下：
++ 0：尚未调用 open()方法
++ 1：已经调用 open()方法，但尚未调用 send()方法。 
++ 2：已经调用 send()方法，但尚未接收到响应。 
++ 3：已经接收到部分响应数据。 
++ 4：已经接收到全部响应数据，而且已经可以在客户端使用了。
+
+#### 21.1.2 HTTP 头部信息
+
++ Accept 浏览器能够处理的内容类型
++ Accept-Charset 浏览器能够显示的字符集
++ Accept-Encoding 浏览器能够处理的压缩码
++ Accept-Language 浏览器当前设置的语言
++ Connection 浏览器与服务器之间的链接类型
++ Cookie 当前页面设置的任何 Cookie
++ Host 发出请求的页面所在域
++ Referer 发出请求的页面所在的域
++ User-Agent 浏览器的用户代理字符串
+
+`setRequestHeader("字段名", "字段值")` 设置头部信息
+
+#### 21.1.3 GET 请求
+
+#### 21.1.4 POST 请求
+
+### 21.2 XMLHttpRequset 2
+
+#### 21.2.1 FormData
+
+XMLHttpRequest 2 定义了 FormData 类型
+
+```js
+// 第一种
+var data = new FormData();
+data.append("name", "Sfsx");
+
+// 第二种
+var data = new FormData(document.forms[0]);
+
+// 通过 XHR 发送
+xhr.send(data);
+```
+
+#### 21.2.2 超时设定
+
+XMLHttpRequest 2 新增属性 timeout。单位为毫秒的数字
+
+#### 21.2.3 `overriderMimeType()` 方法
+
+这个方法重写 XHR 响应的 MIME 类型。且这个方法需要在 `sned()` 方法之前调用。
+
+### 21.3 进度事件
+
+Progress Event 有以下6个事件：
++ loadstart：在接收到响应数据的第一个子节时触发
++ progress：在接受响应期间不断触发
++ error：在请求发生错误时触发
++ abort：在调用 `abort()` 方法而终止连接时触发。
++ load：在接收到完整数据响应数据时触发。
++ loadend：在通信完成或触发 error，abort，load 事件后触发。
+
+#### 21.3.1 load 事件
+
+onload 事件处理程序会接收到一个 event 对象，其 target 属性就指向 XHR 对象实例。
+
+#### 21.3.2 progress 事件
+
+onprogress 事件处理程序会接收到一个 event 对象，其 target 属性是 XHR 对象，但 包含着三个额外的属性：`lengthComputable`、`position` 和 `totalSize`。
++ lengthComputable： 布尔值表示进度信息是否可用
++ position： 表示已接受的字节数
++ totalSize： Conten-Length 的值
+
+### 21.4 跨源资源共享
+
+CORS（Cross-Origin Resource Sharing，跨源资源共享）是 W3C的一个工作草案，定义了在必须访 问跨源资源时，浏览器与服务器应该如何沟通。CORS背后的基本思想，就是使用自定义的 HTTP头部 让浏览器与服务器进行沟通，从而决定请求或响应是应该成功，还是应该失败。 
