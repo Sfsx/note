@@ -4,11 +4,17 @@
 ## 第3章 基础数据类型
 
 ### 3.1 Null
+
 ### 3.2 Undefined
+
 ### 3.3 Boolean
+
 ### 3.4 String
+
 ### 3.5 Number
+
 ### 3.6 Object
+
 ### 3.7 Symbol
 
   ES6引入了一种新的原始数据类型，表示独一无二的值。它是JavaScript的第七种数据类型
@@ -3262,6 +3268,7 @@ XML.ignoreProcessingInstructions = false;
 ```
 
 XMLList 上可以调用以下方法
+
 + `attributes()`
 + `comments()`
 + `elements(tagName)`
@@ -3359,22 +3366,23 @@ JSON和对象的区别 1.属性名加引号 2.没有声明变量 3.末尾没有�
 
     ```js
     var jsonText = JSON.stringify(book, null, "--");  
- 
-    { 
+
+    {
     --"title": "Professional JavaScript",
-    --"authors": [ 
-    ----"Nicholas C. Zakas" 
-    --], 
-    --"edition": 3, 
-    --"year": 2011 
-    } 
+    --"authors": [
+    ----"Nicholas C. Zakas"
+    --],
+    --"edition": 3,
+    --"year": 2011
+    }
     ```
 
 3. `toJSON()`
 
-    给对象定义 `toJSON()` 方法，返回其自定义的 JSON 数据格式。可以让这个方法返回 `undefined`，此时如果包含它的对象嵌入在另一个对象中，会导致 它的值变成 `null`，而如果它是顶级对象，结果就是 `undefined`。 
+    给对象定义 `toJSON()` 方法，返回其自定义的 JSON 数据格式。可以让这个方法返回 `undefined`，此时如果包含它的对象嵌入在另一个对象中，会导致 它的值变成 `null`，而如果它是顶级对象，结果就是 `undefined`。
 
 `JSON.stringify()` 序列化该对象的顺序如下：
+
 1. 如果存在 `toJSON()` 方法且能够通过它取得有效值，则调用该方法。否则，返回对象本身。
 2. 如果提供了第二个参数，应用这个函数过滤器，传入函数过滤器的值是第 1 步的返回值。
 3. 对第 2 步返回的每个值进行相应的序列化。
@@ -3401,6 +3409,7 @@ new ActiveXObject(versions);
 #### 21.1.1 XHR 的用法
 
 `open()` 方法接受3个参数，要发送的请求的类型 （"get"、"post"等）、请求的 URL和表示是否异步发送请求的布尔值。
+
 ```js
 xhr.open("get", "example.php", false);
 xhr.send(null);
@@ -3409,12 +3418,14 @@ xhr.send(null);
 `send()` 该方法接受一个参数：作为请求主体发送的数据。
 
 收到响应后，响应数据会自动填充到XHR对象的属性
+
 + responseText
 + responseXML
 + status
 + statusText
 
 异步发送时检测 XHR 的 readyState 属性，该属性可取值如下：
+
 + 0：尚未调用 open()方法
 + 1：已经调用 open()方法，但尚未调用 send()方法。 
 + 2：已经调用 send()方法，但尚未接收到响应。 
@@ -3468,6 +3479,7 @@ XMLHttpRequest 2 新增属性 timeout。单位为毫秒的数字
 ### 21.3 进度事件
 
 Progress Event 有以下6个事件：
+
 + loadstart：在接收到响应数据的第一个子节时触发
 + progress：在接受响应期间不断触发
 + error：在请求发生错误时触发
@@ -3482,6 +3494,7 @@ onload 事件处理程序会接收到一个 event 对象，其 target 属性就�
 #### 21.3.2 progress 事件
 
 onprogress 事件处理程序会接收到一个 event 对象，其 target 属性是 XHR 对象，但 包含着三个额外的属性：`lengthComputable`、`position` 和 `totalSize`。
+
 + lengthComputable： 布尔值表示进度信息是否可用
 + position： 表示已接受的字节数
 + totalSize： Conten-Length 的值
@@ -3489,3 +3502,132 @@ onprogress 事件处理程序会接收到一个 event 对象，其 target 属性
 ### 21.4 跨源资源共享
 
 CORS（Cross-Origin Resource Sharing，跨源资源共享）是 W3C的一个工作草案，定义了在必须访 问跨源资源时，浏览器与服务器应该如何沟通。CORS背后的基本思想，就是使用自定义的 HTTP头部 让浏览器与服务器进行沟通，从而决定请求或响应是应该成功，还是应该失败。 
+
+#### 21.4.1 IE 对CORS的实现
+
+IE 中引入了XDR类型。这个对象与XHR类似，但能实现可靠的跨域通信
+
+#### 21.4.2 其他浏览器对CORS的实现
+
+跨域XHR对象也有一些限制
+
++ 不能使用 setRequestHeader()设置自定义头部。
++ 不能发送和接收 cookie。
++ 调用 getAllResponseHeaders()方法总会返回空字符串。
+
+#### 21.4.3 Preflighted Requests
+
+这种请求的方法为 options，头部为：
+
++ Origin
++ Acess-Control-Request-Method：请求自身使用的发放。
++ Acess-Control-Request-Header：（可选）自定义头部信息
+
+服务器对于这种请求，通过在响应种发送如下头部与浏览器进行沟通：
+
++ Access-Control-Allow-Origin
++ Access-Control-Allow-Methods
++ Access-Control-Allow-Headers
++ Access-Control-Max-age：应该将这个 Preflight 请求缓冲多长时间
+
+#### 21.4.4 带凭据的请求
+
+将XHR的 `withCredentials` 属性改为 `true`。  
+如果服务器接受带凭证的请求，会用下面的 HTTP 头部来响应
+
+Access-Control-Allow-Credentials: true
+
+#### 21.4.5 跨浏览器的CORS
+
+### 21.5 其他跨域技术
+
+#### 21.5.1 图像 Ping
+
+```js
+var img = new Image();
+img.onload = img.onerror = function(){
+    alert("Done!");
+};
+img.src = "http://www.example.com/test?name=Nicholas"; 
+```
+
+#### 21.5.2 JSONP
+
+```js
+function handleResponse(response){
+    alert("You’re at IP address " + response.ip + ", which is in " +  response.city + ", " + response.region_name);
+}
+
+var script = document.createElement("script");
+script.src = "http://freegeoip.net/json/?callback=handleResponse";
+document.body.insertBefore(script, document.body.firstChild);
+```
+
+#### 21.5.3 Comet
+
++ 长轮询
++ 流 浏览器向服务器发送一个请求，服务器保持连接打开，然后周期性的向浏览器发送数据。这种方式只有一个 http 请求。
+
+#### 21.5.4 服务器发送事件
+
+1. SSE API
+
+    ```js
+    var source = new EventSource("myevents.php");
+    ```
+
+    该类型具有 readyState 属性还有另外三个事件
+    + open
+    + message
+    + error
+
+2. 事件流
+
+    这个API同样是一个持久的 HTTP 请求，这个响应的 MEMI 类型为 text/event-stream。数据为纯文本。
+
+#### 21.5.5 Web Socket
+
+1. Web Sockets API
+
+    ```js
+    var socket = new WebSocket("ws://www.example.com/server.php");
+    ```
+
+    该类型也有 readyState 属性，具有以下属性值
+    + WebSocket.OPENING (0)
+    + WebSocket.OPEN (0)
+    + WebSocket.CLOSEING (0)
+    + WebSocket.CLOSE (0)
+2. 发送和接收数据
+
+    `socket.send(string)`
+
+3. 其他事件
+    + open
+    + error
+    + close
+
+#### 21.5.6 SEE 与 Web Sockets
+
+### 21.6 安全
+
+对于未被授权的系统有权访问某个资源的情况，我们称之为**CSRF**
+
+为确保通过 XHR 访问的 URL 安全，通行的做法就是验证发送请求者是否有权限访问相应的资源。 有下列几种方式可供选择。
+
++ 要以SSL连接来访问请求资源
++ 要求每一次请求都要附带经过相应算法计算得到的验证码
+
+下列措施对防范 CSRF 攻击不起作用
+
++ 要求发送 POST 而不是 GET 请求 —— 很容易改变
++ 检查来源 URL 是否可靠 —— 来源记录很容易伪造
++ 基于 cookie 信息进行验证 —— 同样很容易伪造
+
+---
+
+## 第22章 高级技巧
+
++ 使用高级函数
++ 防篡改对象
++ Yielding Timers
