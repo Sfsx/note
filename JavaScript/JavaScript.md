@@ -3631,3 +3631,89 @@ document.body.insertBefore(script, document.body.firstChild);
 + 使用高级函数
 + 防篡改对象
 + Yielding Timers
+
+### 22.1 高级函数
+
+#### 22.1.1 安全类型检测
+
+```js
+Object.prototype.toString.call(value) == "[object Array]"
+```
+
+#### 22.1.2 作用域安全的构造函数
+
+```js
+function Person(name, age, job){
+    if (this instanceof Person) {
+        this.name = name;
+        this.age = age;
+        this.job = job;
+    } else {
+        return new Person(name, age, job); 
+    }
+}
+
+var person1 = Person("Nicholas", 29, "Software Engineer"); 
+```
+
+#### 22.1.3 惰性载入函数
+
+#### 22.1.4 函数绑定
+
+#### 22.1.5 函数柯里化
+
+与函数绑定紧密相关的主题是柯里化，它用于创建已经设置好的一个或多个参数的函数。函数柯里化的基本方法和函数绑定是一样的：使用一个闭包返回一个函数。两者的区别在于，柯里化时当函数被调用时，返回的函数还需要设置一些传入的参数。
+
+```js
+function curry(fn){
+    var args = Array.prototype.slice.call(arguments, 1);
+    return function(){
+        var innerArgs = Array.prototype.slice.call(arguments);
+        var finalArgs = args.concat(innerArgs);
+        return fn.apply(null, finalArgs);
+    };
+}
+```
+
+ECMAScript 5的 `bind()` 方法也实现函数柯里化，只要在 `this` 的值之后再传入另一个参数即可。其原理类似下面的代码，要注意的是 `fn` 的参数**顺序**，**排在前面**的是 `bind()` 中传入的，**排在后面**的是调用时传入的参数。
+
+```js
+function bind(fn, context) {
+    var args = Array.prototype.slice.call(arguments, 2);
+    return function() {
+        var innerArgs = Array.prototype.slice.call(arguments);
+        var finalArgs = args.concat(innerArgs);
+        return fn.apply(context, finalArgs);
+    };
+}
+```
+
+### 22.2 防篡改对象
+
+#### 22.2.1 不可扩展对象
+
+`Object.preventExtensions(object)` 使你不能够再给对象添加属性和方法。
+
+`Object.istExtensible()` 确定对象是否可被扩展。
+
+#### 22.2.2 密封的对象
+
+密封对象不可扩展，而且以有成员的的 `[[Congfigurable]]` 特性将被设置为 `false`。这就以为着不能删除属性和方法，也不能使用 `Object.defineProperty()`
+
+`Object.seal()`
+
+`Object.isSeal()`
+
+#### 22.2.3 冻结对象
+
+最严格的防篡改级别是冻结对象。既不可扩展，又是密封的，而且对象的`[[Writable]]` 特性会被置为 `false`。如果定义 `[[Set]]` 函数，访问器属性仍然是可写的。
+
+`Object.freeze()`
+
+`Object.isFrozen()`
+
+### 22.3 高级定时器
+
+对于定时器，指定的时间间隔表示何时将定时器的代码添加到队列，而不 是何时实际执行代码。
+
+### 22.3.1 重复的定时器
