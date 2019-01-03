@@ -3716,4 +3716,178 @@ function bind(fn, context) {
 
 对于定时器，指定的时间间隔表示何时将定时器的代码添加到队列，而不 是何时实际执行代码。
 
-### 22.3.1 重复的定时器
+#### 22.3.1 重复的定时器
+
+```js
+setTimeout(function() {
+
+    // 处理
+
+    setTimeout(arguments.callee, interval);
+
+}, interval)
+```
+
+#### 22.3.2 Yielding Processes
+
+数据分组处理
+
+```js
+function chunk(array, process, context){
+    setTimeout(function(){
+        var item = array.shift();
+        process.call(context, item);
+
+        if (array.length > 0){ 
+            setTimeout(arguments.callee, 100);
+        }
+    }, 100);
+}
+```
+
+#### 22.3.3 函数节流
+
+让函数延迟执行，在延迟的时间段中只会执行一次。
+
+### 22.4 自定义事件
+
+事件是一种叫做观察者的设计模式，这是一种创建松散耦合代码的技术。
+
+### 22.5 托放
+
+#### 22.5.1 修缮拖动功能
+
+#### 22.5.2 添加自定义事件
+
+---
+
+## 第23章 离线应用于客户端存储
+
++ 进行离线检测
++ 使用离线缓存
++ 在浏览器中保存数据
+
+### 23.1 离线检测
+
+HTML5 规定了 `navigator.onLine` 属性表示设备是否能连接网络。
+
+HTML5 还规定了 online 和 offline 事件。这两个事件在 window 对象上触发。
+
+### 23.2 应用缓存
+
+HTML5 的应用缓存，简称为 appcache。下面是一个简单的文件缓存示例，假设文件名为 offline.manifest。
+
+```text
+CACHE MANIFEST
+#Comment
+
+file.js
+file.cs
+```
+
+```html
+<html manifest="/offline.manifest">
+```
+
+其 API 核心为 applicationCache 对象，该对象有一个 status 属性，其值为一下常量：
+
++ 0 无缓存
++ 1 闲置 缓存未得到更新
++ 2 检查中 正在下载描述文件并检查更新
++ 3 下载中 正在下载描述文件中指定的资源
++ 4 更新完成
++ 5 废弃 应用缓存描述文件不存在
+
+该对象还有以下事件：
+
++ checking 应用缓存查找更新时触发
++ error 检查更新或下载资源期间发生错误触发
++ noupdate
++ downloading
++ progress 下载应用缓存持续触发
++ updateready
++ cached
+
+`applicationCache.update();` 手动更新
+
+```js
+EventUtil.addHandler(applicationCache, "updateready", function() {
+    applicationCache.swapCache();
+});
+```
+
+### 23.3 数据存储
+
+#### 23.3.1 Cookie
+
+1. 限制
+
+    cookie 是绑定在特定的域名之下
+
+    cookie 长度为 4096B
+2. cookie 构成
+
+    + 名称
+    + 值
+    + 域 domain
+    + 路径 path
+    + 失效时间 expires
+    + 安全标志 secure
+3. JavaScript 中的 cookie
+
+    BOM 接口的 `document.cookie`
+4. 子 cookie
+
+    ```js
+    name=name1=value1&name2=value2&name3=value3&name4=value4&name5=value5
+    ```
+
+5. 关于 cookie 的思考
+
+#### 23.3.2 IE用户数据
+
+#### 23.3.3 Web存储机制
+
+HTML5 规范中的 Web Storage，他的主要目标是
+
++ 提供一种在 cookie 之外存储会话数据的途径
++ 提供一种存储大量可以夸会话存在的数据的机制
+
+Web Storage 规范包含了两种对象的定义：sessionStorage 和 globalStorage。这两个对象以 window 对象属性的形式存在。
+
+1. Storage 类型
+
+   + `clear()`
+   + `getItem()`
+   + `key(index)`
+   + `removeItem(name)`
+   + `setItem(name, value)`
+
+2. sessionStorage 对象
+
+   sessionStorage 对象存储特定于某个会话的数据，也就是该数据只保持到浏览器关闭。
+
+3. globalStorage 对象
+
+    这个对象的目的是跨越会话存储数据，但有特定的访问限制。
+
+    ```js
+    globalStorage["sfsx.com"].name = "sfsx"
+    ```
+
+    这个对象上存储的数据如果未删除，或者用户未清除缓存，则会一直存储在磁盘上。
+4. localStorage 对象
+
+    该对象在修订过的 HTML5 规范中作为持久保存客户端数据的方案取代了 globalStorage。该对象不能指定任何访问规则；规则事先就定好了，要访问同一个 localStorage 对象，页面必须来自同一个域名（子域名无效），使用同一种协议，在同一个端口上。
+5. storage 事件
+
+    该事件的 event 对象具有以下属性：
+    + domain 发生变化的存储空间域名
+    + key 设置或者删除键名
+    + newValue 设置键值为新值，删除键值为 null
+    + oldValue 修改之前的键值
+6. 限制
+
+    每个来源（域名，端口，协议）都有固定大小的空间用于保存自己的数据
+
+#### 23.3.4 IndexedDB

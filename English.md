@@ -142,3 +142,4 @@
 + preflight
 + credentials
 + comet
++ manifest
