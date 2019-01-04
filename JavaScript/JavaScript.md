@@ -3856,19 +3856,14 @@ HTML5 规范中的 Web Storage，他的主要目标是
 Web Storage 规范包含了两种对象的定义：sessionStorage 和 globalStorage。这两个对象以 window 对象属性的形式存在。
 
 1. Storage 类型
-
    + `clear()`
    + `getItem()`
    + `key(index)`
    + `removeItem(name)`
    + `setItem(name, value)`
-
 2. sessionStorage 对象
-
    sessionStorage 对象存储特定于某个会话的数据，也就是该数据只保持到浏览器关闭。
-
 3. globalStorage 对象
-
     这个对象的目的是跨越会话存储数据，但有特定的访问限制。
 
     ```js
@@ -3877,10 +3872,8 @@ Web Storage 规范包含了两种对象的定义：sessionStorage 和 globalStor
 
     这个对象上存储的数据如果未删除，或者用户未清除缓存，则会一直存储在磁盘上。
 4. localStorage 对象
-
     该对象在修订过的 HTML5 规范中作为持久保存客户端数据的方案取代了 globalStorage。该对象不能指定任何访问规则；规则事先就定好了，要访问同一个 localStorage 对象，页面必须来自同一个域名（子域名无效），使用同一种协议，在同一个端口上。
 5. storage 事件
-
     该事件的 event 对象具有以下属性：
     + domain 发生变化的存储空间域名
     + key 设置或者删除键名
@@ -3891,3 +3884,139 @@ Web Storage 规范包含了两种对象的定义：sessionStorage 和 globalStor
     每个来源（域名，端口，协议）都有固定大小的空间用于保存自己的数据
 
 #### 23.3.4 IndexedDB
+
+1. 数据库
+    ```js
+    var request, database;
+
+    request = indexedDB.open("admin"); request.onerror = function(event){
+        alert("Something bad happened while trying to open: " + event.target.errorCode);
+    };
+    request.onsuccess = function(event){
+        database = event.target.result;
+    };
+    ```
+2. 对象存储空间
+    ```js
+    // users 相当于表名称 keyPath 相当于 primekey
+    var store = db.createObjectStore("users", { keyPath: "username" });
+    request = store.add(user);
+    request.onerror = function(){
+        //处理错误
+    };
+    request.onsuccess = function(){
+        //处理成功
+    };
+    ```
+3. 事务
+    ```js
+    // 创建事务只加载 users 空间中的数据
+    var transaction = db.transaction("users")
+    // 访问特定的存储空间
+    var request = transaction.objectStore("users").get("007");
+    ```
+4. 使用游标查询
+    ```js
+    var store = db.transaction("users").objectStore("users"), 
+        request = store.openCursor();
+    request.onsuccess = function(event) {
+        //处理成功
+        var cursor = event.target.result
+        var value = cursor.value;
+    };
+
+    request.onerror = function(event) {
+        //处理失败
+    };
+    ```
+5. 键范围
+6. 设定游标方向
+7. 索引
+    ```js
+    var store = db.transaction("users").objectStore("users");
+    // 参数 索引名 属性名 unique
+    var index = store.createIndex("username", "username", { unique: false });
+    ```
+8. 并发问题
+9. 限制
+
+---
+
+## 第24章 最佳实践
+
++ 可维护的代码
++ 保证代码的性能
++ 部署代码
+
+### 24.1 可维护性
+
+#### 24.1.1 什么是可维护的代码
+
++ 可理解性
++ 直观性
++ 可适应性
++ 可扩展性
++ 可调试性
+
+#### 24.1.2 代码约定
+
+1. 可读性
+    以下代码块需要注释
+    + 函数和方法
+    + 大段代码
+    + 复杂算法
+    + Hack
+2. 变量和函数命名
+    + 变量名应为名词
+    + 函数名应该以动词开始
+    + 变量和函数都应使用合乎逻辑的名字，不要担心长度
+3. 变量类型透明
+    初始化时就指定类型
+    ```js
+    var found = false;  //布尔型
+    var count = -1;     //数字
+    var name = "";      //字符串
+    var person = null;  //对象
+    ```
+
+#### 24.1.3 松散耦合
+
+1. 解耦 HTML / JavaScript
+2. 解耦 CSS / JavaScript
+3. 解耦应用逻辑 / 事件处理程序
+    + 勿将 event 对象传给其他方法，只传来自 event 对象中所需的数据
+    + 任何可以在应用层面的动作都应该可以在不执行任何事件处理程序的情况下进行
+    + 任何事件处理程序都应该处理事件，然后将处理转交给应用逻辑。
+
+#### 24.1.4 编程实践
+
+1. 尊重对象所有权
+    + 不要为实例或原型添加属性
+    + 不要为实例或原型添加方法
+    + 不要重定义已经存在的方法
+
+    + 创建包含所需功能的新对象，并用它与相关对象进行交互
+    + 创建自定义类型，继承需要进行修改的类型。然后可以为自定义类型添加额外功能
+2. 避免全局变量
+3. 避免与 `null` 进行比较
+    ```js
+        if (values != null){           //避免
+
+        }
+    ```
+4. 使用常量
+    + 重复值——任何在多处用到的值都应抽取为一个常量。这就限制了当一个值变了而另一个没变的时候会造成的错误。这也包含了 CSS 类名。
+    + 用户界面字符串——任何用于显示给用户的字符串，都应被抽取出来以方便国际化。
+    + URLs——在 Web 应中，资源位置很容易变更，所以推荐用一个公共地方存放所有的URL。
+    + 任意可能会更改的值
+
+### 24.2 性能
+
+#### 24.2.1 注意作用域
+
+1. 避免全局查找
+    使用全局变量的函数肯定要比局部的开销更大，因为要涉及作用域链上的查找。
+2. 避免 with 语句
+    with 会创建自己的作用域，因此会增加其中执行代码的作用域链的长度。
+
+#### 24.2.2 选择正确的方法
