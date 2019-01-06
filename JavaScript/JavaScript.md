@@ -4020,3 +4020,59 @@ Web Storage 规范包含了两种对象的定义：sessionStorage 和 globalStor
     with 会创建自己的作用域，因此会增加其中执行代码的作用域链的长度。
 
 #### 24.2.2 选择正确的方法
+
+1. 避免不必要的属性查找
+    ```js
+    // 这段代码时间复杂度为 O(1)
+    var values = [5, 10];
+    var sum = values[0] + values[1];
+    alert(sum);
+
+    // 这段代码的时间复杂度为 O(n) 
+    // 对象上任何查找都要比访问变量或者数组花费更长的时间，因为必须在原型链中对拥有该名称的属性进行一次搜索。
+    var values = { first: 5, second: 10};
+    var sum = values.first + values.second;
+    alert(sum);
+
+    // 该语句包含很多属性查找
+    var query = window.location.href.substring(window.location.href.indexOf("?"));
+    // 可以进行如下优化 
+    var url = window.location.href;
+    var query = url.substring(url.indexOf("?"));
+    ```
+2. 优化循环
+    1. 减值迭代
+    2. 简化终止条件
+    3. 简化循环体
+    4. 使用后测试循环体
+3. 展开循环
+    处理大数据集时比较有用，利用一种叫Duff装置将循环展开。
+4. 避免双重解释
+    别用`new Function("alert('Hello world!')");`这种句子。
+5. 性能的其他注意事项
+    + 原生方法较快
+    + Switch 语句较快
+    + 位运算符较快
+
+#### 24.2.3 最小化语句数
+
+1. 多个变量声明
+2. 插入迭代值
+3. 使用数组和对象字面量
+
+#### 24.2.4 优化DOM交互
+
+1. 最小化现场更新
+2. 使用innerHTML
+3. 使用事件代理
+4. 注意HTMLCollection
+   + 进行了 `getElementsByTagName()`
+   + 获取了元素的 `ChildNode()`
+   + 获取了元素的 `attribute()`
+   + 访问元素集合 document.forms、document.images
+
+### 24.3 部署
+
+#### 24.3.2 验证
+
+#### 24.3.3 压缩
