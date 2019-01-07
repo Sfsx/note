@@ -4076,3 +4076,27 @@ Web Storage 规范包含了两种对象的定义：sessionStorage 和 globalStor
 #### 24.3.2 验证
 
 #### 24.3.3 压缩
+
+---
+
+## 第25章
+
++ 创建平滑的动画
++ 操作文件
++ 使用 Web Works 在后台执行 JavaScript
+
+### 25.1 requestAnimationFrame()
+
+### 25.2 Page Visibility API
+
++ document.hidden
++ document.visibilityState
++ visibilitychange事件
+
+### 25.3 Geolocation API
+
+### 25.4 File API
+
+### 25.5 Web 计时
+
+### 25.6 Web Workers
