@@ -16,6 +16,49 @@
 
 ### 2.2 新增的元素和废除的元素
 
+#### 2.2.1 新增结构元素
+
++ section
++ article
++ aside
++ header
++ footer
++ nav
++ figure
+
+#### 2.2.2 新增其他元素
+
++ video
++ audio
++ embed
++ mark
++ progress
++ meter
++ time
++ ruby
++ rt
++ rp
++ wbr
++ canvas
++ command
++ details
++ datalist
++ keygen
++ output
++ source
++ menu
++ dialog
+
+### 2.3 新增的属性喝废除的属性
+
 ### 2.4 全局属性
 
 ### 2.5 新增事件
+
+## 第3章 HTML5 的结构
+
+### 3.1 新增主体结构元素
+
+### 3.2 新增非主体结构元素
+
+### 3.3 HTML5 中网页结构
