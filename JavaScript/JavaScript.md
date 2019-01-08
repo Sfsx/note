@@ -4,11 +4,17 @@
 ## 第3章 基础数据类型
 
 ### 3.1 Null
+
 ### 3.2 Undefined
+
 ### 3.3 Boolean
+
 ### 3.4 String
+
 ### 3.5 Number
+
 ### 3.6 Object
+
 ### 3.7 Symbol
 
   ES6引入了一种新的原始数据类型，表示独一无二的值。它是JavaScript的第七种数据类型
@@ -3262,6 +3268,7 @@ XML.ignoreProcessingInstructions = false;
 ```
 
 XMLList 上可以调用以下方法
+
 + `attributes()`
 + `comments()`
 + `elements(tagName)`
@@ -3319,3 +3326,777 @@ alert(settings.prettyPrinting);       // true  默认每个元素重启一行
 XML 创建必须创建 DOM 对象，而 JSON 不用。
 
 关于 JSON，重要的是要理解它是一种数据格式，不是一种编程语言。
+
+### 20.1 语法
+
++ 简单值
++ 对象
++ 数组
+
+#### 20.1.1 简单值
+
+#### 20.1.2 对象
+
+JSON和对象的区别 1.属性名加引号 2.没有声明变量 3.末尾没有分号
+
+#### 20.1.3 数组
+
+### 20.2 解析与序列化
+
+#### 20.2.1 JSON对象
+
+`stringify()` 和 `parse()`
+
+#### 20.2.2 序列化选项
+
+`JSON.stringify()` 方法两个**可选**参数：第一个参数是个过滤器，可以是一个数组，也可以是一个函数；第二个参数是一个选项，表示是否在 JSON 字符串中保留缩进，这个参数可以是数字，也可以是特殊字符
+
+1. 过滤结果
+
+    单第二个参数为函数
+    ```js
+    var jsonText = JSON.stringify(book, function(key, value) {
+      // 表示忽略
+      return undefined;
+      // 表示返回值
+      return value
+    }); 
+    ```
+2. 字符串缩进
+
+    ```js
+    var jsonText = JSON.stringify(book, null, "--");  
+
+    {
+    --"title": "Professional JavaScript",
+    --"authors": [
+    ----"Nicholas C. Zakas"
+    --],
+    --"edition": 3,
+    --"year": 2011
+    }
+    ```
+
+3. `toJSON()`
+
+    给对象定义 `toJSON()` 方法，返回其自定义的 JSON 数据格式。可以让这个方法返回 `undefined`，此时如果包含它的对象嵌入在另一个对象中，会导致 它的值变成 `null`，而如果它是顶级对象，结果就是 `undefined`。
+
+`JSON.stringify()` 序列化该对象的顺序如下：
+
+1. 如果存在 `toJSON()` 方法且能够通过它取得有效值，则调用该方法。否则，返回对象本身。
+2. 如果提供了第二个参数，应用这个函数过滤器，传入函数过滤器的值是第 1 步的返回值。
+3. 对第 2 步返回的每个值进行相应的序列化。
+4. 如果提供了第三个参数，执行相应的格式化。
+
+#### 20.2.3 解析选项
+
+`JSON.parse()` 方法也可以接收另一个参数，该参数是一个函数，将在每个键值对儿上调用。该函数接收两个参数，一个键和一个值，而且都需要返回一个值。 如果还原函数返回 `undefined`，则表示要从结果中删除相应的键；如果返回其他值，则将该值插入到结果中。
+
+---
+
+## 第21章 Ajax 与 Comet
+
++ 使用 XMLHttpRequest 对象
++ 使用 XMLHttpRequest 事件
++ 跨域 Ajax 通信的限制
+
+### 21.1 XMLHttpRequest 对象
+
+```js
+new ActiveXObject(versions); 
+```
+
+#### 21.1.1 XHR 的用法
+
+`open()` 方法接受3个参数，要发送的请求的类型 （"get"、"post"等）、请求的 URL和表示是否异步发送请求的布尔值。
+
+```js
+xhr.open("get", "example.php", false);
+xhr.send(null);
+```
+
+`send()` 该方法接受一个参数：作为请求主体发送的数据。
+
+收到响应后，响应数据会自动填充到XHR对象的属性
+
++ responseText
++ responseXML
++ status
++ statusText
+
+异步发送时检测 XHR 的 readyState 属性，该属性可取值如下：
+
++ 0：尚未调用 open()方法
++ 1：已经调用 open()方法，但尚未调用 send()方法。 
++ 2：已经调用 send()方法，但尚未接收到响应。 
++ 3：已经接收到部分响应数据。 
++ 4：已经接收到全部响应数据，而且已经可以在客户端使用了。
+
+#### 21.1.2 HTTP 头部信息
+
++ Accept 浏览器能够处理的内容类型
++ Accept-Charset 浏览器能够显示的字符集
++ Accept-Encoding 浏览器能够处理的压缩码
++ Accept-Language 浏览器当前设置的语言
++ Connection 浏览器与服务器之间的链接类型
++ Cookie 当前页面设置的任何 Cookie
++ Host 发出请求的页面所在域
++ Referer 发出请求的页面所在的域
++ User-Agent 浏览器的用户代理字符串
+
+`setRequestHeader("字段名", "字段值")` 设置头部信息
+
+#### 21.1.3 GET 请求
+
+#### 21.1.4 POST 请求
+
+### 21.2 XMLHttpRequset 2
+
+#### 21.2.1 FormData
+
+XMLHttpRequest 2 定义了 FormData 类型
+
+```js
+// 第一种
+var data = new FormData();
+data.append("name", "Sfsx");
+
+// 第二种
+var data = new FormData(document.forms[0]);
+
+// 通过 XHR 发送
+xhr.send(data);
+```
+
+#### 21.2.2 超时设定
+
+XMLHttpRequest 2 新增属性 timeout。单位为毫秒的数字
+
+#### 21.2.3 `overriderMimeType()` 方法
+
+这个方法重写 XHR 响应的 MIME 类型。且这个方法需要在 `sned()` 方法之前调用。
+
+### 21.3 进度事件
+
+Progress Event 有以下6个事件：
+
++ loadstart：在接收到响应数据的第一个子节时触发
++ progress：在接受响应期间不断触发
++ error：在请求发生错误时触发
++ abort：在调用 `abort()` 方法而终止连接时触发。
++ load：在接收到完整数据响应数据时触发。
++ loadend：在通信完成或触发 error，abort，load 事件后触发。
+
+#### 21.3.1 load 事件
+
+onload 事件处理程序会接收到一个 event 对象，其 target 属性就指向 XHR 对象实例。
+
+#### 21.3.2 progress 事件
+
+onprogress 事件处理程序会接收到一个 event 对象，其 target 属性是 XHR 对象，但 包含着三个额外的属性：`lengthComputable`、`position` 和 `totalSize`。
+
++ lengthComputable： 布尔值表示进度信息是否可用
++ position： 表示已接受的字节数
++ totalSize： Conten-Length 的值
+
+### 21.4 跨源资源共享
+
+CORS（Cross-Origin Resource Sharing，跨源资源共享）是 W3C的一个工作草案，定义了在必须访 问跨源资源时，浏览器与服务器应该如何沟通。CORS背后的基本思想，就是使用自定义的 HTTP头部 让浏览器与服务器进行沟通，从而决定请求或响应是应该成功，还是应该失败。 
+
+#### 21.4.1 IE 对CORS的实现
+
+IE 中引入了XDR类型。这个对象与XHR类似，但能实现可靠的跨域通信
+
+#### 21.4.2 其他浏览器对CORS的实现
+
+跨域XHR对象也有一些限制
+
++ 不能使用 setRequestHeader()设置自定义头部。
++ 不能发送和接收 cookie。
++ 调用 getAllResponseHeaders()方法总会返回空字符串。
+
+#### 21.4.3 Preflighted Requests
+
+这种请求的方法为 options，头部为：
+
++ Origin
++ Acess-Control-Request-Method：请求自身使用的发放。
++ Acess-Control-Request-Header：（可选）自定义头部信息
+
+服务器对于这种请求，通过在响应种发送如下头部与浏览器进行沟通：
+
++ Access-Control-Allow-Origin
++ Access-Control-Allow-Methods
++ Access-Control-Allow-Headers
++ Access-Control-Max-age：应该将这个 Preflight 请求缓冲多长时间
+
+#### 21.4.4 带凭据的请求
+
+将XHR的 `withCredentials` 属性改为 `true`。  
+如果服务器接受带凭证的请求，会用下面的 HTTP 头部来响应
+
+Access-Control-Allow-Credentials: true
+
+#### 21.4.5 跨浏览器的CORS
+
+### 21.5 其他跨域技术
+
+#### 21.5.1 图像 Ping
+
+```js
+var img = new Image();
+img.onload = img.onerror = function(){
+    alert("Done!");
+};
+img.src = "http://www.example.com/test?name=Nicholas"; 
+```
+
+#### 21.5.2 JSONP
+
+```js
+function handleResponse(response){
+    alert("You’re at IP address " + response.ip + ", which is in " +  response.city + ", " + response.region_name);
+}
+
+var script = document.createElement("script");
+script.src = "http://freegeoip.net/json/?callback=handleResponse";
+document.body.insertBefore(script, document.body.firstChild);
+```
+
+#### 21.5.3 Comet
+
++ 长轮询
++ 流 浏览器向服务器发送一个请求，服务器保持连接打开，然后周期性的向浏览器发送数据。这种方式只有一个 http 请求。
+
+#### 21.5.4 服务器发送事件
+
+1. SSE API
+
+    ```js
+    var source = new EventSource("myevents.php");
+    ```
+
+    该类型具有 readyState 属性还有另外三个事件
+    + open
+    + message
+    + error
+
+2. 事件流
+
+    这个API同样是一个持久的 HTTP 请求，这个响应的 MEMI 类型为 text/event-stream。数据为纯文本。
+
+#### 21.5.5 Web Socket
+
+1. Web Sockets API
+
+    ```js
+    var socket = new WebSocket("ws://www.example.com/server.php");
+    ```
+
+    该类型也有 readyState 属性，具有以下属性值
+    + WebSocket.OPENING (0)
+    + WebSocket.OPEN (0)
+    + WebSocket.CLOSEING (0)
+    + WebSocket.CLOSE (0)
+2. 发送和接收数据
+
+    `socket.send(string)`
+
+3. 其他事件
+    + open
+    + error
+    + close
+
+#### 21.5.6 SEE 与 Web Sockets
+
+### 21.6 安全
+
+对于未被授权的系统有权访问某个资源的情况，我们称之为**CSRF**
+
+为确保通过 XHR 访问的 URL 安全，通行的做法就是验证发送请求者是否有权限访问相应的资源。 有下列几种方式可供选择。
+
++ 要以SSL连接来访问请求资源
++ 要求每一次请求都要附带经过相应算法计算得到的验证码
+
+下列措施对防范 CSRF 攻击不起作用
+
++ 要求发送 POST 而不是 GET 请求 —— 很容易改变
++ 检查来源 URL 是否可靠 —— 来源记录很容易伪造
++ 基于 cookie 信息进行验证 —— 同样很容易伪造
+
+---
+
+## 第22章 高级技巧
+
++ 使用高级函数
++ 防篡改对象
++ Yielding Timers
+
+### 22.1 高级函数
+
+#### 22.1.1 安全类型检测
+
+```js
+Object.prototype.toString.call(value) == "[object Array]"
+```
+
+#### 22.1.2 作用域安全的构造函数
+
+```js
+function Person(name, age, job){
+    if (this instanceof Person) {
+        this.name = name;
+        this.age = age;
+        this.job = job;
+    } else {
+        return new Person(name, age, job); 
+    }
+}
+
+var person1 = Person("Nicholas", 29, "Software Engineer"); 
+```
+
+#### 22.1.3 惰性载入函数
+
+#### 22.1.4 函数绑定
+
+#### 22.1.5 函数柯里化
+
+与函数绑定紧密相关的主题是柯里化，它用于创建已经设置好的一个或多个参数的函数。函数柯里化的基本方法和函数绑定是一样的：使用一个闭包返回一个函数。两者的区别在于，柯里化时当函数被调用时，返回的函数还需要设置一些传入的参数。
+
+```js
+function curry(fn){
+    var args = Array.prototype.slice.call(arguments, 1);
+    return function(){
+        var innerArgs = Array.prototype.slice.call(arguments);
+        var finalArgs = args.concat(innerArgs);
+        return fn.apply(null, finalArgs);
+    };
+}
+```
+
+ECMAScript 5的 `bind()` 方法也实现函数柯里化，只要在 `this` 的值之后再传入另一个参数即可。其原理类似下面的代码，要注意的是 `fn` 的参数**顺序**，**排在前面**的是 `bind()` 中传入的，**排在后面**的是调用时传入的参数。
+
+```js
+function bind(fn, context) {
+    var args = Array.prototype.slice.call(arguments, 2);
+    return function() {
+        var innerArgs = Array.prototype.slice.call(arguments);
+        var finalArgs = args.concat(innerArgs);
+        return fn.apply(context, finalArgs);
+    };
+}
+```
+
+### 22.2 防篡改对象
+
+#### 22.2.1 不可扩展对象
+
+`Object.preventExtensions(object)` 使你不能够再给对象添加属性和方法。
+
+`Object.istExtensible()` 确定对象是否可被扩展。
+
+#### 22.2.2 密封的对象
+
+密封对象不可扩展，而且以有成员的的 `[[Congfigurable]]` 特性将被设置为 `false`。这就以为着不能删除属性和方法，也不能使用 `Object.defineProperty()`
+
+`Object.seal()`
+
+`Object.isSeal()`
+
+#### 22.2.3 冻结对象
+
+最严格的防篡改级别是冻结对象。既不可扩展，又是密封的，而且对象的`[[Writable]]` 特性会被置为 `false`。如果定义 `[[Set]]` 函数，访问器属性仍然是可写的。
+
+`Object.freeze()`
+
+`Object.isFrozen()`
+
+### 22.3 高级定时器
+
+对于定时器，指定的时间间隔表示何时将定时器的代码添加到队列，而不 是何时实际执行代码。
+
+#### 22.3.1 重复的定时器
+
+```js
+setTimeout(function() {
+
+    // 处理
+
+    setTimeout(arguments.callee, interval);
+
+}, interval)
+```
+
+#### 22.3.2 Yielding Processes
+
+数据分组处理
+
+```js
+function chunk(array, process, context){
+    setTimeout(function(){
+        var item = array.shift();
+        process.call(context, item);
+
+        if (array.length > 0){ 
+            setTimeout(arguments.callee, 100);
+        }
+    }, 100);
+}
+```
+
+#### 22.3.3 函数节流
+
+让函数延迟执行，在延迟的时间段中只会执行一次。
+
+### 22.4 自定义事件
+
+事件是一种叫做观察者的设计模式，这是一种创建松散耦合代码的技术。
+
+### 22.5 托放
+
+#### 22.5.1 修缮拖动功能
+
+#### 22.5.2 添加自定义事件
+
+---
+
+## 第23章 离线应用于客户端存储
+
++ 进行离线检测
++ 使用离线缓存
++ 在浏览器中保存数据
+
+### 23.1 离线检测
+
+HTML5 规定了 `navigator.onLine` 属性表示设备是否能连接网络。
+
+HTML5 还规定了 online 和 offline 事件。这两个事件在 window 对象上触发。
+
+### 23.2 应用缓存
+
+HTML5 的应用缓存，简称为 appcache。下面是一个简单的文件缓存示例，假设文件名为 offline.manifest。
+
+```text
+CACHE MANIFEST
+#Comment
+
+file.js
+file.cs
+```
+
+```html
+<html manifest="/offline.manifest">
+```
+
+其 API 核心为 applicationCache 对象，该对象有一个 status 属性，其值为一下常量：
+
++ 0 无缓存
++ 1 闲置 缓存未得到更新
++ 2 检查中 正在下载描述文件并检查更新
++ 3 下载中 正在下载描述文件中指定的资源
++ 4 更新完成
++ 5 废弃 应用缓存描述文件不存在
+
+该对象还有以下事件：
+
++ checking 应用缓存查找更新时触发
++ error 检查更新或下载资源期间发生错误触发
++ noupdate
++ downloading
++ progress 下载应用缓存持续触发
++ updateready
++ cached
+
+`applicationCache.update();` 手动更新
+
+```js
+EventUtil.addHandler(applicationCache, "updateready", function() {
+    applicationCache.swapCache();
+});
+```
+
+### 23.3 数据存储
+
+#### 23.3.1 Cookie
+
+1. 限制
+
+    cookie 是绑定在特定的域名之下
+
+    cookie 长度为 4096B
+2. cookie 构成
+
+    + 名称
+    + 值
+    + 域 domain
+    + 路径 path
+    + 失效时间 expires
+    + 安全标志 secure
+3. JavaScript 中的 cookie
+
+    BOM 接口的 `document.cookie`
+4. 子 cookie
+
+    ```js
+    name=name1=value1&name2=value2&name3=value3&name4=value4&name5=value5
+    ```
+
+5. 关于 cookie 的思考
+
+#### 23.3.2 IE用户数据
+
+#### 23.3.3 Web存储机制
+
+HTML5 规范中的 Web Storage，他的主要目标是
+
++ 提供一种在 cookie 之外存储会话数据的途径
++ 提供一种存储大量可以夸会话存在的数据的机制
+
+Web Storage 规范包含了两种对象的定义：sessionStorage 和 globalStorage。这两个对象以 window 对象属性的形式存在。
+
+1. Storage 类型
+   + `clear()`
+   + `getItem()`
+   + `key(index)`
+   + `removeItem(name)`
+   + `setItem(name, value)`
+2. sessionStorage 对象
+   sessionStorage 对象存储特定于某个会话的数据，也就是该数据只保持到浏览器关闭。
+3. globalStorage 对象
+    这个对象的目的是跨越会话存储数据，但有特定的访问限制。
+
+    ```js
+    globalStorage["sfsx.com"].name = "sfsx"
+    ```
+
+    这个对象上存储的数据如果未删除，或者用户未清除缓存，则会一直存储在磁盘上。
+4. localStorage 对象
+    该对象在修订过的 HTML5 规范中作为持久保存客户端数据的方案取代了 globalStorage。该对象不能指定任何访问规则；规则事先就定好了，要访问同一个 localStorage 对象，页面必须来自同一个域名（子域名无效），使用同一种协议，在同一个端口上。
+5. storage 事件
+    该事件的 event 对象具有以下属性：
+    + domain 发生变化的存储空间域名
+    + key 设置或者删除键名
+    + newValue 设置键值为新值，删除键值为 null
+    + oldValue 修改之前的键值
+6. 限制
+
+    每个来源（域名，端口，协议）都有固定大小的空间用于保存自己的数据
+
+#### 23.3.4 IndexedDB
+
+1. 数据库
+    ```js
+    var request, database;
+
+    request = indexedDB.open("admin"); request.onerror = function(event){
+        alert("Something bad happened while trying to open: " + event.target.errorCode);
+    };
+    request.onsuccess = function(event){
+        database = event.target.result;
+    };
+    ```
+2. 对象存储空间
+    ```js
+    // users 相当于表名称 keyPath 相当于 primekey
+    var store = db.createObjectStore("users", { keyPath: "username" });
+    request = store.add(user);
+    request.onerror = function(){
+        //处理错误
+    };
+    request.onsuccess = function(){
+        //处理成功
+    };
+    ```
+3. 事务
+    ```js
+    // 创建事务只加载 users 空间中的数据
+    var transaction = db.transaction("users")
+    // 访问特定的存储空间
+    var request = transaction.objectStore("users").get("007");
+    ```
+4. 使用游标查询
+    ```js
+    var store = db.transaction("users").objectStore("users"), 
+        request = store.openCursor();
+    request.onsuccess = function(event) {
+        //处理成功
+        var cursor = event.target.result
+        var value = cursor.value;
+    };
+
+    request.onerror = function(event) {
+        //处理失败
+    };
+    ```
+5. 键范围
+6. 设定游标方向
+7. 索引
+    ```js
+    var store = db.transaction("users").objectStore("users");
+    // 参数 索引名 属性名 unique
+    var index = store.createIndex("username", "username", { unique: false });
+    ```
+8. 并发问题
+9. 限制
+
+---
+
+## 第24章 最佳实践
+
++ 可维护的代码
++ 保证代码的性能
++ 部署代码
+
+### 24.1 可维护性
+
+#### 24.1.1 什么是可维护的代码
+
++ 可理解性
++ 直观性
++ 可适应性
++ 可扩展性
++ 可调试性
+
+#### 24.1.2 代码约定
+
+1. 可读性
+    以下代码块需要注释
+    + 函数和方法
+    + 大段代码
+    + 复杂算法
+    + Hack
+2. 变量和函数命名
+    + 变量名应为名词
+    + 函数名应该以动词开始
+    + 变量和函数都应使用合乎逻辑的名字，不要担心长度
+3. 变量类型透明
+    初始化时就指定类型
+    ```js
+    var found = false;  //布尔型
+    var count = -1;     //数字
+    var name = "";      //字符串
+    var person = null;  //对象
+    ```
+
+#### 24.1.3 松散耦合
+
+1. 解耦 HTML / JavaScript
+2. 解耦 CSS / JavaScript
+3. 解耦应用逻辑 / 事件处理程序
+    + 勿将 event 对象传给其他方法，只传来自 event 对象中所需的数据
+    + 任何可以在应用层面的动作都应该可以在不执行任何事件处理程序的情况下进行
+    + 任何事件处理程序都应该处理事件，然后将处理转交给应用逻辑。
+
+#### 24.1.4 编程实践
+
+1. 尊重对象所有权
+    + 不要为实例或原型添加属性
+    + 不要为实例或原型添加方法
+    + 不要重定义已经存在的方法
+
+    + 创建包含所需功能的新对象，并用它与相关对象进行交互
+    + 创建自定义类型，继承需要进行修改的类型。然后可以为自定义类型添加额外功能
+2. 避免全局变量
+3. 避免与 `null` 进行比较
+    ```js
+        if (values != null){           //避免
+
+        }
+    ```
+4. 使用常量
+    + 重复值——任何在多处用到的值都应抽取为一个常量。这就限制了当一个值变了而另一个没变的时候会造成的错误。这也包含了 CSS 类名。
+    + 用户界面字符串——任何用于显示给用户的字符串，都应被抽取出来以方便国际化。
+    + URLs——在 Web 应中，资源位置很容易变更，所以推荐用一个公共地方存放所有的URL。
+    + 任意可能会更改的值
+
+### 24.2 性能
+
+#### 24.2.1 注意作用域
+
+1. 避免全局查找
+    使用全局变量的函数肯定要比局部的开销更大，因为要涉及作用域链上的查找。
+2. 避免 with 语句
+    with 会创建自己的作用域，因此会增加其中执行代码的作用域链的长度。
+
+#### 24.2.2 选择正确的方法
+
+1. 避免不必要的属性查找
+    ```js
+    // 这段代码时间复杂度为 O(1)
+    var values = [5, 10];
+    var sum = values[0] + values[1];
+    alert(sum);
+
+    // 这段代码的时间复杂度为 O(n) 
+    // 对象上任何查找都要比访问变量或者数组花费更长的时间，因为必须在原型链中对拥有该名称的属性进行一次搜索。
+    var values = { first: 5, second: 10};
+    var sum = values.first + values.second;
+    alert(sum);
+
+    // 该语句包含很多属性查找
+    var query = window.location.href.substring(window.location.href.indexOf("?"));
+    // 可以进行如下优化 
+    var url = window.location.href;
+    var query = url.substring(url.indexOf("?"));
+    ```
+2. 优化循环
+    1. 减值迭代
+    2. 简化终止条件
+    3. 简化循环体
+    4. 使用后测试循环体
+3. 展开循环
+    处理大数据集时比较有用，利用一种叫Duff装置将循环展开。
+4. 避免双重解释
+    别用`new Function("alert('Hello world!')");`这种句子。
+5. 性能的其他注意事项
+    + 原生方法较快
+    + Switch 语句较快
+    + 位运算符较快
+
+#### 24.2.3 最小化语句数
+
+1. 多个变量声明
+2. 插入迭代值
+3. 使用数组和对象字面量
+
+#### 24.2.4 优化DOM交互
+
+1. 最小化现场更新
+2. 使用innerHTML
+3. 使用事件代理
+4. 注意HTMLCollection
+   + 进行了 `getElementsByTagName()`
+   + 获取了元素的 `ChildNode()`
+   + 获取了元素的 `attribute()`
+   + 访问元素集合 document.forms、document.images
+
+### 24.3 部署
+
+#### 24.3.2 验证
+
+#### 24.3.3 压缩
+
+---
+
+## 第25章
+
++ 创建平滑的动画
++ 操作文件
++ 使用 Web Works 在后台执行 JavaScript
+
+### 25.1 requestAnimationFrame()
+
+### 25.2 Page Visibility API
+
++ document.hidden
++ document.visibilityState
++ visibilitychange事件
+
+### 25.3 Geolocation API
+
+### 25.4 File API
+
+### 25.5 Web 计时
+
+### 25.6 Web Workers

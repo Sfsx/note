@@ -21,6 +21,7 @@ for (let item of data) {
     JavaScript
 
 ## koa源码有感
+
 ```js
 function createServer(res, req) {
     // ....
@@ -29,7 +30,7 @@ function createServer(res, req) {
 createServer(callback())
 
 function callback(){
-    
+
     const handleRequest = function (res, req) {
         // ....
     };
@@ -43,6 +44,7 @@ function callback(){
 ## npm bluebird
 
 一个 `promise` 的第三方库 其中一个api:  `Promise.promisify` 将 `node` 的函数转换为 `promise` 封装
+
 ```js
 
 Promise.promisify(
@@ -73,6 +75,7 @@ readFile("myfile.js", "utf8").then(function(contents) {
 ## 为什么要用Array.prototype.forEach.call(array, cb)而不直接使用array.forEach(cb)
 
 有一些看起来很像数组的对象：
+
 + `argument`
 + `children` and `childNodes` collections
 + NodeList collections returned by methods like `document.getElementsByClassName` and `document.querySelectorAll`
@@ -116,6 +119,7 @@ Object.prototype.hasOwnProperty.call(foo, 'bar'); // true
 
 node 遇到 await 先执行后面的函数，将 resolve 压进回调队列再让出线程  
 chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 压进回调队列
+
 ```js
 /**
  * 异步试题
@@ -145,6 +149,8 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 })();
 ```
 
++ [JavaScript 执行机制](https://juejin.im/post/59e85eebf265da430d571f89)
+
 ## es6
 
 没有块级作用域回来带很多难以理解的问题，比如 `for` 循环 `var` 变量泄露，变量覆盖等问题。`let` 声明的变量拥有自己的块级作用域，且修复了 `var` 声明变量带来的变量提升问题。
@@ -153,7 +159,7 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 
 HTML5 调用摄像头，音频媒体api
 
-## import 
+## import
 
 ```js
 import defaultMember from "module-name";
@@ -170,7 +176,8 @@ import "module-name";
 ---
 
 ## XHTML HTML XML 联系以及区别
-## Chinese:
+
+## Chinese
 
 ### html 和 xhtml 和 xml 的区别
 
@@ -196,12 +203,12 @@ import "module-name";
 ### 再说说为什么网页编码要从html>>xhtml>>xml这么发展？
 
 话说早起的网页使用html语言编写的，但是它拥有三个严重的缺点：
+
 1. 编码不规范，结构混乱臃肿，需要智能的终端才能很好的显示
 2. 表现和结构混乱，不利于开发和维护
-3. 不能使用更多的网络设备，比如手机、PDA等
-因此HTML需要发展才能解决这个问题，于是W3C又制定了XHTML，XHTML是HTML向XML 过度的一个桥梁。而xml是web发展的趋势。
+3. 不能使用更多的网络设备，比如手机、PDA等因此HTML需要发展才能解决这个问题，于是W3C又制定了XHTML，XHTML是HTML向XML 过度的一个桥梁。而xml是web发展的趋势。
 
-## EngLish:
+## EngLish
 
 ### What are HTML, XML and XHTML?
 
@@ -211,7 +218,7 @@ import "module-name";
 
 2. XML
 
-    XML (eXtensible Markup Language) grew out of a desire to be able to use more than just the fixed vocabulary of HTML on the web. It is a meta-markup language, like SGML, but one that simplifies many aspects to make it easier to make a generic parser. 
+    XML (eXtensible Markup Language) grew out of a desire to be able to use more than just the fixed vocabulary of HTML on the web. It is a meta-markup language, like SGML, but one that simplifies many aspects to make it easier to make a generic parser.
 
 3. XHTML
 
@@ -268,6 +275,7 @@ So what really determines if a document is HTML or XHTML? The one and only thing
   }
 })()
 ```
+
 **结论上级会被reject**
 
 ---
@@ -279,7 +287,7 @@ So what really determines if a document is HTML or XHTML? The one and only thing
 翻译：  
 CharacterData 抽象接口（abstract interface）代表 Node 对象包含的字符。这是一个抽象接口，意味着没有 CharacterData 类型的对象。 它是在其他接口中被实现的，如 Text、Comment 或 ProcessingInstruction 这些非抽象接口。
 
-原文：   
+原文：
 The CharacterData abstract interface represents a Node object that contains characters. This is an abstract interface, meaning there aren't any object of type CharacterData: it is implemented by other interfaces, like Text, Comment, or ProcessingInstruction which aren't abstract.
 
 ### ProcessingInstruction
@@ -368,6 +376,7 @@ macrotasks: script(整体代码),setTimeout, setInterval, setImmediate, I/O, UI 
 
 microtasks: process.nextTick, Promises, Object.observe, MutationObserver
 ```
-[js运行机制](https://zhuanlan.zhihu.com/p/52000508)
+
+[JavaScript 运行机制](https://zhuanlan.zhihu.com/p/52000508)
 
 [原文链接](https://www.jianshu.com/p/3ed992529cfc)
