@@ -119,19 +119,19 @@ alert(data[0].name);  //Zachary
 
     ```javascript
     function factorial(num) {
-      if (num <=1) {
+      if (num <= 1) {
         return 1;
       } else {
-        return num * factorial(num-1)
+        return num * factorial(num - 1)
       }
     }
 
     // 等价于 这样改写的好处是实现更松散的耦合，使函数与函数名factorial解耦，可以随意改变函数名（函数名仅是一个指向函数的指针）
     function factorial(num){
-      if (num <=1) {
+      if (num <= 1) {
         return 1;
       } else {
-        return num * arguments.callee(num-1)
+        return num * arguments.callee(num - 1)
       }
     }
     ```
@@ -141,7 +141,7 @@ alert(data[0].name);  //Zachary
     ```javascript
     window.color = "red";
     var o = { color: "blue" };
-    function sayColor(){
+    function sayColor() {
       alert(this.color);
     }
 
