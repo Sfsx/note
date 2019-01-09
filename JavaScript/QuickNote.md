@@ -380,3 +380,23 @@ microtasks: process.nextTick, Promises, Object.observe, MutationObserver
 [JavaScript 运行机制](https://zhuanlan.zhihu.com/p/52000508)
 
 [原文链接](https://www.jianshu.com/p/3ed992529cfc)
+
+---
+
+## MVC MVP MVVM 概念
+
+[相关文章](http://www.ruanyifeng.com/blog/2015/02/mvcmvp_mvvm.html)
+
+[相关文章](https://juejin.im/post/593021272f301e0058273468)
+
+---
+
+## vue 双向绑定
+
+[原文链接](https://jiongks.name/blog/vue-code-review/)
+
+---
+
+## 《nodeJS 设计模式》
+
+[简介](https://zhuanlan.zhihu.com/p/29786710)
