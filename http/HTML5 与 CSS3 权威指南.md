@@ -62,3 +62,32 @@
 ### 3.2 新增非主体结构元素
 
 ### 3.3 HTML5 中网页结构
+
+#### 3.3.1 HTML5 中的大纲
+
+#### 3.3.2 大纲编排规则
+
+#### 3.3.3 对新结构元素使用样式
+
+## 第4章 表达及其他新增和改良元素
+
++ HTML5 新增的表单内元素可以使用的属性及其使用方法
++ HTML5 新增表单元素及其使用方法
++ HTML5 中新增的关于表单内元素内容的有效性验证方法，包括属性验证、显示验证以及取消验证
++ HTML5 中除了表单元素以外，在页面上新增及改良的元素以及他们的使用方法
+
+### 4.1 新增元素与属性
+
++ form
++ formaction
++ formmethod
++ formenctype
+  + application/x-www-from-urlencoded
+  + multipart/form-data
+  + text/plain
++ formtarget
++ autofocus
++ required
++ labels 表单验证提示
++ control
++ placeholder
