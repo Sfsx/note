@@ -91,3 +91,8 @@
 + labels 表单验证提示
 + control
 + placeholder
++ select list
++ autocomplete
++ pattern
++ selectionDirection
++ indeteminate
