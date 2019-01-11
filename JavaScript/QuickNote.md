@@ -420,11 +420,21 @@ c -> m -> v
 
 ### 1. Progress Indicator（进度指示器）
 
+1. 使用 NProgress.js 库
+
+
 ### 2. Skeleton Screen（加载占位图）
 
 1. 先写好 Skeleton Screen Loading 组件 
     ![avatar][skeletonScreen]
-2. 在加载数据时先使用 Skeleton Screen Loading 组件进行页面展示
+   在加载数据时先使用 Skeleton Screen Loading 组件进行页面展示
+
+2. 先写好 Skeleton Screen 的 CSS 样式，加载完数据后移除 Skeleton Screen 样式
+3. 利用 CSS :empty 伪类辅助实现
+
+最终我选择用 CSS :empty 伪元素实现
+
+[原文链接](https://zhuanlan.zhihu.com/p/41605338)
 
 ### 3. 图片加载
 
