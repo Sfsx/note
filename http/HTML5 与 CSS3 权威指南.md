@@ -96,3 +96,21 @@
 + pattern
 + selectionDirection
 + indeteminate
+
+### 4.2 表单验证
+
+novalidate 属性
+
+### 4.3 增强的页面元素
+
+#### 4.3.13 增强的 script 元素
+
+async 属性与 defer 属性。
+
+当 script 元素添加这两个属性时，在浏览器发出下载脚本文件的请求，开始脚本文件的下载工作后，立即执行页面的加载工作。
+
+async 表示加载完成后立即触发。当脚本文件下载完成后立即触发 onload 事件，哪个 script 先加载完成，先触发。
+
+defer 表示页面全部加载完成后再触发。按照 html 文档中的排序依次触发
+
+## 第5章 绘制图形
