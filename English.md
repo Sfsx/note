@@ -143,3 +143,5 @@
 + credentials
 + comet
 + manifest
++ shallow
++ deep
