@@ -39,7 +39,7 @@ function callback(){
 }
 ```
 
----
+
 
 ## npm bluebird
 
@@ -70,7 +70,7 @@ readFile("myfile.js", "utf8").then(function(contents) {
 });
 ```
 
----
+
 
 ## 为什么要用Array.prototype.forEach.call(array, cb)而不直接使用array.forEach(cb)
 
@@ -84,7 +84,7 @@ readFile("myfile.js", "utf8").then(function(contents) {
 
 [StackOverflow 链接](https://stackoverflow.com/questions/26546352/why-would-one-use-array-prototype-foreach-callarray-cb-over-array-foreachcb)
 
----
+
 
 ## Object.prototype.hasOwnProperty.call()
 
@@ -107,11 +107,11 @@ foo.hasOwnProperty('bar'); // 始终返回 false
 Object.prototype.hasOwnProperty.call(foo, 'bar'); // true
 ```
 
----
+
 
 ## ES6的尾调用优化只在严格模式下开启，正常模式是无效的。（未验证）
 
----
+
 
 ## 异步
 
@@ -155,7 +155,7 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 
 没有块级作用域回来带很多难以理解的问题，比如 `for` 循环 `var` 变量泄露，变量覆盖等问题。`let` 和 `const` 声明的变量拥有自己的块级作用域，且修复了 `var` 声明变量带来的变量提升问题。
 
----
+
 
 ## HTML5 调用摄像头
 
@@ -163,7 +163,7 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 
 **demo 未完成**
 
----
+
 
 ## import
 
@@ -179,20 +179,20 @@ import defaultMember, * as name from "module-name";
 import "module-name";
 ```
 
----
+
 
 ## XHTML HTML XML 联系以及区别
 
-## Chinese
+### Chinese
 
-### html 和 xhtml 和 xml 的区别
+#### html 和 xhtml 和 xml 的区别
 
 1. html 即是超文本标记语言（Hyper Text Markup Language），是最早写网页的语言，但是由于时间早，规范不是很好，大小写混写且编码不规范；
 2. xhtml 即是升级版的html（Extensible Hyper Text Markup Language），对html进行了规范，编码更加严谨纯洁，也是一种过渡语言，html 向 xml 过渡的语言；
 3. xml 即时可扩展标记语言（Extensible Markup Language），是一种跨平台语言，编码更自由，可以自由创建标签。
 4. 网页编码从 html >> xhtml >> xml 这个过程发展。
 
-### html 与 xhtml 之间的区别
+#### html 与 xhtml 之间的区别
 
 1. xhtml 对比与 html，xhtml 文档具有良好完整的排版
    + 元素必须要有结束标签
@@ -206,7 +206,7 @@ import "module-name";
     `<input checked>`
 5. 在 xhtml 中，name 属性是不赞成使用的，在以后的版本中将被删除。
 
-### 再说说为什么网页编码要从html>>xhtml>>xml这么发展？
+#### 再说说为什么网页编码要从html>>xhtml>>xml这么发展？
 
 话说早起的网页使用html语言编写的，但是它拥有三个严重的缺点：
 
@@ -214,9 +214,9 @@ import "module-name";
 2. 表现和结构混乱，不利于开发和维护
 3. 不能使用更多的网络设备，比如手机、PDA等因此HTML需要发展才能解决这个问题，于是W3C又制定了XHTML，XHTML是HTML向XML 过度的一个桥梁。而xml是web发展的趋势。
 
-## EngLish
+### EngLish
 
-### What are HTML, XML and XHTML?
+#### What are HTML, XML and XHTML?
 
 1. HTML
 
@@ -234,11 +234,11 @@ First, XML always needs close tags, and has a special syntax for tags that don�
 
 Second, XML has draconian error-handling rules.
 
-### HTML-compatible XHTML
+#### HTML-compatible XHTML
 
 To enable at least partial use of XHTML, the W3C came up with something called “HTML-compatible XHTML”. This is a set of guidelines for making valid XHTML documents that can still more or less be processed as HTML
 
-### What determines if my document is HTML or XHTML?
+#### What determines if my document is HTML or XHTML?
 
 So what really determines if a document is HTML or XHTML? The one and only thing that controls whether a document is HTML or XHTML is the MIME type. If the document is served with a `text/html` MIME type, it is treated as HTML. If it is served as `application/xhtml+xml` or `text/xml`, it gets treated as XHTML. In particular, none of the following things will cause your document to be treated as XHTML:
 
@@ -249,9 +249,11 @@ So what really determines if a document is HTML or XHTML? The one and only thing
 
 [原文链接](https://webkit.org/blog/68/understanding-html-xml-and-xhtml/)
 
----
 
-## promise 错误能不能上抛 当有一个函数返回 promise 这个函数内部再调用另一个函数，这个函数也会返回 promise, 这个 promise 被 reject，那么上级 promise 会不会被reject 
+
+## promise 问题
+
+### promise 错误能不能上抛 当有一个函数返回 promise 这个函数内部再调用另一个函数，这个函数也会返回 promise, 这个 promise 被 reject，那么上级 promise 会不会被reject 
 
 ```js
 (async function () {
@@ -284,7 +286,7 @@ So what really determines if a document is HTML or XHTML? The one and only thing
 
 **结论上级会被reject**
 
----
+
 
 ## DOM 相关知识点
 
@@ -333,7 +335,7 @@ Comment 接口代表标签（markup）之间的文本符号（textual notations�
 原文：  
 The Comment interface represents textual notations within markup; although it is generally not visually shown, such comments are available to be read in the source view. Comments are represented in HTML and XML as content between `'<!--' and '-->'`. In XML, the character sequence `'--'` cannot be used within a comment.
 
----
+
 
 ## react 性能问题
 
@@ -353,11 +355,11 @@ The Comment interface represents textual notations within markup; although it is
 
     + 自己
 
-        以测。照着网友的demo自己敲了一遍
+        已测。照着网友的demo自己敲了一遍
 
     [原文链接](https://www.v2ex.com/t/519999#reply176)
 
----
+
 
 ## 深入理解Node.js垃圾回收与内存管理
 
@@ -376,7 +378,7 @@ Buffer对象本身属于普通对象，保存在堆，由V8管理，但是其储
 
 [原文链接](https://www.jianshu.com/p/4129a3fce7bb)
 
----
+
 
 ## V8实现中，两个队列各包含不同的任务
 
@@ -390,7 +392,7 @@ Buffer对象本身属于普通对象，保存在堆，由V8管理，但是其储
 
 [原文链接](https://www.jianshu.com/p/3ed992529cfc)
 
----
+
 
 ## MVC MVP MVVM 概念
 
@@ -402,19 +404,19 @@ c -> m -> v
 
 [相关文章](https://juejin.im/post/593021272f301e0058273468)
 
----
+
 
 ## vue 双向绑定
 
 [原文链接](https://jiongks.name/blog/vue-code-review/)
 
----
+
 
 ## 《nodeJS 设计模式》
 
 [简介](https://zhuanlan.zhihu.com/p/29786710)
 
---- 
+ 
 
 ## 页面加载
 
@@ -425,8 +427,10 @@ c -> m -> v
 
 ### 2. Skeleton Screen（加载占位图）
 
-1. 先写好 Skeleton Screen Loading 组件 
-    ![avatar][skeletonScreen]
+1. 先写好 Skeleton Screen Loading 组件
+
+   ![avatar][skeletonScreen]
+
    在加载数据时先使用 Skeleton Screen Loading 组件进行页面展示
 
 2. 先写好 Skeleton Screen 的 CSS 样式，加载完数据后移除 Skeleton Screen 样式
@@ -443,6 +447,48 @@ c -> m -> v
 3. 完全加载
 
 
----
+
+
+## JavaScript 高阶函数
+
+以下两个特征只要符合其中一项就可以称为高阶函数
+
++ 以一个或多个函数作为参数
++ 返回结果是一个函数
+
+## 函数式编程
+
+### 纯函数
+
+对于相同的输入，永远会得到相同的输出，而且没有任何可观察的副作用，也不依赖外部环境的状态
+
+### 柯里化
+
+传递给函数一部分参数来调用它，让它返回一个函数去处理剩下的参数
+
+### 组合函数
+
+将多个函数的能力合并，创造一个新的函数
+
+### point free
+
+不要命名转瞬即逝的中间变量
+
+```js
+// bad
+var f = str => str.toUpperCase().split(' ');
+
+// good
+var toUpperCase = word => word.toUpperCase();
+var split = x => (str => str.split(x));
+
+var f = compose(split(' '), toUpperCase);
+f("abdf efgh");
+```
+
+参考资料
+
++ [函数式编程指南](https://llh911001.gitbooks.io/mostly-adequate-guide-chinese/content/)
++ [原文链接](https://zhuanlan.zhihu.com/p/21714695)
 
 [skeletonScreen]:data:image/gif;base64,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
