@@ -17,17 +17,20 @@
 
 ### 3.7 Symbol
 
-  ES6引入了一种新的原始数据类型，表示独一无二的值。它是JavaScript的第七种数据类型
-  ```javascript
-  var sym = new Symbol(); // TypeError
-  ```
-  需要注意的事 `typeof` 返回值可能是
-  + 'undefined'  如果这个值未定义
-  + 'string'     如果这个值是字符串
-  + 'boolean'    如果这个值是布尔值
-  + 'number'     如果这个值是数值
-  + 'object'     如果这个值是对象或 `null`
-  + 'function'   如果这个值是函数
+ES6引入了一种新的原始数据类型，表示独一无二的值。它是JavaScript的第七种数据类型
+
+```javascript
+var sym = new Symbol(); // TypeError
+```
+
+需要注意的事 `typeof` 返回值可能是
+
++ 'undefined'  如果这个值未定义
++ 'string'     如果这个值是字符串
++ 'boolean'    如果这个值是布尔值
++ 'number'     如果这个值是数值
++ 'object'     如果这个值是对象或 `null`
++ 'function'   如果这个值是函数
 
 ---
 
@@ -69,6 +72,7 @@ array.shift()
 ```
 
 ### 5.5 Function
+
 #### 5.5.1 没有重载
 
 ```js
@@ -214,17 +218,17 @@ console.log(result); // "world (cat), world (bat), world (sat), world (fat)"
 function htmlEscape(text) {
   return text.replace(/[<>"&]/g, function(match, pos, originalText) {
     switch(match){
-      case "<":                
+      case "<":
         return "&lt;";
-      case ">":                 
-        return "&gt;";             
-      case "&":                 
-        return "&amp;";             
-      case "\"":                 
-        return "&quot;";         
-    }                  
-  }); 
-} 
+      case ">":
+        return "&gt;";
+      case "&":
+        return "&amp;";
+      case "\"":
+        return "&quot;";
+    }
+  });
+}
 
 console.log(htmlEscape("<p class=\"greeting\">Hello world!</p>"));  //&lt;p class=&quot;greeting&quot;&gt;Hello world!&lt;/p&gt
 ```
@@ -241,6 +245,7 @@ console.log(htmlEscape("<p class=\"greeting\">Hello world!</p>"));  //&lt;p clas
 + `eval()`
 
 #### 5.7.2 Math 对象
+
 + `math` 对象属性
 + `min()` 和 `max()`
 
@@ -259,7 +264,8 @@ console.log(htmlEscape("<p class=\"greeting\">Hello world!</p>"));  //&lt;p clas
 
 + `random()` 方法  
   `Math.random()`方法返回大于等于 `0` 小于 `1` 的一个随机数。
-  ```javascript
+
+  ```js
   // 值 = Math.floor(Math.random() * 可能值的总数 + 第一个可能的值)
   function selectFrom(lowerValue, upperValue) {
     var choices = upperValue - lowerValue + 1;
@@ -284,7 +290,7 @@ console.log(htmlEscape("<p class=\"greeting\">Hello world!</p>"));  //&lt;p clas
 
     + Configurable  
     表示能否通过 `delete` 删除属性从而重新定义属性，能否修改属性的特性，或者能否把属性修改为访问器属性
-    + Enumerable   
+    + Enumerable
     表示能否通过 `for-in` 循环返回属性
     + Writable  
     表示能否修改属性的值
@@ -294,9 +300,9 @@ console.log(htmlEscape("<p class=\"greeting\">Hello world!</p>"));  //&lt;p clas
     ```javascript
     var person = {};
     Object.defineProperty(person, "name", {
-      writable: true,   
-      configurable: true,   
-      Enumerable: true,    
+      writable: true,
+      configurable: true,
+      Enumerable: true,
       value: "Nicholas",
     });
     ```
@@ -336,7 +342,7 @@ console.log(htmlEscape("<p class=\"greeting\">Hello world!</p>"));  //&lt;p clas
 
 #### 6.1.3 读取属性的特性
 
-  ```js 
+  ```js
   /**
   * descript即为key属性的特性，可能是数据属性或者访问属性
   */
@@ -360,10 +366,11 @@ function createPerson(name, age, job){
 }
 var person1 = createPerson("Nicholas", 29, "Software Engineer");
 ```
+
 工厂模式虽然解决了创建多个相似对象的问题，但却没有解决对象识别的问题（即怎样知道一个对象的类型）
 
 #### 6.2.2 构造函数  
-    
+
 ```js
 function Person(name, age, job){
   this.name = name;
@@ -380,11 +387,12 @@ var person2 = new Person("Greg", 27, "Doctor");
 Person("Greg", 27, "Doctor"); // 添加到 window
 window.sayName(); //"Greg"
 ```
+
 要创建 `Person` 的新实例，必须使用 `new` 操作符。以这种方式调用构造函数实际上会经历以下 4 个步骤：  
 >(1) 创建一个新的对象  
 >(2) 将构造函数的作用域传给新的对象  
 >(3) 执行构造函数，为这个新对象添加属性  
->(4) 返回新的对象   
+>(4) 返回新的对象
 
 构造函数模式虽然好用，但也并非没有缺点。使用构造函数的主要问题，就是每个方法都要在每个实例上重新创建一遍。在前面的例子中， `person1` 和 `person2` 都有一个名为 `sayName()`的方法，但那两个方法不是同一个 `Function` 的实例。这样如果创建多个实例会造成内存浪费
 
@@ -444,11 +452,11 @@ Person.prototype.sayName = function () {
 
     不推荐在程序开发过程中修改原生对象的原型
 
-6. 原型对象的问题 
+6. 原型对象的问题
 
     原型模式中所有属性是被很多实例共享的，对于包含基本值的属性也无伤大雅，通过在实例中添加同名属性，可以隐藏原型中对应的属性。  
     但是如果包含引用类型值的属性，会造成多个实际修改同一个引用类型值，将导致比较多的问题。
-      
+
 #### 6.2.4 组合使用构造函数模式和原型模式
 
 构造函数用于定义实例的属性,而原型模式定义实例共享的方法
@@ -480,6 +488,7 @@ function Person(name) {
 }
 var friend = new Person('Sfsx');
 ```
+
 这个模式和工厂模式其实是一模一样的，就是调用的时候用 `new` 关键字。  
 同工厂模式一样，无法用 `instanceof` 来判断对象的类型。不建议使用
 
@@ -530,7 +539,6 @@ alert(instance.getSuperValue()); //true
 
     所有引用类型默认都继承了 `Object`，而这个继承也是通过原型链实现的。所有函数的默认原型都是 `Object` 的实例，因此默认原型都会包含一个内部指针，指向 `Object.prototype`。  
     **所有对象都是通过函数创建，所有函数都是对象。**
-    
 
 2. 确定原型链与实例的关系
 
@@ -549,6 +557,7 @@ alert(instance.getSuperValue()); //true
 
 **函数只不过是在特定环境中执行代码的对象，
 因此通过使用 `apply()` 和 `call()` 方法也可以在（将来）新创建的对象上执行构造函数**
+
 ```js
 function SuperType() {
   this.colors = ["red", "blue", "green"];
@@ -616,6 +625,7 @@ var instance = new SubType();
 #### 6.3.4 原型式继承
 
 `Object.create()`即为原型继承。这个方法接收两个参数：一个用作新对象原型的对象和（可选的）一个为新对象定义额外属性的对象。
+
 ```js
 var superType = {
   color: ["red", "blue", "green"]
@@ -627,6 +637,7 @@ var anotherSubType = Object.create(superType);
 anotherSubType.color.push("white");
 alert(anotherSubType.color) // "red, blue, green, black, white"
 ```
+
 但是，当对象包含引用类型值的属性时，通过`Object.create()`创建的对象会始终共享其值，就像原型模式一样。
 
 #### 6.3.5 寄生式继承
@@ -637,15 +648,15 @@ alert(anotherSubType.color) // "red, blue, green, black, white"
 function createAnother(original){
   var clone = object(original);  //通过调用函数创建一个新对象
   clone.sayHi = function(){      //以某种方式来增强这个对象
-    alert("hi");     
+    alert("hi");
   };
   return clone;                  //返回这个对象
 }
-var person = {     
-  name: "Nicholas",     
+var person = {
+  name: "Nicholas",
   friends: ["Shelby", "Court", "Van"]
-}; 
- 
+};
+
 var anotherPerson = createAnother(person); anotherPerson.sayHi(); //"hi"
 ```
 
@@ -688,10 +699,11 @@ inheritPrototype(SubType, SuperType);
 + 函数表达式的特征
 + 使用函数实现递归
 + 使用闭包定义私有变量
- 
+
 ### 7.1 递归
 
 严格模式下，不能通过脚本访问 `arguments.callee`，访问这个属性会导致错误。不过，可以使用命名函数表达式来达成相同的结果。
+
 ```js
 "use strict";
 var factorial = (function f(num){
@@ -701,8 +713,9 @@ var factorial = (function f(num){
     return num * f(num-1);
   }
 })
-alert(f); // undefined 
+alert(f); // undefined
 ```
+
 ### 7.2 闭包
 
 **闭包是指一个函数有权访问另一个函数作用域中的变量**
@@ -739,6 +752,7 @@ function createFunction() {
 ### 7.4 私有变量
 
 在构造函数中定义私有变量和特权方法
+
 ```js
 function Person(name){
   var age = 29;
@@ -753,6 +767,7 @@ function Person(name){
   }
 }
 ```
+
 但是这种方法存在构造函数模式继承所存在的问题: 针对每一个实例都会创建同样的一组新方法
 
 #### 7.4.1 静态私有变量
@@ -789,9 +804,10 @@ var person = function() {
     setName: function(newName) {
       name = newName;
     }
-  } 
-}() 
+  }
+}()
 ```
+
 因为是单例所以
 
 #### 7.4.3 增强模块模式
@@ -815,6 +831,7 @@ var singleton = function() {
   return object;
 }()
 ```
+
 ---
 
 ## 第8章 BOM
@@ -832,10 +849,12 @@ BOM 浏览器对象模型
 
 在全局作用域中申明的变量、函数会变成 `window` 对象的属性和函数。
 定义在全局作用域中的变量和函数与直接定义在 `window` 对象上的属性与函数还是有区别，`window` 对象的属性是可以通过 `delete` 删除的
+
 ```js
 var age = 29;
 delete window.age; // 报错
 ```
+
 `var` 关键字表示在 `window` 上建立一个 `[[Configurable]]` 特性为 `false` 的属性，所以 `delete` 该属性会报错
 
 #### 8.1.2 窗口关系及框架
@@ -851,34 +870,34 @@ delete window.age; // 报错
 #### 8.1.6 间歇调用和超时调用
 
 + 间歇调用：`setInterval()`
-```js
-var num = 0;
-var max = 10;
-var intervalId = null;
+    ```js
+    var num = 0;
+    var max = 10;
+    var intervalId = null;
 
-function incrementNumber() {
-  if (num > max) {
-    clearInterval(intervalId);
-    alert("done");
-  }
-}
+    function incrementNumber() {
+        if (num > max) {
+            clearInterval(intervalId);
+            alert("done");
+        }
+    }
 
-intervalId = setInterval(incrementNumber, 500);
-``` 
+    intervalId = setInterval(incrementNumber, 500);
+    ```
 + 超时调用：`setTimeout()`
-```js
-var num = 0;
-var max = 10;
-function increamentNumber() {
-  num ++;
-  if(num < max) {
+    ```js
+    var num = 0;
+    var max = 10;
+    function increamentNumber() {
+        num ++;
+        if(num < max) {
+            setTimeout(increamentNumber, 500);
+        } else {
+            alert("done");
+        }
+    }
     setTimeout(increamentNumber, 500);
-  } else {
-    alert("done");
-  }
-}
-setTimeout(increamentNumber, 500);
-```
+    ```
 使用超时调用来模拟间歇调用是一种最佳模式，在开发环境中，后一个间歇调用有可能在在前一个间歇调用完成之前启动。所以最好不要使用间歇调用。
 
 #### 8.1.7 系统对话框
@@ -1031,13 +1050,13 @@ http herader User-Agent
 1. `nodeName` 和 `nodeValue` 属性
 2. 节点关系
 3. 操作节点
-    
+
     + `appendChild(newNode)`
     + `insertBefor(newNode, someNode)`
     + `replaceChild(newNode, someNode)`
 
 4. 其他方法
-    
+
     `cloneNode()`
 
 #### 10.1.2 Document 类型
@@ -1066,7 +1085,7 @@ http herader User-Agent
 
 2. 文档信息
 
-    作为 `HTMLDocument` 的一个实例，`document` 对象还有一些标准的 `Document` 对象所没有的属性。   
+    作为 `HTMLDocument` 的一个实例，`document` 对象还有一些标准的 `Document` 对象所没有的属性。
     + `title` -> 浏览器标签标题
     + `URL` -> 地址栏 url
     + `domain` -> 域名
@@ -1137,6 +1156,7 @@ Element 是非常通用的基类，所有 `Document` 对象下的对象都继承
 #### 10.1.4 Text 类型
 
 文本节点由 `Text` 类型表示，包含的是可以照字面解释的纯文本内容。纯文本可以包含转义后的 `html` 代码，但不能包含 `html` 代码，`Text` 节点具有以下特征：
+
 + nodeType 3
 + nodeName "#text"
 + nodeValue 节点所包含的文本
@@ -1164,10 +1184,10 @@ Element 是非常通用的基类，所有 `Document` 对象下的对象都继承
 
     ```js
     var element = document.createElement("div"); element.className = "message"; 
-    
+
     var textNode = document.createTextNode("Hello world!"); 
     element.appendChild(textNode); 
-    
+
     document.body.appendChild(element);
     ```
 
@@ -1182,6 +1202,7 @@ Element 是非常通用的基类，所有 `Document` 对象下的对象都继承
 #### 10.1.5 Comment 类型
 
 注释在DOM中是通过 `Comment` 类型来表示的。`Commnet` 具有一下特征：
+
 + nodeType 8
 + nodeName "#comment"
 + nodeValue 注释的内容
@@ -1195,6 +1216,7 @@ Element 是非常通用的基类，所有 `Document` 对象下的对象都继承
 #### 10.1.6 CDATASection 类型
 
 `CDATASection` 类型只针对基于 `XML` 的文档，表示的是 `CDATA` 区域。与 `Comment` 类似，`CDATASection` 类型继承自 `Text` 类型，因此拥有除 `splitText()` 之外的所有字符串操作方法。`CDATASection` 具有以下特征：
+
 + nodeType 4
 + nodeName "#cdata-section"
 + nodeValue CDATA 区域中的内容
@@ -1206,6 +1228,7 @@ Element 是非常通用的基类，所有 `Document` 对象下的对象都继承
 #### 10.1.7 DocumentType 类型
 
 `DocumentType` 在浏览器中并不常用，仅有 Fiefox、Safari和Opera支持。`DocumentType`包含着与文档的doctype有关的所有信息，它具有一下特性：
+
 + nodeType 10
 + nodeName doctype 的名称
 + parentNode Document
@@ -1224,6 +1247,7 @@ Element 是非常通用的基类，所有 `Document` 对象下的对象都继承
 #### 10.1.8 DocumentFragment 类型
 
 在所有节点类型中，只有 `DocumentFragment` 在文档中没有对应的标记。`DOM` 规定文档片段是一种 “轻量级” 的文档，可以包含和控制节点。`DocumentFragment` 节点具有一下特征：
+
 + nodeValue 11
 + nodeName "#document-fragment"
 + nodeValue null
@@ -1234,6 +1258,7 @@ Element 是非常通用的基类，所有 `Document` 对象下的对象都继承
 #### 10.1.9 Attr 类型
 
 元素的特性在 `DOM` 中以 `Attr` 类型表示。在所有浏览器中都可以访问 `Attr` 类型的构造函数和原型。特性就是存在与元素的 `attributes` 属性中的节点。特性节点具有以下特征：
+
 + nodeType 2
 + nodeName 特性的名称
 + nodeValue 特性的值
@@ -1282,7 +1307,7 @@ function loadScript(url) {
 ### 11.1 选择符API
 
 `Jquery` 的核心就是通过CSS选择符查询 DOM 文档获得元素引用，从而抛开`getElementById()` 和 `getElementByTagName()`
- 
+
 `Selectors API` 是由W3C发起制定的一个标准，致力于让浏览器支持元素 `CSS` 查询。所有实现这一功能的 `JavaScript` 库都会写一个基础 `CSS` 解析器，然后在使用以有 `DOM` 方法并查询文档并找到匹配的节点。但是现在这个解析功能变成原生 `API` 之后，解析和查询操作可以由浏览器内部通过编译后的代码来完成，极大的改善了性能。
 
 #### 11.1.1 `querySelector()`方法
@@ -1290,13 +1315,13 @@ function loadScript(url) {
 ```js
 //取得 body 元素
 var body = document.querySelector("body"); 
- 
+
 //取得 ID 为"myDiv"的元素
 var myDiv = document.querySelector("#myDiv"); 
- 
+
 //取得类为"selected"的第一个元素
 var selected = document.querySelector(".selected"); 
- 
+
 //取得类为"button"的第一个图像元素
 var img = document.body.querySelector("img.button");
 ```
@@ -1316,6 +1341,7 @@ var img = document.body.querySelector("img.button");
 对于元素之间的空格，不同浏览器处理方式不一样，导致使用 `childNodes` 和 `firstChild` 等属性时行为不一致
 
 `Element Traversal API` 为 `DOM` 添加5个特性：
+
 + childElementCount
 + firstElementChild
 + lastElementChild
@@ -1329,7 +1355,7 @@ var img = document.body.querySelector("img.button");
 #### 11.3.1 与类相关的扩充
 
 1. `getElementByClassName()`  
-   
+
     在 `document` 对象上调用会返回与类名匹配的所有元素，在元素上调用会返回后代元素中匹配的元素。返回为 `NodeList` 故该方法存在性能问题
 
 2. classList 属性
@@ -1344,13 +1370,13 @@ var img = document.body.querySelector("img.button");
 #### 11.3.2 焦点管理
 
 + `document.activeElement` 这个属性返回当前 `DOM` 中获得焦点的元素。文档加载期间值为null，文档刚加载完成值为 `document.body`
-+ `document.hasFocus()` 
++ `document.hasFocus()`
 
 #### 11.3.3 HTMLDocument 变化
 
 HTML5 扩展了 HTMLDocument, 增加了新功能
 
-1. `document.readyState` 属性——文档加载状态 
+1. `document.readyState` 属性——文档加载状态
     + loading 文档正在加载
     + complete 文档加载完成
 
@@ -1413,9 +1439,11 @@ HTML5 扩展了 HTMLDocument, 增加了新功能
 #### 11.4.1 文档模式
 
 `IE8` 引入了一个新的概念叫"文档模式"(`document mode`)。页面的文档模式决定了可以使用什么功能。换句话说，文档模式决定了你可以使用哪个级别的 `CSS`，可以在 `JavasCript` 中使用哪些 `API`，以及如何对待文档类型(`doctype`)
+
 ```html
-<meta http-equiv="X-UA-Compatible" content="IE=IEVersion"> 
-``` 
+<meta http-equiv="X-UA-Compatible" content="IE=IEVersion">
+```
+
 `document.documentMode ` 可以确定当前页面使用的是什么文档模式
 
 #### 11.4.2 `children` 属性
@@ -1425,14 +1453,17 @@ HTML5 扩展了 HTMLDocument, 增加了新功能
 #### 11.4.3 `contains()`
 
 判断一个节点是不是另一个节点的后代
+
 ```js
-alert(document.documentElement.contains(document.body));    //true 
+alert(document.documentElement.contains(document.body));    //true
 ```
+
 `DOM3` 中的 `compareDocumentPosition()` 也能够确定节点间的关系。
 
 #### 11.4.4 插入文本
 
 `innerHTML` 和 `outerHTML` 已经被 `HTML5` 纳入规范。 但另外两个插入文本的专有属性 `innerText` 和 `outerText` 没有被 `HTML5` 看中。
+
 1. `innerText` 属性
 
     设置该属性后会替换调用元素的所有内容（元素下原有的子节点都会被替换成文本，并且会过滤HTML标签）。设置 `innerText` 永远只会生成当前节点的一个子文本节点
@@ -1468,6 +1499,7 @@ alert(document.documentElement.contains(document.body));    //true
 
 DOM1 主要定义的是 HTML 和 XML 文档的底层结构。DOM2 和 DOM3 则在这个结构的基础上引入了更多交互能力，也支持更高级的 XML 特性。
 DOM2 模块：
+
 + DOM2 核心
 + DOM2 视图
 + DOM2 事件
@@ -1551,16 +1583,18 @@ DOM2 模块：
     + `isEqualNode()`
     + `setUserData()` 处理函数会在带有数据的节点被复制、删除、重命名或引入一个文档时调用，因而你可以事先决定在上述操作发生时如何处理用户数据。处理函数接受 5 个参数：表示操作类型的数值（1 表示复制，2 表示导入，3 表示删除，4 表示重命名）、数据键、数据值、源节点和目标节点
 
-4. 框架的变化 
-    
+4. 框架的变化
+
     框架和内嵌框架分别用 `HTMLFrameElement` 和 `HTMLIFrameElement` 表示，他们的新属性是 `contenDocument` 这个属性包含一个指针，指向表示框架内容的文档对象。
 
 ### 12.2 样式
 
 在HTML 中定义样式的方式有三种
+
 + `<link/>` 元素包含外部样式文件
 + `<style/>` 元素定义嵌入式样式
 + 使用 `style` 特性针对特定元素定义特定样式
+
 DOM2 围绕这三种样式的机制提供一套API
 
 #### 12.2.1 访问元素样式
@@ -1579,10 +1613,10 @@ DOM2 围绕这三种样式的机制提供一套API
     + `parenRule` 表示 CSS 信息的 `CSSRule` 对象，这个对象包含两个属性 `cssText` 和 `cssValueType`。其中 `cssValueType` 属性则是一个数值常量，表示值的类型：0表示继承的值，1表示基本的值，2表示 值列表，3表示自定义的值
     + `getPropertyCssValue(propertyName)`
     + `getPropertyProprity(propertyName)` 如果给定对象的属性使用了 `!important` 设置则返回 `"important"` 否则返回空字符串
-     + `getProtpertyValue(propertyName)`
-     + `item(index)` 返回指定位置的 CSS 属性名称是带短划线
-     + `removeProperty(propertyName)`
-     + `setProperty(propertyName, value, proprity)` 
+    + `getProtpertyValue(propertyName)`
+    + `item(index)` 返回指定位置的 CSS 属性名称是带短划线
+    + `removeProperty(propertyName)`
+    + `setProperty(propertyName, value, proprity)` 
 
 2. 计算的样式
 
@@ -1595,6 +1629,7 @@ DOM2 围绕这三种样式的机制提供一套API
 CSSStyleSheet 类型表示的是样式表，包括 `<link/>` (HTMLLinkElement 类型) 和 `<style/>` (HTMLStyleElement 类型)。该对象上只有**只读**接口(有一个属性例外)
 
 CSSStyleSheet 继承自 StyleSheet 属性如下：
+
 + `disabled`
 + `herf`： `<link>`的样式URL
 + `media`
@@ -1607,7 +1642,7 @@ CSSStyleSheet 继承自 StyleSheet 属性如下：
 + `insertRule`
   
 1. CSS 规则
- 
+
     CSSStyleRuyle 类型包含下列属性：
     + cssText
     + parentRule
@@ -1654,6 +1689,7 @@ CSSStyleSheet 继承自 StyleSheet 属性如下：
 #### 12.3.1 `NodeIterator`
 
 `document.createNodeIterator()` 方法创建。该方法有四个参数：
+
 + root
 + whatToShow
 + filter： NodeFilter 对象或者是一个表示应该接受还是拒绝某种特定节点的函数
@@ -1662,6 +1698,7 @@ CSSStyleSheet 继承自 StyleSheet 属性如下：
 #### 12.3.2 `TreeWalker`
 
 `TreeWalker` 是 `NodeIterator` 的高级版本。用`document.createTreeWalker()`方法创建，参数与`document.createNodeIterator()`相同。除了包括 `nextNode()` 和 `previousNode()` 还有以下方法：
+
 + `parentNode()`
 + `firstChild()`
 + `lastChild()`
@@ -1752,6 +1789,7 @@ DOM2 在 `Document` 类型中定义了 `createRange()` 方法
 #### 13.1.3 DOM事件流
 
 “DOM2 事件” 规定的事件流包括三个阶段：
+
 + 事件捕获阶段  
   从Document 向下传递事件，对象事件并没有触发
 + 处于目标阶段  
@@ -1765,6 +1803,7 @@ DOM2 在 `Document` 类型中定义了 `createRange()` 方法
 #### 13.2.1 HTML事件处理程序
 
 在 HTML 中指定事件处理程序有两个缺点：
+
 + 时差，用户可能在 HTML 元素一出现在页面上就触发该事件，而这时页面还没有加载完成，绑定的 JavaScript 函数还没完成加载
 + 以这种方式拓展的事件处理程序的作用域链在不同浏览器中是不同的。不同的 JavaScript 引擎遵循的标识符解析规则略有差异，很可能在访问非限定对象时出错
 + HTML 与 JavaScript 代码紧密耦合，如果更换程序需要更换两个地方
@@ -1777,11 +1816,13 @@ btn.onclick = function(){
   alert("Clicked");
 };
 ```
+
 DOM0方法指定的事件处理程序被认为是元素的方法，此时事件处理程序是在元素的作用域中执行的
 
 #### 13.2.3 DOM2 事件处理程序
 
 “DOM2 事件” 模块定义的方法 `addEventListener()` 和 `removeEventListener()`，这两个函数都接受3个参数：
+
 + 要处理的事件名
 + 事件处理函数
 + Boolean 
@@ -1789,6 +1830,7 @@ DOM0方法指定的事件处理程序被认为是元素的方法，此时事件�
   + flase表示在冒泡阶段调用事件处理程序
 
 同 DOM0 一样处理函数是在元素的作用域中执行，能够多次添加，顺序执行
+
 ```js
 var btn = document.getElementById("myBtn");
 btn.addEventListener("click", function(){
@@ -1799,6 +1841,7 @@ btn.addEventListener("click", function(){
 #### 13.2.4 IE 事件处理程序
 
 `attachEvent()` 和 `detachEvent()` 这两个参数接受相同的两个参数：
+
 + 事件处理程序名称
 + 事件处理函数
 
@@ -1808,6 +1851,7 @@ btn.attachEvent("onclick", function(){
   alert("Clicked");
 });
 ```
+
 全局作用域
 
 #### 13.2.5 跨浏览器的事件处理程序
@@ -1819,6 +1863,7 @@ event 对象
 #### 13.3.1 DOM中的事件对象
 
 event 都具有的属性和方法（以下属性均为只读不可修改）：
+
 + bubbles 事件是否冒泡
 + cancelable 是否取消事件默认行为
 + cuurentTarget 处理事件的那个元素
@@ -1841,6 +1886,7 @@ event 都具有的属性和方法（以下属性均为只读不可修改）：
 若使用 `attachEvent()` 添加事件处理函数， event 作为 window 对象的一个属性存在， 并且作为处理函数的参数
 
 IE event 都具有的属性和方法：
+
 + cancelBubble
 + returnValue
 + srcElemnet
@@ -1879,7 +1925,7 @@ IE event 都具有的属性和方法：
     当页面 **完全** 加载后就会触发 window 上的 load 事件
 
     在向文档添加新图像元素时，新图像元素不一定要从添加到文档后才开始 下载，只要设置了 src 属性就会开始下载
-    
+
 2. unload
 
     只要用户从一个页面切 换到另一个页面，就会发生 unload 事件
@@ -1901,6 +1947,7 @@ IE event 都具有的属性和方法：
 #### 13.4.2 焦点事件
 
 焦点事件会在页面元素获得焦点时触发，配合 documnet.hasFocus() 以及 document.activeElement 属性配合可获取用户行踪。
+
 + blur 在元素失去焦点时触发，不会冒泡
 + focus 在元素获得焦点时触发，不会冒泡
 + focusout 在元素获得焦点时触发，这个事件与 HTML 的 focus 等价，会冒泡
@@ -1945,9 +1992,9 @@ click + click = dblclick
 
 4. 修改键
 
-    `evnet.shiftKey`   
-    `event.ctrlKey`   
-    `event.altKey`  
+    `evnet.shiftKey`
+    `event.ctrlKey`
+    `event.altKey`
     `event.metaKey` (win -> win, mac -> cmd)
 
 5. 相关元素
@@ -1967,7 +2014,7 @@ click + click = dblclick
     wheeldelta 事件  
     `event.wheelDelta` 表示滚轮滚动方向
 
-9.  触摸设备
+9. 触摸设备
 
     + 不支持 dblclick 双击窗口放大
     + 轻击可单击元素会触发 mouseove 事件。如果此操作会导致内容变化，则不再有其他事件发生。若屏幕没有变化，会依次发生 mousedown, mouseup, click事件
@@ -2006,8 +2053,8 @@ click + click = dblclick
     DOM3 事件中的键盘事件，不再包含 `charCode` 属性，而是包含两个新属性：`key` 和 `char`。`key` 属性是按下键相应的文本字符， `char` 属性是按下那个键所代表字符的 ASCII 编码（自测chrome既有 `charCode` 也有 `key` 和 `char`）
 
     DOM3 还添加了 `location` 的属性，这是一个数值，表示按下了什么位置的键。0表示键盘，1表示左侧键（左 alt），2表示右侧位置，3表示数字小键盘，4表示移动设备键盘，5表示手柄（浏览器支持不多，自测chrome支持）
-    
-    DOM3 添加 `event.getModifierState()` 但只有 IE9 支持（自测chrome支持） 
+
+    DOM3 添加 `event.getModifierState()` 但只有 IE9 支持（自测chrome支持）
 
 4. textInput 事件
 
@@ -2073,7 +2120,7 @@ click + click = dblclick
 5. pageshow 和 pagehide 事件
 
     使用浏览器后退按钮，页面从bfcache加载时不会触发 load 事件。
-    
+
     pageshow 事件页面显示时触发。如果页面从 bfcache 加载，页面状态完全恢复的那一刻触发。如果页面重新加载，则在 load 事件后触发。该事件 evnet.persisted 标志页面是否从 bfcache 加载。
 
     pagehide 事件会在浏览器卸载页面时触发，而且是在 unload 事件前触发。其 evnet.persisted 表示卸载页面是否会存入缓存。
@@ -2086,15 +2133,15 @@ click + click = dblclick
 
 #### 13.4.8 设备事件
 
-1. orientationchange 事件 
+1. orientationchange 事件
 
     设备切换横纵向查看模式时触发。 其中 `window.orientation` 值区别横纵方向
- 
+
 2. Mozorientation 事件
 
     当设备的加速计检测到设备方向改变时，就会触发这个事 件
 
-3. deviceorientation 事件 
+3. deviceorientation 事件
 
     在加速计检测到设备方向变化时在 window 对象上触发，事件的意图是告诉开发人员设备在空间中朝向哪儿，而不是如何移动。
 
@@ -2133,6 +2180,7 @@ click + click = dblclick
 #### 13.5.1 事件委托
 
 对 “事件处理程序过多” 问题的解决方案就是**事件委托**。利用事件冒泡，可以只在 document 层次处理事件。优点有下
+
 + document 对象很快能够访问，可以在页面生命周期任何事件点添加事件处理程序
 + 在页面中设置处理程序的所需的时间更少。
 + 整个页面占用内存空间更少
@@ -2156,7 +2204,7 @@ document 对象上使用 `createEvent()` 方法创建事件
 
     ```js
     var btn = document.getElementById("myBtn"); 
- 
+
     //创建事件对象
     var event = document.createEvent("MouseEvents");
     //初始化事件对象
@@ -2169,8 +2217,8 @@ document 对象上使用 `createEvent()` 方法创建事件
 
     ```js
     var event = document.createEvent("KeyboardEvent"); 
- 
-    //初始化事件对象     
+
+    //初始化事件对象
     event.initKeyboardEvent("keydown", true, true, document.defaultView, "a", 0, "Shift", 0); 
     ```
 
@@ -2199,6 +2247,7 @@ document 对象上使用 `createEvent()` 方法创建事件
 ### 14.1 表单的基础知识
 
 HTML 标签的 `<form>` 在 JavaScript 中，对应的是 HTMLFormElement 类型。 HTMLFromElement 继承了 HTMLElement，因此与 HTML 元素具有相同的属性。但本身还有以下独特的属性和方法：
+
 + accetpCharset -> HTML accept-charset 属性
 + action -> HTML action 属性
 + elements -> 表单中所有控件的集合
@@ -2218,8 +2267,8 @@ HTML 标签的 `<form>` 在 JavaScript 中，对应的是 HTMLFormElement 类型
 
 ```html
 <!-- 通用重置按钮 -->
-<input type="reset" value="Reset Form"> 
- 
+<input type="reset" value="Reset Form">
+
 <!-- 自定义重置按钮 -->
 <button type="reset">Reset Form</button>
 ```
@@ -2283,7 +2332,7 @@ HTML 标签的 `<form>` 在 JavaScript 中，对应的是 HTMLFormElement 类型
     textDom.setSelectionRange(0, textDom.value.length);
     ```
 
-#### 14.2.2 过滤输入 
+#### 14.2.2 过滤输入
 
 1. 屏蔽字符
 2. 操作剪贴板
@@ -2302,6 +2351,7 @@ HTML 标签的 `<form>` 在 JavaScript 中，对应的是 HTMLFormElement 类型
 可以通过 window.clipboardData 对象访问剪贴板数据，最好只在发生剪贴板事件期间使用这个对象
 
 该对象有三个方法：
+
 + getData()：只有一个参数为取得的数据格式：`"text/plain"`
 + setData()：只有一个参数也是数据类型，返回 `boolean` 判断操作是否成功
 + clearData()
@@ -2350,7 +2400,8 @@ HTML 标签的 `<form>` 在 JavaScript 中，对应的是 HTMLFormElement 类型
 #### 14.3 选择脚本
 
 选择框是通过 `<select>` 和 `<option>` 元素创建的。属于 HTMLSelectElement 类型，该类型提供了下列属性和方法：
-+ `add(newOption, relOption)`：向元素的 reloption（选项）之前插入新的 `<option>` 
+
++ `add(newOption, relOption)`：向元素的 reloption（选项）之前插入新的 `<option>`
 + multiple
 + options： 控件中所有 `<option>` 元素的 HTMLCollection
 + `remove(index)`
@@ -2364,6 +2415,7 @@ HTML 标签的 `<form>` 在 JavaScript 中，对应的是 HTMLFormElement 类型
   + 有多个选择项，则 value 会根据之前的规则取得第一个选项中的值
 
 `<option>` 元素都有一个 HTMLOptionElement 对象表示。该对象具有以下属性：
+
 + index
 + label
 + selected 表示是否被选中
@@ -2464,11 +2516,12 @@ selectbox.insertBefore(optionToMove, selectbox.options[optionToMove.index+2]);
 #### 14.5.4 表单与富文本
 
 在表单提交前将富文本中的 HTML 插入表单的隐藏字段，同样适用于 contenteditable 元素
+
 ```js
 EventUtil.addHandler(form, "submit", function(event){
     event = EventUtil.getEvent(event);
     var target = EventUtil.getTarget(event); 
- 
+
     target.elements["comments"].value = frames["richedit"].document.body.innerHTML;
 
     // contenteditable
@@ -2492,7 +2545,11 @@ HTML5 中添加的元素中最受欢迎的元素就是 `<canves>` 元素。`<can
 
 `getContex()` 无参。获取2D上下文。
 
-`toDataURL()` 参数为图像 MIME 类型。例如，`var imgURI = drawing.toDataURL("image/png"); `
+`toDataURL()` 参数为图像 MIME 类型。例如，
+
+```js
+var imgURI = drawing.toDataURL("image/png");
+```
 
 ### 15.2 2D上下文
 
@@ -2524,17 +2581,18 @@ HTML5 中添加的元素中最受欢迎的元素就是 `<canves>` 元素。`<can
 
 #### 15.2.4 绘制文本
 
-`fillText()` 和 `strokText()` 这两个方法都接受4个参数：文本，x，y和可选的最大像素宽度。并基于以下三个属性 
+`fillText()` 和 `strokText()` 这两个方法都接受4个参数：文本，x，y和可选的最大像素宽度。并基于以下三个属性
+
 + font
 + textAlign
 + textBaseline
-  + 可能值："top"、"hanging"、"middle"、"alphabetic"、 "ideographic"和"bottom"。 
+  + 可能值："top"、"hanging"、"middle"、"alphabetic"、 "ideographic"和"bottom"。
 
 ```js
 context.font = "bold 14px Arial";
 context.textAlign = "center";
 context.textBaseline = "middle";
-context.fillText("12", 100, 20); 
+context.fillText("12", 100, 20);
 ```
 
 #### 15.2.5 变换
@@ -2542,14 +2600,14 @@ context.fillText("12", 100, 20);
 + `rotate(angle)`：围绕远点旋转图像 angle 弧度
 + `scale(scaleX, scaleY)`：缩放图像，`x*scaleX`， `y*csaleY`
 + `translate(x, y)`：将坐标原点移动到 (x, y)。
-+ `transform(m11, m12, m21, m22, dx, dy)`：直接修改变换矩阵，方式是矩阵相乘：  
-$$
-  \begin{matrix}
-  m11 & m12 & dx \\
-  m21 & m22 & dy \\
-  0 & 0 & 1
-  \end{matrix} \tag{1}
-$$
++ `transform(m11, m12, m21, m22, dx, dy)`：直接修改变换矩阵，方式是矩阵相乘：
+    $$
+    \begin{matrix}
+    m11 & m12 & dx \\
+    m21 & m22 & dy \\
+    0 & 0 & 1
+    \end{matrix} \tag{1}
+    $$
 + `setTransform(m1_1, m1_2, m2_1, m2_2, dx, dy)`：将变化矩阵重置为默认状态在调用 `transform()`
 
 `save()` 将当前上下文中的变化与属性压栈保存
@@ -2593,6 +2651,7 @@ context.drawImage(image, 0, 10, 50, 50, 0, 100, 40, 60);
 #### 15.2.7 阴影
 
 以下属性用于绘制阴影：
+
 + shadowColor
 + shadowOffsetX：阴影x方向偏移量
 + shadowOffsetY
@@ -2633,6 +2692,7 @@ context.storkStyle = gradient;
 `globalAlpha`： 0 ~ 1 之间的值指定所有绘制的透明度，可修改
 
 `globalCompositionOperation`：表示后绘制的图形怎么样与先绘制的图形结合。可能值如下
+
 + source-over：后者位于前者上方
 + source-in：两者重叠可见，其他部分透明
 + source-out：两者不重叠部分可见，前者透明
@@ -2670,13 +2730,13 @@ var buffer = new ArrayBuffer(20);
 
     var buffer = new ArrayBuffer(20),
         view = new DataView(buffer),
-        value; 
- 
+        value;
+
     view.setUint16(0, 25);
-    value = view.getInt8(0); 
-    
-    alert(value); //0 
-    ``` 
+    value = view.getInt8(0);
+
+    alert(value); //0
+    ```
 
     虽然 DataView 能让我们在字节级别上读写数组缓冲器中的数据，但我们必须自己记住要将数据保存到哪里，需要占多少子节
 
@@ -2695,14 +2755,14 @@ var buffer = new ArrayBuffer(20);
     以上每个视图的构造函数都有一个名为 `BYTES_PRE_ELEMENT` 的属性，表示该类型化数组一个元素需要多少字节。
 
     还有一个 `subarray(startIndex, endIndex)` 方法基于底层数组缓冲器的子集创建一个新视图。其中第二个参数可选。
-    
+
     ```js
     //需要 10 个元素空间
-    var int8s = new Int8Array(buffer, 0, 10 * Int8Array.BYTES_PER_ELEMENT); 
- 
+    var int8s = new Int8Array(buffer, 0, 10 * Int8Array.BYTES_PER_ELEMENT);
+
     //需要 5 个元素空间
     var uint16s = new Uint16Array(
-      buffer, 
+      buffer,
       int8s.byteOffset + int8s.byteLength,
       5 * Uint16Array.BYTES_PER_ELEMENT
     );
@@ -2721,6 +2781,7 @@ var gl = drawing.getContext("experimental-webgl");
 ```
 
 通过给 `getContext()` 传递第二个参数，可以为 WebGL 上下文设置一些选项。
+
 + alpha：为上下文创建一个 alpha 缓冲区。默认 true
 + depth：可以使用16位深缓冲区。默认 true
 + stencil：可以使用8位缓冲区。默认 true
@@ -2778,7 +2839,7 @@ var gl = drawing.getContext("experimental-webgl");
     WebGL 的着色器并不是用 JavaScript 写的，是用 GLSL 写的。
 
 8. 编写着色器
-9.  编写着色器程序
+9. 编写着色器程序
 10. 为着色器传入值
 11. 调试着色器和程序
 12. 绘图
@@ -2805,7 +2866,7 @@ iframeWindow.postMessage("A secret", "http://www.wrox.com");
 
 ```js
 EventUtil.addHandler(window, "message", function(event){ 
- 
+
   //确保发送消息的域是已知的域
   if (event.origin == "http://www.wrox.com"){ 
 
@@ -2815,20 +2876,23 @@ EventUtil.addHandler(window, "message", function(event){
     //可选：向来源窗口发送回执
     event.source.postMessage("Received!", "http://p2p.wrox.com");
   }
-}); 
+});
 ```
+
 ### 16.2 原生托放
 
 #### 16.2.1 托放事件
 
 托动某元素时依次触发以下事件：
+
 + dragstart
 + drag
 + dragend
 
 dragstart 触发后会持续触发 drag 事件
 
-当某个元素被拖动到一个有效的放置目标上时，下列事件会依次发生： 
+当某个元素被拖动到一个有效的放置目标上时，下列事件会依次发生：
+
 + dragenter
 + dragover
 + dragleave
@@ -2842,6 +2906,7 @@ dragstart 触发后会持续触发 drag 事件
 #### 16.2.3 dataTransfer 对象
 
 通过 dataTransfer 对象，实现数据交换
+
 + `dataTransfer.setData()`
 + `dataTransfer.getData()`
 
@@ -2850,12 +2915,14 @@ dragstart 触发后会持续触发 drag 事件
 #### 16.2.4 dorpEffect 和 effectAllowed
 
 `dataTransfer.dorpEffect` 被拖动元素能够执行哪种放置行为
+
 + `"none"`：不能把拖动元素放在这里，这是除文本框之外所有元素的默认值。
 + `"move"`：应该把目标元素移动到放置目标
 + `"copy"`：应该把目标元素复制到放置目标
 + `"link"`：表示放置目标会打开拖动的元素(拖动元素必须是一个 url )
 
 `dataTransfer.effectAllowed` 表示允许被拖动元素的哪种 `dorpEffect`
+
 + "uninitialized"：没有给被拖动的元素设置任何放置行为。
 + "none"：被拖动的元素不能有任何行为。
 + "copy"：只允许值为"copy"的 dropEffect。
@@ -2897,6 +2964,7 @@ HTML5 为所有 HTML 元素规定了一个 `draggable` 属性，表示元素是�
 #### 16.3.4 检测编码器的支持状情况
 
 `audio.canPlayType(MIME)` 将MIME 类型和编解码器作为参返回值有三种 `"probably"`， `"maybe"`， `""`(空字符串)
+
 ```js
 //可能是"probably"
 if (audio.canPlayType("audio/ogg; codecs=\"vorbis\"")){
@@ -2920,6 +2988,7 @@ if (audio.canPlayType("audio/ogg; codecs=\"vorbis\"")){
 #### 16.3.5 Audio类型
 
 `<audio>` 元素还有一个原生的 JavaScript 构造函数 Audio，可以在任何时候播放音频
+
 ```js
 var audio = new Audio("sound.mp3");
 EventUtil.addHandler(audio, "canplaythrough", function(event) {
@@ -2943,7 +3012,7 @@ EventUtil.addHandler(window, "popstate", function(event){
   if (state){   //第一个页面加载时 state 为空
     processState(state);
   }
-}); 
+});
 ```
 
 `replaceState()` 方法重写当前状态，参数为 `pushState()` 方法的前两个参数。
@@ -3023,12 +3092,14 @@ window.onerror = function(message, url, line) {
 #### 17.2.6 区分致命错误和非致命错误
 
 非致命错误
+
 + 不影响用户的主要任务
 + 只影响页面的一部分
 + 可以恢复
 + 重复相同操作可以消除错误
 
 致命错误
+
 + 程序无法运行
 + 用户无法操作
 + 会导致其他连带错误
@@ -3085,19 +3156,19 @@ DOM2 是第一个提到动态创建 XML DOM 概念的规范，DOM3 进一步增�
 var xmldom = document.implementation.createDocument(namespaceUri, root, doctype); 
 
 //  JavaScrip中管理命名空间比较困难，所以一般不用。root 表示根元素
-var xmldom = document.implementation.createDocument("", "root", null); 
+var xmldom = document.implementation.createDocument("", "root", null);
 ```
 
 #### 18.1.2 DOMParser 类型
 
 ```js
-var parser = new DOMParser(); var xmldom = parser.parseFromString("<root><child/></root>", "text/xml"); 
- 
+var parser = new DOMParser(); var xmldom = parser.parseFromString("<root><child/></root>", "text/xml");
+
 alert(xmldom.documentElement.tagName);    //"root"
-alert(xmldom.documentElement.firstChild.tagName);    //"child" 
- 
-var anotherChild = xmldom.createElement("child"); xmldom.documentElement.appendChild(anotherChild); 
- 
+alert(xmldom.documentElement.firstChild.tagName);    //"child"
+
+var anotherChild = xmldom.createElement("child"); xmldom.documentElement.appendChild(anotherChild);
+
 var children = xmldom.getElementsByTagName("child"); alert(children.length);     //2
 ```
 
@@ -3106,10 +3177,11 @@ var children = xmldom.getElementsByTagName("child"); alert(children.length);    
 #### 18.1.3 XMLSerializer
 
 将 DOM 文档序列化为 XML字符串。
+
 ```js
 var serializer = new XMLSerializer();
 var xml = serializer.serializeToString(xmldom);
-alert(xml); 
+alert(xml);
 ```
 
 #### 18.1.4 IE8 及之前版本中的XML
@@ -3126,6 +3198,7 @@ XPath 是设计用来在 DOM 文档中查找节点的一种手段，因而对 XM
 #### 18.2.1 DOM3 级XPath
 
 DOM3 的 XPath 规范定义的类型中，最重要的两个类型是 XPathEvaluator 和 XPathResult。
+
 + `createExpression(expression, nsresolver)`：XPath表达式及相应的命名空间信息转 换成一个 XPathExpression。
 + `createNSResolve(node)`：根据 node 的命名空间信息创建一个新的 XPathNSResolver 对象。
 + `evaluate(expression, context, nsresolver, type, result)`：在给定的上下文中， 基于特定的命名空间信息来对 XPath表达式求值。
@@ -3134,35 +3207,34 @@ DOM3 的 XPath 规范定义的类型中，最重要的两个类型是 XPathEvalu
 
 第四个参数（返 回结果的类型）的取值范围是 XPathResult 对象上定义的常量。
 
-
 ```js
-var result = xmldom.evaluate("employee/name", xmldom.documentElement, null,                                   XPathResult.ORDERED_NODE_ITERATOR_TYPE, null); 
- 
-if (result !== null) {     
-  var node = result.iterateNext();     
-  while(node) {         
-    alert(node.tagName);        
-    node = node.iterateNext(); 
+var result = xmldom.evaluate("employee/name", xmldom.documentElement, null,                                   XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+
+if (result !== null) {
+  var node = result.iterateNext();
+  while(node) {
+    alert(node.tagName);
+    node = node.iterateNext();
   }
 }
 if (result !== null) {
   for (var i = 0, len=result.snapshotLength; i < len; i++){
     alert(result.snapshotItem(i).tagName);
   }
-} 
+}
 ```
 
 1. 单节点结果
 
 ```js
 var result = xmldom.evaluate("employee/name", xmldom.documentElement, null,                                   XPathResult.FIRST_ORDERED_NODE_TYPE, null); 
- 
+
 if (result !== null) {
   alert(result.singleNodeValue.tagName);
-} 
+}
 ```
-2. 简单类型结果
 
+2. 简单类型结果
   + XPathResult.BOOLEAN_TYPE
     + result.booleanValue
   + XPathResult.NUMBER_TYPE
@@ -3183,10 +3255,10 @@ if (result !== null) {
 
 ```js
 //  createNSResolver() 先创建一个 XPathNSResolver 对象，作为参数传递给 evaluate() 方法
-var nsresolver = xmldom.createNSResolver(xmldom.documentElement); 
- 
-var result = xmldom.evaluate("wrox:book/wrox:author",                              xmldom.documentElement, nsresolver,                              XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null); 
- 
+var nsresolver = xmldom.createNSResolver(xmldom.documentElement);
+
+var result = xmldom.evaluate("wrox:book/wrox:author",                              xmldom.documentElement, nsresolver,                              XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+
 alert(result.snapshotLength);
 ```
 
@@ -3215,6 +3287,7 @@ XSLT 是与 XML 相关的一种技术，它利用 XPath 将文档从一种表现
 ### 19.1 E4X 的类型
 
 作为对ECMAScript的扩展，E4X定义了如下几个新的全局类型
+
 + XML
 + XMLList
 + Namespace
@@ -3244,23 +3317,25 @@ var employee = <employee position="Software Engineer">
                </employee>;
 alert(employee.name); //"Nicholas C. Zakas"
 ```
+
 #### 19.2.1 访问特性
 
 ```js
 var employees = <employees>
                   <employee position="Software Engineer">  
-                    <name>Nicholas C. Zakas</name>   
+                    <name>Nicholas C. Zakas</name>
                   </employee>  
-                  <employee position="Salesperson">   
-                    <name>Jim Smith</name>   
-                  </employee> 
-                </employees>; 
-// 访问特性在使用  @特性名称 的语法 
+                  <employee position="Salesperson">
+                    <name>Jim Smith</name>
+                  </employee>
+                </employees>;
+// 访问特性在使用  @特性名称 的语法
 alert(employees.employee[0].@position); //"Software Engineer"
 ```
 
 #### 19.2.2 其他节点类型
-在默认情况上，E4X不会解 析注释或处理指令，因此这些部分不会出现在终的对象层次中。如果想让解析器解析这些部分，可以 像下面这样设置 XML构造函数的下列两个属性。 
+
+在默认情况上，E4X不会解 析注释或处理指令，因此这些部分不会出现在终的对象层次中。如果想让解析器解析这些部分，可以 像下面这样设置 XML构造函数的下列两个属性。
 
 ```js
 XML.ignoreComments = false;
@@ -3282,8 +3357,8 @@ XMLList 上可以调用以下方法
 ```js
 var tagName = "color";
 var color = "red";
-var xml = <{tagName}>{color}</{tagName}>; 
- 
+var xml = <{tagName}>{color}</{tagName}>;
+
 alert(xml.toXMLString());     //"<color>red</color>
 
 // 第二种构建方式
@@ -3300,7 +3375,7 @@ alert(settings.ignoreWhitespace);     // true  默认忽略元素间的空格
 alert(settings.ignoreComments);       // true  默认忽略标记中的注释。
 alert(settings.ignoreProcessingInstructions);     // true  默认忽略标记中的处理指令。
 alert(settings.prettyIndent);         // 2     默认缩进
-alert(settings.prettyPrinting);       // true  默认每个元素重启一行 
+alert(settings.prettyPrinting);       // true  默认每个元素重启一行
 ```
 
 #### 19.2.6 命名空间
@@ -3310,7 +3385,7 @@ alert(settings.prettyPrinting);       // true  默认每个元素重启一行
 #### 19.4 全面启用 E4X
 
 ```js
-<script type="text/javascript;e4x=1" src="e4x_file.js"></script> 
+<script type="text/javascript;e4x=1" src="e4x_file.js"></script>
 ```
 
 ---
@@ -3360,7 +3435,7 @@ JSON和对象的区别 1.属性名加引号 2.没有声明变量 3.末尾没有�
       return undefined;
       // 表示返回值
       return value
-    }); 
+    });
     ```
 2. 字符串缩进
 
@@ -4028,7 +4103,7 @@ Web Storage 规范包含了两种对象的定义：sessionStorage 和 globalStor
     var sum = values[0] + values[1];
     alert(sum);
 
-    // 这段代码的时间复杂度为 O(n) 
+    // 这段代码的时间复杂度为 O(n)
     // 对象上任何查找都要比访问变量或者数组花费更长的时间，因为必须在原型链中对拥有该名称的属性进行一次搜索。
     var values = { first: 5, second: 10};
     var sum = values.first + values.second;

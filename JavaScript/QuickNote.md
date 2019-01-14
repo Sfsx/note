@@ -35,7 +35,7 @@ function callback(){
         // ....
     };
 
-    reutrn handleRequest;
+    return handleRequest;
 }
 ```
 
