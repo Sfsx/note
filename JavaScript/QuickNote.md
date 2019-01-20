@@ -20,7 +20,7 @@ for (let item of data) {
 
     JavaScript
 
-## koa源码有感
+## koa源码
 
 ```js
 function createServer(res, req) {
@@ -101,14 +101,18 @@ foo.hasOwnProperty('bar'); // 始终返回 false
 Object.prototype.hasOwnProperty.call(foo, 'bar'); // true
 ```
 
-## ES6的尾调用优化只在严格模式下开启，正常模式是无效的。（未验证）
+## ES6 的尾调用优化只在严格模式下开启，正常模式是无效的。（未验证）
 
-## 异步
+## JavaScript 执行机制
 
 **实际上 `await` 是一个让出线程的标志。** `await` 后面的函数会先执行一遍，然后就会跳出整个 `async` 函数来执行后面js栈的代码
 
+### 上面这段说法有误，当年年轻不懂事，不打算删了，引以为戒。
+
 node 遇到 await 先执行后面的函数，将 resolve 压进回调队列再让出线程  
 chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 压进回调队列
+
+补充 **node 10版本后与浏览器运行结果一致。**
 
 ```js
 /**
@@ -139,17 +143,33 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 })();
 ```
 
+`macro-tasks: script(整体代码),setTimeout, setInterval, setImmediate, I/O, UI rendering`
+
+`micro-tasks: process.nextTick, Promises, Object.observe, MutationObserver`
+
+### async 做一件什么事情？
+
+带 `async` 关键字的函数，它使得你的函数的返回值必定是 `promise` 对象
+
+如果 `async` 关键字函数返回的不是 `promise` ，会自动用 `Promise.resolve()` 包装
+
+如果 `async` 关键字函数显式地返回 `promise` ，那就以你返回的 `promise` 为准
+
+[详细答案](https://zhuanlan.zhihu.com/p/52000508)
+
+[宏队列 和 微队列](https://www.jianshu.com/p/3ed992529cfc)
+
+[event loop](https://html.spec.whatwg.org/multipage/webappapis.html#event-loops)
+
 [JavaScript 执行机制](https://juejin.im/post/59e85eebf265da430d571f89)
 
-## es6
+## ES6
 
 没有块级作用域回来带很多难以理解的问题，比如 `for` 循环 `var` 变量泄露，变量覆盖等问题。`let` 和 `const` 声明的变量拥有自己的块级作用域，且修复了 `var` 声明变量带来的变量提升问题。
 
-## HTML5 调用摄像头
+## HTML5 调用摄像头 （未完成demo）
 
 `MediaDevices.getUserMedia()`
-
-**demo 未完成**
 
 ## import
 
@@ -200,7 +220,7 @@ import "module-name";
 
 ### EngLish
 
-#### What are HTML, XML and XHTML ?
+#### What are HTML, XML and XHTML?
 
 1. HTML
 
@@ -222,7 +242,7 @@ Second, XML has draconian error-handling rules.
 
 To enable at least partial use of XHTML, the W3C came up with something called “HTML-compatible XHTML”. This is a set of guidelines for making valid XHTML documents that can still more or less be processed as HTML
 
-#### What determines if my document is HTML or XHTML ?
+#### What determines if my document is HTML or XHTML?
 
 So what really determines if a document is HTML or XHTML? The one and only thing that controls whether a document is HTML or XHTML is the MIME type. If the document is served with a `text/html` MIME type, it is treated as HTML. If it is served as `application/xhtml+xml` or `text/xml`, it gets treated as XHTML. In particular, none of the following things will cause your document to be treated as XHTML:
 
@@ -266,7 +286,7 @@ So what really determines if a document is HTML or XHTML? The one and only thing
 })()
 ```
 
-**结论上级会被reject**
+结论：**上级会被reject**
 
 ## DOM 相关知识点
 
@@ -337,7 +357,7 @@ The Comment interface represents textual notations within markup; although it is
 
     [原文链接](https://www.v2ex.com/t/519999#reply176)
 
-## 深入理解Node.js垃圾回收与内存管理
+## 深入理解Node.js垃圾回收与内存管理（待测试）
 
 Node程序运行中，此进程占用的所有内存称为**常驻内存**（Resident Set）。
 
@@ -350,19 +370,7 @@ Node程序运行中，此进程占用的所有内存称为**常驻内存**（Res
 
 Buffer对象本身属于普通对象，保存在堆，由V8管理，但是其储存的数据，则是保存在堆外内存，是有C++申请分配的，因此不受V8管理，也不需要被V8垃圾回收，一定程度上节省了V8资源，也不必在意堆内存限制。
 
-**待测试**
-
 [原文链接](https://www.jianshu.com/p/4129a3fce7bb)
-
-## V8实现中，两个队列各包含不同的任务
-
-`macrotasks: script(整体代码),setTimeout, setInterval, setImmediate, I/O, UI rendering`
-
-`microtasks: process.nextTick, Promises, Object.observe, MutationObserver`
-
-[JavaScript 运行机制](https://zhuanlan.zhihu.com/p/52000508)
-
-[原文链接](https://www.jianshu.com/p/3ed992529cfc)
 
 ## MVC MVP MVVM 概念
 
@@ -456,6 +464,8 @@ f("abdf efgh");
 
 ### Hindley-Milner 类型签名
 
+这个东西有点类似 typescript 的强类型定义
+
 ```js
 // strLength :: String -> Number
 const strLength = s => s.length
@@ -477,7 +487,74 @@ const replace = curry((reg, sub, s) => s.replace(reg, sub))
 + 可以用于编译时候检查
 + 代码最好的文档
 
-参考资料
+### 实际体验
+
+#### 容器
+
+```js
+const Box = x => ({
+    map: f => Box(f(x)),        // 返回容器为了链式调用
+    flod: f => f(x),            // 将元素从容器中取出
+    inspect: () => `Box(${x})`  // 看容器里有啥
+})
+```
+
+#### Either / Maybe
+
+```js
+// Either 由 Right 和 Left 组成
+// monad 单子
+const Left = (x) => ({
+  map: f => Left(x),            // 忽略传入的 f 函数
+  fold: (f, g) => f(x),         // 使用左边的函数
+  inspect: () => `Left(${x})`,  // 看容器里有啥
+  chain: f => Left(x)           // 和 map 一样，直接返回 Left
+})
+
+// monad 单子
+const Right = (x) => ({
+  map: f => Right(f(x)),        // 返回容器为了链式调用
+  fold: (f, g) => g(x),         // 使用右边的函数
+  inspect: () => `Right(${x})`, // 看容器里有啥
+  chain: f => f(x)
+})
+
+// 来测试看看~
+const right = Right(4)
+  .map(x => x * 7 + 1)
+  .map(x => x / 2)
+
+right.inspect() // Right(14.5)
+right.fold(e => 'error', x => x) // 14.5
+
+const left = Left(4)
+  .map(x => x * 7 + 1)
+  .map(x => x / 2)
+
+left.inspect() // Left(4)
+left.fold(e => 'error', x => x) // error
+```
+
+实际使用，其中 formNullable 为 Either
+
+```js
+const fromNullable = (x) => x == null
+  ? Left(null)
+  : Right(x)
+
+const findColor = (name) => fromNullable(({
+  red: '#ff4444',
+  blue: '#3b5998',
+  yellow: '#fff68f',
+})[name])
+
+findColor('green')
+  .map(c => c.slice(1))
+  .fold(
+    e => 'no color',
+    c => c.toUpperCase()
+  ) // no color
+```
 
 + [函数式编程指南](https://llh911001.gitbooks.io/mostly-adequate-guide-chinese/content/)
 + [原文链接](https://zhuanlan.zhihu.com/p/21714695)
