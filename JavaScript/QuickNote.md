@@ -20,7 +20,7 @@ for (let item of data) {
 
     JavaScript
 
-## koa源码有感
+## koa源码
 
 ```js
 function createServer(res, req) {
@@ -38,8 +38,6 @@ function callback(){
     return handleRequest;
 }
 ```
-
-
 
 ## npm bluebird
 
@@ -70,8 +68,6 @@ readFile("myfile.js", "utf8").then(function(contents) {
 });
 ```
 
-
-
 ## 为什么要用Array.prototype.forEach.call(array, cb)而不直接使用array.forEach(cb)
 
 有一些看起来很像数组的对象：
@@ -83,8 +79,6 @@ readFile("myfile.js", "utf8").then(function(contents) {
 + and even strings.
 
 [StackOverflow 链接](https://stackoverflow.com/questions/26546352/why-would-one-use-array-prototype-foreach-callarray-cb-over-array-foreachcb)
-
-
 
 ## Object.prototype.hasOwnProperty.call()
 
@@ -107,18 +101,18 @@ foo.hasOwnProperty('bar'); // 始终返回 false
 Object.prototype.hasOwnProperty.call(foo, 'bar'); // true
 ```
 
+## ES6 的尾调用优化只在严格模式下开启，正常模式是无效的。（未验证）
 
-
-## ES6的尾调用优化只在严格模式下开启，正常模式是无效的。（未验证）
-
-
-
-## 异步
+## JavaScript 执行机制
 
 **实际上 `await` 是一个让出线程的标志。** `await` 后面的函数会先执行一遍，然后就会跳出整个 `async` 函数来执行后面js栈的代码
 
+### 上面这段说法有误，当年年轻不懂事，不打算删了，引以为戒。
+
 node 遇到 await 先执行后面的函数，将 resolve 压进回调队列再让出线程  
 chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 压进回调队列
+
+补充 **node 10版本后与浏览器运行结果一致。**
 
 ```js
 /**
@@ -149,21 +143,33 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 })();
 ```
 
+`macro-tasks: script(整体代码),setTimeout, setInterval, setImmediate, I/O, UI rendering`
+
+`micro-tasks: process.nextTick, Promises, Object.observe, MutationObserver`
+
+### async 做一件什么事情？
+
+带 `async` 关键字的函数，它使得你的函数的返回值必定是 `promise` 对象
+
+如果 `async` 关键字函数返回的不是 `promise` ，会自动用 `Promise.resolve()` 包装
+
+如果 `async` 关键字函数显式地返回 `promise` ，那就以你返回的 `promise` 为准
+
+[详细答案](https://zhuanlan.zhihu.com/p/52000508)
+
+[宏队列 和 微队列](https://www.jianshu.com/p/3ed992529cfc)
+
+[event loop](https://html.spec.whatwg.org/multipage/webappapis.html#event-loops)
+
 [JavaScript 执行机制](https://juejin.im/post/59e85eebf265da430d571f89)
 
-## es6
+## ES6
 
 没有块级作用域回来带很多难以理解的问题，比如 `for` 循环 `var` 变量泄露，变量覆盖等问题。`let` 和 `const` 声明的变量拥有自己的块级作用域，且修复了 `var` 声明变量带来的变量提升问题。
 
-
-
-## HTML5 调用摄像头
+## HTML5 调用摄像头 （未完成demo）
 
 `MediaDevices.getUserMedia()`
-
-**demo 未完成**
-
-
 
 ## import
 
@@ -178,8 +184,6 @@ import defaultMember, { member [ , [...] ] } from "module-name";
 import defaultMember, * as name from "module-name";
 import "module-name";
 ```
-
-
 
 ## XHTML HTML XML 联系以及区别
 
@@ -199,7 +203,7 @@ import "module-name";
    + 元素必须嵌套
 2. 对于 html 的元素和属性，xhtml必须小写，因为xml是严格区分大小写的，`<li>`和`<LI>`是不同的标签
 3. xhtml 的属性值必须在引号之中
-4. xhtml 不支持属性最小化，什么是属性最小化了？ 
+4. xhtml 不支持属性最小化，什么是属性最小化了？
     + 正确:非最小化属性(unminimized attributes)  
     `<input checked="checked">`
     + 不正确:最小化属性(minimized attributes)  
@@ -249,11 +253,9 @@ So what really determines if a document is HTML or XHTML? The one and only thing
 
 [原文链接](https://webkit.org/blog/68/understanding-html-xml-and-xhtml/)
 
-
-
 ## promise 问题
 
-### promise 错误能不能上抛 当有一个函数返回 promise 这个函数内部再调用另一个函数，这个函数也会返回 promise, 这个 promise 被 reject，那么上级 promise 会不会被reject 
+### promise 错误能不能上抛 当有一个函数返回 promise 这个函数内部再调用另一个函数，这个函数也会返回 promise, 这个 promise 被 reject，那么上级 promise 会不会被reject
 
 ```js
 (async function () {
@@ -284,9 +286,7 @@ So what really determines if a document is HTML or XHTML? The one and only thing
 })()
 ```
 
-**结论上级会被reject**
-
-
+结论：**上级会被reject**
 
 ## DOM 相关知识点
 
@@ -302,7 +302,7 @@ The CharacterData abstract interface represents a Node object that contains char
 
 ### ProcessingInstruction
 
-#### 原文：  
+#### 原文：
 
 A processing instruction embeds application-specific instructions in XML which can be ignored by other applications that don't recognize them. Even if an XML processor ignores processing instructions, it will give them a place in the DOM.
 
@@ -335,8 +335,6 @@ Comment 接口代表标签（markup）之间的文本符号（textual notations�
 原文：  
 The Comment interface represents textual notations within markup; although it is generally not visually shown, such comments are available to be read in the source view. Comments are represented in HTML and XML as content between `'<!--' and '-->'`. In XML, the character sequence `'--'` cannot be used within a comment.
 
-
-
 ## react 性能问题
 
 1. 问题：
@@ -350,7 +348,7 @@ The Comment interface represents textual notations within markup; although it is
     尝试结果：
 
     + 网友
-    
+
         [demo](https://codesandbox.io/s/l7kow2rp5l/)
 
     + 自己
@@ -359,9 +357,7 @@ The Comment interface represents textual notations within markup; although it is
 
     [原文链接](https://www.v2ex.com/t/519999#reply176)
 
-
-
-## 深入理解Node.js垃圾回收与内存管理
+## 深入理解Node.js垃圾回收与内存管理（待测试）
 
 Node程序运行中，此进程占用的所有内存称为**常驻内存**（Resident Set）。
 
@@ -374,25 +370,7 @@ Node程序运行中，此进程占用的所有内存称为**常驻内存**（Res
 
 Buffer对象本身属于普通对象，保存在堆，由V8管理，但是其储存的数据，则是保存在堆外内存，是有C++申请分配的，因此不受V8管理，也不需要被V8垃圾回收，一定程度上节省了V8资源，也不必在意堆内存限制。
 
-**待测试**
-
 [原文链接](https://www.jianshu.com/p/4129a3fce7bb)
-
-
-
-## V8实现中，两个队列各包含不同的任务
-
-
-`macrotasks: script(整体代码),setTimeout, setInterval, setImmediate, I/O, UI rendering`
-
-`microtasks: process.nextTick, Promises, Object.observe, MutationObserver`
-
-
-[JavaScript 运行机制](https://zhuanlan.zhihu.com/p/52000508)
-
-[原文链接](https://www.jianshu.com/p/3ed992529cfc)
-
-
 
 ## MVC MVP MVVM 概念
 
@@ -404,26 +382,19 @@ c -> m -> v
 
 [相关文章](https://juejin.im/post/593021272f301e0058273468)
 
-
-
 ## vue 双向绑定
 
 [原文链接](https://jiongks.name/blog/vue-code-review/)
 
-
-
 ## 《nodeJS 设计模式》
 
 [简介](https://zhuanlan.zhihu.com/p/29786710)
-
- 
 
 ## 页面加载
 
 ### 1. Progress Indicator（进度指示器）
 
 1. 使用 NProgress.js 库
-
 
 ### 2. Skeleton Screen（加载占位图）
 
@@ -445,9 +416,6 @@ c -> m -> v
 1. svg占位
 2. 模糊图像
 3. 完全加载
-
-
-
 
 ## JavaScript 高阶函数
 
@@ -491,11 +459,19 @@ const curry = (fn, arr = []) => (...args) => (
 
 ### 组合函数
 
-将多个函数的能力合并，创造一个新的函数
+将多个函数的能力合并，创造一个新的函数。
+
+$y = f(w), w = g(x), y = f(g(x))$
+
+一个应用其实就是一个长时间运行的进程，并将一系列异步的事件转换为对应结果。( pipline )
+
+函数组合的意义就在于完成一条完整的 pipline，存在于 start 与 end 之间的数据变换 ( transformations )。
 
 ### point free
 
-不要命名转瞬即逝的中间变量
+`Pointfree` 风格能够有效减少大量中间变量的命名。
+
+不要命名转瞬即逝的中间变量（其实就是通过 `compose` 函数组合函数，去掉中间变量）
 
 ```js
 // bad
@@ -509,7 +485,99 @@ var f = compose(split(' '), toUpperCase);
 f("abdf efgh");
 ```
 
-参考资料
+### Hindley-Milner 类型签名
+
+这个东西有点类似 typescript 的强类型定义
+
+```js
+// strLength :: String -> Number
+const strLength = s => s.length
+
+// join :: String -> [String] -> String
+const join = curry((what, xs) => xs.join(what))
+
+// match :: Regex -> String -> [String]
+const match = curry((reg, s) => s.match(reg))
+
+// replace :: Regex -> String -> String -> String
+const replace = curry((reg, sub, s) => s.replace(reg, sub))
+```
+
+总结一下类型签名的作用就是：
+
++ 声明函数的输入和输出
++ 让函数保持通用和抽象
++ 可以用于编译时候检查
++ 代码最好的文档
+
+### 实际体验
+
+#### 容器
+
+```js
+const Box = x => ({
+    map: f => Box(f(x)),        // 返回容器为了链式调用
+    flod: f => f(x),            // 将元素从容器中取出
+    inspect: () => `Box(${x})`  // 看容器里有啥
+})
+```
+
+#### Either / Maybe
+
+```js
+// Either 由 Right 和 Left 组成
+// monad 单子
+const Left = (x) => ({
+  map: f => Left(x),            // 忽略传入的 f 函数
+  fold: (f, g) => f(x),         // 使用左边的函数
+  inspect: () => `Left(${x})`,  // 看容器里有啥
+  chain: f => Left(x)           // 和 map 一样，直接返回 Left
+})
+
+// monad 单子
+const Right = (x) => ({
+  map: f => Right(f(x)),        // 返回容器为了链式调用
+  fold: (f, g) => g(x),         // 使用右边的函数
+  inspect: () => `Right(${x})`, // 看容器里有啥
+  chain: f => f(x)
+})
+
+// 来测试看看~
+const right = Right(4)
+  .map(x => x * 7 + 1)
+  .map(x => x / 2)
+
+right.inspect() // Right(14.5)
+right.fold(e => 'error', x => x) // 14.5
+
+const left = Left(4)
+  .map(x => x * 7 + 1)
+  .map(x => x / 2)
+
+left.inspect() // Left(4)
+left.fold(e => 'error', x => x) // error
+```
+
+实际使用，其中 formNullable 为 Either
+
+```js
+const fromNullable = (x) => x == null
+  ? Left(null)
+  : Right(x)
+
+const findColor = (name) => fromNullable(({
+  red: '#ff4444',
+  blue: '#3b5998',
+  yellow: '#fff68f',
+})[name])
+
+findColor('green')
+  .map(c => c.slice(1))
+  .fold(
+    e => 'no color',
+    c => c.toUpperCase()
+  ) // no color
+```
 
 + [函数式编程指南](https://llh911001.gitbooks.io/mostly-adequate-guide-chinese/content/)
 + [原文链接](https://zhuanlan.zhihu.com/p/21714695)
