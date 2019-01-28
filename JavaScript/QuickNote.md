@@ -466,6 +466,29 @@ c -> m -> v
 
 传递给函数一部分参数来调用它，让它返回一个函数去处理剩下的参数
 
+```js
+// ES5
+var curry = function curry (fn, arr) {
+  arr = arr || []
+
+  return function () {
+    var args = [].slice.call(arguments)
+    var arg = arr.concat(args)
+
+    return arg.length >= fn.length
+      ? fn.apply(null, arg)
+      : curry(fn, arg)
+  }
+}
+
+// ES6
+const curry = (fn, arr = []) => (...args) => (
+  arg => arg.length >= fn.length
+    ? fn(...arg)
+    : curry(fn, arg)
+)([...arr, ...args])
+```
+
 ### 组合函数
 
 将多个函数的能力合并，创造一个新的函数
