@@ -31,3 +31,9 @@
 + 一个 WebIDE 工具
   + CodeSandbox 容器。支持在线编写前端demo，可以将编写好的demo链接嵌入博文。
   + [首页](https://codesandbox.io/)
+
+### SVG 在线制作工具
+
+[SVG图标制作指南](https://zhuanlan.zhihu.com/p/20753791?refer=FrontendMagazine)
+
+[SVG在线制作工具](https://svg.wxeditor.com/)
