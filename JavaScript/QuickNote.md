@@ -107,12 +107,10 @@ Object.prototype.hasOwnProperty.call(foo, 'bar'); // true
 
 **实际上 `await` 是一个让出线程的标志。** `await` 后面的函数会先执行一遍，然后就会跳出整个 `async` 函数来执行后面js栈的代码
 
-### 上面这段说法有误，当年年轻不懂事，不打算删了，引以为戒。
-
 node 遇到 await 先执行后面的函数，将 resolve 压进回调队列再让出线程  
 chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 压进回调队列
 
-补充 **node 10版本后与浏览器运行结果一致。**
+### 上面这段说法有误，当年年轻不懂事，不打算删了，引以为戒。
 
 ```js
 /**
@@ -143,9 +141,13 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 })();
 ```
 
-`macro-tasks: script(整体代码),setTimeout, setInterval, setImmediate, I/O, UI rendering`
+遇到 `await` 先执行后面的函数，先中断 `async` 运行外部代码，再执行 `await Promiese.resolve(undefined)`。这段代码类似于 `Promise.resolve(undefined).then((undefined) => { })`。故将 `then` 的第一个回调参数 `(undefined) => {}` 推入微任务队列。
 
-`micro-tasks: process.nextTick, Promises, Object.observe, MutationObserver`
+第一次宏任务到此执行完毕。开始执行微任务。
+
+补充 **node v10.0.0 与浏览器运行结果一致。**
+
+[详细答案](https://zhuanlan.zhihu.com/p/52000508)
 
 ### async 做一件什么事情？
 
@@ -155,17 +157,24 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 
 如果 `async` 关键字函数显式地返回 `promise` ，那就以你返回的 `promise` 为准
 
-[详细答案](https://zhuanlan.zhihu.com/p/52000508)
+### macrotask queue and microtask queue
+
+`macro-tasks: script(整体代码),setTimeout, setInterval, setImmediate, I/O, UI rendering`
+
+`micro-tasks: process.nextTick, Promises, Object.observe, MutationObserver`
+
+#### 执行过程如下：
+1. JavaScript引擎首先从macrotask queue中取出第一个任务，执行完毕。
+2. 将microtask queue中的所有任务取出，按顺序全部执行。
+3. 然后再从macrotask queue中取下一个，执行完毕。
+4. 再次将microtask queue中的全部取出，按顺序全部执行。
+5. 循环往复，直到两个queue中的任务都取完。
 
 [宏队列 和 微队列](https://www.jianshu.com/p/3ed992529cfc)
 
 [event loop](https://html.spec.whatwg.org/multipage/webappapis.html#event-loops)
 
 [JavaScript 执行机制](https://juejin.im/post/59e85eebf265da430d571f89)
-
-## ES6
-
-没有块级作用域回来带很多难以理解的问题，比如 `for` 循环 `var` 变量泄露，变量覆盖等问题。`let` 和 `const` 声明的变量拥有自己的块级作用域，且修复了 `var` 声明变量带来的变量提升问题。
 
 ## HTML5 调用摄像头 （未完成demo）
 
