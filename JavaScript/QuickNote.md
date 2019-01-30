@@ -426,6 +426,61 @@ c -> m -> v
 2. 模糊图像
 3. 完全加载
 
+## JavaScript `this`
+
+### 什么是 `this` ?
+
+JavaScript 的 `this` 关键字指向它所属的对象
+
+> 在方法中，`this` 指向它所属的对象  
+> 单独 `this` 指向全局对象  
+> 在函数中 `this` 指向全局对象  
+> 在函数中，严格模式下，`this` 是 `undefined`  
+> 在事件中，`this` 指向接收事件的元素
+> 方法`call()`、`applay()` 可以改变 `this` 指向任意对象
+
+### 在方法中的 `this`
+
+```js
+var preson = {
+    firstName: '',
+    lastName: '',
+    fullName : function() {
+    return this.firstName + " " + this.lastName;
+    }
+}
+```
+
+### 单独的 `this`
+
+这时所有者为全局对象，严格模式下也一样
+
+```js
+var x = this;
+```
+
+### 在函数中的 `this`
+
+在严格模式下 `this` 是 `undefined`。在函数中的 `this` 只有在调用的时候才能确定，指向调用它的对象。
+
+```js
+function myFunction() {
+  return this;
+}
+```
+
+### 在事件处理中
+
+```html
+<button onclick="this.style.display='none'">
+  Click to Remove Me!
+</button>
+```
+
+### 函数绑定
+
+[原文链接](https://www.w3schools.com/js/js_this.asp)
+
 ## JavaScript 高阶函数
 
 以下两个特征只要符合其中一项就可以称为高阶函数
