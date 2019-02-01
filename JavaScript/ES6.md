@@ -325,3 +325,38 @@ ES2017 允许函数的最后一个参数有逗号（trailing comma）。
 
 ### 4. 数组实例的 `copyWithin()`
 
+在当前数组内部，将指定位置的成员复制到其他位置（会覆盖原有成员），然后返回当前数组。该方法会修改当前数组。
+
+```js
+Array.prototype.copyWithin(target, start = 0, end = this.length)
+```
+
+### 5. 数组实例的 `find()` 和 `findIndex()`
+
+### 6. 数组实例的 `fill()`
+
+### 7. 数组实例的 `entries()`，`keys()` 和 `values()`
+
+ES6 提供三个新的方法 — — `entries()`， `keys()` 和 `values()`用于数组遍历，它们都返回一个遍历对象。
+
+`keys()` 对键名的遍历
+
+`valuse()` 对键值的遍历
+
+`enterise()` 对键值对的遍历
+
+### 8. 数组实例的 `includes()`
+
+### 9. 数组实例的 `flat()`，`flatMap()`
+
+`Array.prototype.flat()` 用于将嵌套数组“拉平”，变成一维数组。
+
+参数为需要拉平的层数。
+
+特殊参数 `Infinity` 可以无视数组层数，将其拉平为一维数组。
+
+`Array.prototype.flatMap()` 相当于先 `map()` 在 `flat()`
+
+### 10. 数组的空位
+
+ES6 中的数组方法会将空位转换为 `undefined`
