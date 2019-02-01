@@ -360,3 +360,63 @@ ES6 提供三个新的方法 — — `entries()`， `keys()` 和 `values()`用�
 ### 10. 数组的空位
 
 ES6 中的数组方法会将空位转换为 `undefined`
+
+## 对象的扩展
+
+### 1.属性的简洁表示法
+
+访问器属性的简洁表示法（在 ES5 中访问器属性不能直接定义需要 `Object.defineProperty()` 方法才能定义）。
+
+```js
+const cart = {
+  _wheels: 4,
+
+  get wheels () {
+    return this._wheels;
+  },
+
+  set wheels (value) {
+    if (value < this._wheels) {
+      throw new Error('数值太小了！');
+    }
+    this._wheels = value;
+  }
+}
+```
+
+### 2. 属性名表达式
+
+### 3. 方法的 name 属性
+
+如果对象的方法是一个 Symbol 值，那么 name 属性返回的是这个 Symbol 值的描述
+
+```js
+const key1 = Symbol('description');
+const key2 = Symbol();
+let obj = {
+  [key1]() {},
+  [key2]() {},
+};
+obj[key1].name // "[description]"
+obj[key2].name // ""
+```
+
+### 4.属性的可枚举性和遍历
+
+目前有4个操作会忽略 enumerable 为 false 的属性
++ `for...in`
++ `Object.keys()`
++ `JSON.stringfiy()`
++ `Object.assign()`
+
+这四个操作之中，前三个是 ES5 就有的，最后一个是 ES6 新增的。其中，只有 `for...in` 会返回继承的属性，其他三个方法都会忽略继承的属性。当只关心对象自身的属性时，尽量使用 `Object.keys()` 而不要使用 `for...in`
+
+ES6 规定，所有 class 的原型的方法都是不可枚举的
+
+### 5. 属性的遍历
+
+1. `for...in`
+2. `Object.keys(obj)`
+3. `Object.getOwnPropertyNames(obj)`
+4. `Object.getOwnPropertySymbols(obj)`
+5. `Reflect.ownKeys(obj)`
