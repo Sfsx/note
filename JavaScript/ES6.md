@@ -403,6 +403,8 @@ obj[key2].name // ""
 
 ### 4.属性的可枚举性和遍历
 
+#### 可枚举性
+
 目前有4个操作会忽略 enumerable 为 false 的属性
 + `for...in`
 + `Object.keys()`
@@ -411,12 +413,87 @@ obj[key2].name // ""
 
 这四个操作之中，前三个是 ES5 就有的，最后一个是 ES6 新增的。其中，只有 `for...in` 会返回继承的属性，其他三个方法都会忽略继承的属性。当只关心对象自身的属性时，尽量使用 `Object.keys()` 而不要使用 `for...in`
 
-ES6 规定，所有 class 的原型的方法都是不可枚举的
+ES6 规定，所有 class 的原型的方法都是**不可枚举**的
 
-### 5. 属性的遍历
+#### 属性的遍历
 
 1. `for...in`
 2. `Object.keys(obj)`
 3. `Object.getOwnPropertyNames(obj)`
 4. `Object.getOwnPropertySymbols(obj)`
 5. `Reflect.ownKeys(obj)`
+
+### 5. `super` 关键字
+
+`super` 关键字指向当前对象的原型对象。只能用在当前对象的方法之中。
+
+```js
+// 报错
+const obj = {
+  foo: super.foo
+}
+
+// 报错
+const obj = {
+  foo: () => super.foo
+}
+
+// 报错
+const obj = {
+  foo: function() {
+    return super.foo
+  }
+}
+```
+
+这三种 `super` 的用法都会报错。其中后两种的写法是 `super` 用在一个函数里面，然后复制给 `foo` 属性。目前，只有对象方法地简写可以让 JavaScript 引擎确认，定义的是对象的方法。
+
+这里的 `super.foo` 等同于 `Object.getPrototypeOf(this).foo` （属性）或 `Object.getPrototypeOf(this).foo.call(this)` （方法）
+
+### 6. 对象的扩展运算符
+
+#### 解构赋值
+
+结构赋值的等号右边不能是 `underfined` 或 `null`。
+
+而且**拓展运算符的**解构赋值必须是最后一个参数。
+
+结构赋值为浅拷贝。
+
+**拓展运算符的**结构赋值不能复制继承自原型的对象的属性。但是**单纯的**解构赋值可以。
+
+拓展运算符后面必须是一个变量名
+
+```js
+let { x, ...{ y, z } } = o;
+```
+
+#### 扩展运算符
+
+对象的扩展运算符（`...`）用于去除参数对象的所有可遍历属性，拷贝到当前对象之中。
+
+对象的扩展运算符等同于使用 `Object.assign()` 方法
+
+完整克隆对象，包括其原型属性的方法
+
+```js
+// 写法一
+const clone1 = {
+  __proto__: Object.getPrototypeOf(obj),
+  ...obj
+};
+
+// 写法二
+const clone2 = Object.assign(
+  Object.create(Object.getPrototypeOf(obj)),
+  obj
+);
+
+// 写法三
+const clone3 = Object.create(
+  Object.getPrototypeOf(obj),
+  Object.getOwnPropertyDescriptors(obj)
+)
+```
+
+扩展运算符的参数对象之中，如果有取值函数 `get`，这个函数是会执行的。
