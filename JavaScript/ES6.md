@@ -623,3 +623,10 @@ Object.fromEntries([
 ])
 // { foo: "bar", baz: 42 }
 ```
+
+该方法的一个用处就是配合 `URLSearchParams` 对象，将查询字符串转为对象
+
+```js
+Object.fromEntries(new URLSearchParams('foo=bar&baz=qux'))
+// { foo: "bar", baz: "qux" }
+```
