@@ -156,7 +156,7 @@ ES6 引入了 `Number.MAX_SAFE_INTEGER` 和 `Number.MIN_SAFE_INTEGER` 这两个�
 
 ### 8. 指数原算符
 
-`**` 
+`**`
 
 V8 引擎的指数运算符与 `Math.pow` 的实现不相同，对于特别大的运算结果，两者会有细微的差异。
 
@@ -406,6 +406,7 @@ obj[key2].name // ""
 #### 可枚举性
 
 目前有4个操作会忽略 enumerable 为 false 的属性
+
 + `for...in`
 + `Object.keys()`
 + `JSON.stringfiy()`
@@ -497,3 +498,128 @@ const clone3 = Object.create(
 ```
 
 扩展运算符的参数对象之中，如果有取值函数 `get`，这个函数是会执行的。
+
+## 对象的新增方法
+
+### `Object.is()`
+
+`==` 与 `===` 它们都有缺点，前者会自动转换数据类型，后者的 `NaN` 不等于自身，以及 `+0` 不等于 `-0`
+
+ES6 提出 "Same-value equality" 算法，用来解决上述问题。 `Object.is()` 就是部署这个算法的新方法。
+
+```js
++0 === -0 //true
+NaN === NaN // false
+
+Object.is(+0, -0) // false
+Object.is(NaN, NaN) // true
+```
+
+### `Object.assign()`
+
+#### 基本用法
+
+```js
+const v1 = 'abc';
+const v2 = true;
+const v3 = 10;
+
+const obj = Object.assign({}, v1, v2, v3);
+console.log(obj); // { "0": "a", "1": "b", "2": "c" }
+```
+
+#### 注意点
+
+1. 浅拷贝
+2. 同名属性替换
+3. 数组处理
+4. 取值函数处理
+
+    `Object.assign()` 不会复制取值函数（`get`），只会执行函数拿到值，对值进行复制。
+
+#### 常见用途
+
+1. 为对象添加属性
+2. 为对象添加方法
+3. 克隆对象
+4. 合并多个对象
+5. 为属性指定默认属性
+
+### 3. `Object.getOwnPropertyDescriptors()`
+
+ES5 `Object.getOwnPropertyDescriptor()` 方法会返回某个对象的描述对象
+
+ES2107 引入了 `Object.getOwnPropertyDescriptors()` 方法，会返回指定对象所有自身方法的描述对象
+
+由于 `Object.assign()` 无法复制 `gey` 和 `set` 属性。这时 `Object.getOwnPropertyDescriptors()` 方法配合 `Object.defineProperties()` 方法可以实现正确拷贝
+
+```js
+const source = {
+  set foo(value) {
+    console.log(value);
+  }
+};
+
+const target2 = {};
+Object.defineProperties(target2, Object.getOwnPropertyDescriptors(source));
+Object.getOwnPropertyDescriptor(target2, 'foo')
+// { get: undefined,
+//   set: [Function: set foo],
+//   enumerable: true,
+//   configurable: true }
+```
+
+### 4. `__proto__` 属性，`Object.setPrototypeOf()`，`Object.getPrototypeOf()`
+
+#### `__proto__` 属性
+
+所有浏览器都部署这个属性。不建议使用。
+
+使用以下函数代替  
+`Object.setPrototypeOf()`,`Object.getPrototypeOf()`,`Object.create()`
+
+#### `Object.setPrototypeOf()`
+
+```js
+Object.setPrototypeOf(object, prototype)
+```
+
+#### `Object.getPrototypeOf()`
+
+### 5. `Object.keys()`, `Object.values`, `Object.entries()`
+
+#### `Object.keys()`
+
+```js
+var obj = { foo: 'bar', baz: 42 };
+Object.keys(obj)
+// ["foo", "baz"]
+```
+
+#### `Object.values()`
+
+```js
+const obj = { foo: 'bar', baz: 42 };
+Object.values(obj)
+// ["bar", 42]
+```
+
+#### `Object.entries()`
+
+```js
+const obj = { foo: 'bar', baz: 42 };
+Object.entries(obj)
+// [ ["foo", "bar"], ["baz", 42] ]
+```
+
+### 6. `Object.fromEntries()`
+
+`Object.fromEntries()` 是 `Object.entries()` 的逆操作，用于将键值对数组转化成对象。
+
+```js
+Object.fromEntries([
+  ['foo', 'bar'],
+  ['baz', 42]
+])
+// { foo: "bar", baz: 42 }
+```
