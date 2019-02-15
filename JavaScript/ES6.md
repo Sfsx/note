@@ -630,3 +630,35 @@ Object.fromEntries([
 Object.fromEntries(new URLSearchParams('foo=bar&baz=qux'))
 // { foo: "bar", baz: "qux" }
 ```
+
+```js
+let a = new Set([1, 2, 3]);
+let b = new Set([4, 3, 2]);
+
+// 并集
+let union = new Set([...a, ...b]);
+// Set { 1, 2, 3, 4 }
+
+// 交集
+let insersect = new Set([...a].filter(x => b.has(x)));
+// Set { 2, 3 }
+
+// 差
+let defference = new Set([...a].filter(x => !b.has(x)));
+// Set { 1 }
+```
+
+### 2.WeakSet
+
+#### 含义
+
+WeakSet 结构与 Set 类似，也是不重复的值的集合。但是，它与 Set 有两个区别。
+
++ 首先，WeakSet 的成员只能是对象，而不能是其他类型的值。
++ 其次，WeakSet 中的对象都是弱引用，即垃圾回收机制不考虑 WeakSet 对该对象的引用
+
+#### 语法
+
++ `WeakSet.prototype.add(value)`
++ `WeakSet.prototype.delete(value)`
++ `WeakSet.prototype.has(value)`
