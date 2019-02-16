@@ -630,3 +630,121 @@ Object.fromEntries([
 Object.fromEntries(new URLSearchParams('foo=bar&baz=qux'))
 // { foo: "bar", baz: "qux" }
 ```
+
+## Symbol
+
+### 1. 概述
+
+属性名为字符串时容易冲突，故引入 `Symbol`
+
+### 2. 作为属性名的 `Symbol`
+
+`Symbol` 值作为对象属性名时，不能用点运算符。因为点运算符后面总是字符串。
+
+在对象内部，使用 `Symbol` 值定义属性时，`Symbol` 值必须放在方括号中。
+
+```js
+let obj = {
+  [s](arg) { ... }
+};
+```
+
+定义常量
+
+```js
+const log = {};
+
+log.levels = {
+  DEBUG: Symbol('debug'),
+  INFO: Symbol('info'),
+  WARN: Symbol('warn')
+};
+
+// or
+
+const COLOR_RED    = Symbol();
+const COLOR_GREEN  = Symbol();
+```
+
+### 3. 实例：消除魔术字符串
+
+魔术字符串指的是，在代码之中多次出现、与代码形成强耦合的某一个具体的字符串或数值。良好风格的代码，应该尽量消除魔术字符串，改由含义清晰的变量代替。
+
+### 4. 属性名的遍历
+
+`Symbol` 作为属性名，该属性不会出现在 `for...in`、`for...of` 循环中，也不会被 `Object.keys()`、`Object.getOwnPropertyNames()`、`JSON.stringify()` 返回
+
+只能使用 `Object.getOwnPropertySymbols(obj)` 方法，或者 `Reflect.ownKeys` 方法。
+
+由于以 `Symbol` 值作为名称的属性，不会被常规方法遍历到。我们可以利用这个特性，为对象定义一些非私有的、但又希望只用于内部的方法。
+
+### 5. `Symbol.for()`, `Symbol.keyFor()`
+
+```js
+// 为了使用同一个 Symbol 值
+let s1 = Symbol.for('foo');
+let s2 = Symbol.for('foo');
+
+s1 === s2 // true
+```
+
+`Symbol.keyFor` 方法返回一个已登记的 `Symbol` 类型值的`key`。
+
+```js
+let s1 = Symbol.for("foo");
+Symbol.keyFor(s1) // "foo"
+
+let s2 = Symbol("foo");
+Symbol.keyFor(s2) // undefined
+```
+
+### 6. 实例：模块的 Singleton 模式
+
+```js
+// mod.js
+const FOO_KEY = Symbol.for('foo');
+
+function A() {
+  this.foo = 'hello';
+}
+
+if (!global[FOO_KEY]) {
+  global[FOO_KEY] = new A();
+}
+
+module.exports = global[FOO_KEY];
+
+// index.js
+const a = require('./mod.js');
+console.log(a.foo);
+```
+
+### 7. 内置的 Symbol 值
+
+#### Symbol.hasInstance
+
+`foo instanceof Foo` 在语言内部，实际调用的是 `Foo[Symbol.instanceof](foo)`
+
+```js
+class MyClass {
+  [Symbol.hasInstance](foo) {
+    return foo instanceof Array;
+  }
+}
+
+[1, 2, 3] instanceof new MyClass() // true
+```
+
+#### Symbol.isConcatSpreadable
+
+#### Symbol.species
+
+#### Symbol.match
+
+#### Symbol.replace
+
+#### Symbol.search
+
+#### Symbol.split
+
+#### Symbol.iterator
