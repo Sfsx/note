@@ -772,7 +772,11 @@ class MyClass {
 
 对象的 `Symbol.unscopables` 属性，指向一个对象。该对象知道了使用 `with` 关键字时，哪些属性会被 `with` 环境排除。
 
-## Set
+## Set 和 Map 数据结构
+
+### 1.Set
+
+#### 基本用法
 
 ```js
 let a = new Set([1, 2, 3]);
@@ -791,6 +795,20 @@ let defference = new Set([...a].filter(x => !b.has(x)));
 // Set { 1 }
 ```
 
+#### Set 实例的属性和方法
+
++ `add(value)`：添加某个值，返回 Set 结构本身。
++ `delete(value)`：删除某个值，返回一个布尔值，表示删除是否成功。
++ `has(value)`：返回一个布尔值，表示该值是否为Set的成员。
++ `clear()`：清除所有成员，没有返回值。
+
+#### 遍历操作
+
++ keys()：返回键名的遍历器
++ values()：返回键值的遍历器
++ entries()：返回键值对的遍历器
++ forEach()：使用回调函数遍历每个成员
+
 ### 2.WeakSet
 
 #### 含义
@@ -805,3 +823,6 @@ WeakSet 结构与 Set 类似，也是不重复的值的集合。但是，它与 
 + `WeakSet.prototype.add(value)`
 + `WeakSet.prototype.delete(value)`
 + `WeakSet.prototype.has(value)`
+
+### 3. Map
+
