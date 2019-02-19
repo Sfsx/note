@@ -700,6 +700,10 @@ Symbol.keyFor(s2) // undefined
 
 ### 6. 实例：模块的 Singleton 模式
 
+Singleton 模式指的是电泳一个类，任何时候返回的都是同一个实例。
+
+实际运用：在 Node 中模块文件可以看成是一个 Singleton 类。
+
 ```js
 // mod.js
 const FOO_KEY = Symbol.for('foo');
@@ -739,6 +743,8 @@ class MyClass {
 
 #### Symbol.species
 
+对象的 `Symbol.species` 属性，指向一个构造函数。用于 `instanceof` 判断
+
 #### Symbol.match
 
 #### Symbol.replace
@@ -748,6 +754,23 @@ class MyClass {
 #### Symbol.split
 
 #### Symbol.iterator
+
+#### Symbol.toPrimitive
+
+对象的 `Symbol.toPrimitive` 属性，指向一个方法。该对象被转为原始类型的值时，会调用这个方法，返回该对象对应的原始类型值。
+
+#### Symbol.toStringTag
+
+对象调用 `toString` 方法返回 `[object Object]` 或 `[object Array]`，对象的这个属性可以改变 `object`后面的那个字符串
+
+```js
+({[Symbol.toStringTag]: 'Foo'}.toString())
+// "[object Foo]"
+```
+
+#### Symbol.unscopables
+
+对象的 `Symbol.unscopables` 属性，指向一个对象。该对象知道了使用 `with` 关键字时，哪些属性会被 `with` 环境排除。
 
 ## Set
 
