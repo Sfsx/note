@@ -157,24 +157,79 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 
 如果 `async` 关键字函数显式地返回 `promise` ，那就以你返回的 `promise` 为准
 
-### macrotask queue and microtask queue
+### 浏览器中的 event loop
+
+#### macrotask queue and microtask queue
 
 `macro-tasks: script(整体代码),setTimeout, setInterval, setImmediate, I/O, UI rendering`
 
 `micro-tasks: process.nextTick, Promises, Object.observe, MutationObserver`
 
-#### 执行过程如下：
+#### 执行过程
+
 1. JavaScript引擎首先从macrotask queue中取出第一个任务，执行完毕。
 2. 将microtask queue中的所有任务取出，按顺序全部执行。
 3. 然后再从macrotask queue中取下一个，执行完毕。
 4. 再次将microtask queue中的全部取出，按顺序全部执行。
 5. 循环往复，直到两个queue中的任务都取完。
 
+### nodejs 中的 event loop
+
+nodejs 的 event loop分为6个阶段，`MicroTask Queue` 在6个阶段结束的时候都会执行。
+
+#### event loop 的6个阶段
+
++ `timers`：执行 `setTimeout()` 和 `setInterval()` 中到期的 `callback`
++ `I/O callback`：上一轮循环中有少数的 `I/O callback` 会被延迟到这一轮的这一阶段执行。
++ `idle, prepare`： 仅内部使用
++ `poll`：最为重要的几段， 执行除了以下之外的所有 `callback` 
+  + close 事件的 `callbacks`
+  + `timers` （定时器，`setTimeout`、`setInterval` 等）设定的 `callbacks`
+  + `setImmediate()` 设定的 `callbacks`
++ `check`：执行 `setImmediate` 的 `callback`
++ `close callback`：执行 close 事件的 `callback`，例如 `socket.on("close", func)`
+
+event loop 的每一次循环都需要一次经过上述的阶段。每个阶段都有自己的 `callback` 队列，每当进入某个阶段，都会从所属的队列中取出 `callback` 来执行，当队列为空或者被执行 `callback` 的数量达到系统的最大数量时，进入下一个阶段。六个阶段执行完成称为一轮事件循环。
+
+#### 执行过程
+
+外部输入数据 --> 轮询阶段(`poll`) --> 检查阶段(`check`) --> 关闭事件回调阶段(`close callback`) --> 定时器检测阶段(`timer`) --> I/O 事件回调阶段(`I/O callback`) --> 闲置阶段(`idle, prepare`) --> 轮询阶段...
+
+#### `poll` 阶段
+
+在 node.js 里，任何异步方法（除 `timer,close,setImmediate` 之外）完成时，都会将其 `callback` 加到 `poll queue` 里,并立即执行。
+
+poll 阶段有两个主要的功能：
+
++ 处理poll队列（poll quenue）的事件(callback);
++ 执行timers的callback,当到达timers指定的时间时;
+
+如果event loop进入了 poll阶段，且代码未设定timer，将会发生下面情况：
+
++ 如果poll queue不为空，event loop将同步的执行queue里的callback,直至queue为空，或执行的callback到达系统上限;
++ 如果poll queue为空，将会发生下面情况：
+  + 如果代码已经被setImmediate()设定了callback, event loop将结束poll阶段进入check阶段，并执行check阶段的queue (check阶段的queue是 setImmediate设定的)
+  + 如果代码没有设定setImmediate(callback)，event loop将阻塞在该阶段等待callbacks加入poll queue;
+
+如果event loop进入了 poll阶段，且代码设定了timer：
+
++ 如果poll queue进入空状态时（即poll 阶段为空闲状态），event loop将检查timers,如果有1个或多个timers时间时间已经到达，event loop将按循环顺序进入 timers 阶段，并执行timer queue.
+
+#### 参考资料
+
 [宏队列 和 微队列](https://www.jianshu.com/p/3ed992529cfc)
 
 [event loop](https://html.spec.whatwg.org/multipage/webappapis.html#event-loops)
 
 [JavaScript 执行机制](https://juejin.im/post/59e85eebf265da430d571f89)
+
+[nodejs中的event loop](https://www.jianshu.com/p/deedcbf68880)
+
+[Event Loop 必知必会（六道题）](https://zhuanlan.zhihu.com/p/34182184)
+
+[不要混淆nodejs和浏览器中的event loop](https://cnodejs.org/topic/5a9108d78d6e16e56bb80882#5a98d9a2ce1c90bc44c445af)
+
+[理解nodejs的事件循环](http://coolcao.com/2016/12/22/node-js-event-loop/)
 
 ## HTML5 调用摄像头 （未完成demo）
 
@@ -494,6 +549,14 @@ function myFunction() {
 
 对于相同的输入，永远会得到相同的输出，而且没有任何可观察的副作用，也不依赖外部环境的状态
 
+优点：
+
++ 可缓存性（Cacheable）
++ 可移植性／自文档化（Portable / Self-Documenting）
++ 可测试性（Testable）
++ 合理性（Reasonable）
++ 并行代码（Parallel Code）
+
 ### 柯里化
 
 传递给函数一部分参数来调用它，让它返回一个函数去处理剩下的参数
@@ -645,7 +708,7 @@ findColor('green')
 
 + [函数式编程指南](https://llh911001.gitbooks.io/mostly-adequate-guide-chinese/content/)
 + [原文链接](https://zhuanlan.zhihu.com/p/21714695)
-
++ [JavaScript 函数式编程（一）](https://juejin.im/post/5b7014d5518825612d6441f8)
 ## SSR vs CSR
 
 SSR (server-side-rendering)
