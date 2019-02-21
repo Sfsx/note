@@ -551,7 +551,7 @@ ES5 `Object.getOwnPropertyDescriptor()` 方法会返回某个对象的描述对�
 
 ES2107 引入了 `Object.getOwnPropertyDescriptors()` 方法，会返回指定对象所有自身方法的描述对象
 
-由于 `Object.assign()` 无法复制 `gey` 和 `set` 属性。这时 `Object.getOwnPropertyDescriptors()` 方法配合 `Object.defineProperties()` 方法可以实现正确拷贝
+由于 `Object.assign()` 无法复制 `get` 和 `set` 属性。这时 `Object.getOwnPropertyDescriptors()` 方法配合 `Object.defineProperties()` 方法可以实现正确拷贝
 
 ```js
 const source = {
