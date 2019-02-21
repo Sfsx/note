@@ -159,6 +159,8 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 
 ### 浏览器中的 event loop
 
+![avatar](http://lynnelv.github.io/img/article/event-loop/ma(i)crotask.png)
+
 #### macrotask queue and microtask queue
 
 `macro-tasks: script(整体代码),setTimeout, setInterval, setImmediate, I/O, UI rendering`
@@ -174,6 +176,8 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 5. 循环往复，直到两个queue中的任务都取完。
 
 ### nodejs 中的 event loop
+
+![avatar](http://lynnelv.github.io/img/article/event-loop/ma(i)crotask-in-node.png)
 
 nodejs 的 event loop分为6个阶段，`MicroTask Queue` 在6个阶段结束的时候都会执行。
 
@@ -201,19 +205,20 @@ event loop 的每一次循环都需要一次经过上述的阶段。每个阶段
 
 poll 阶段有两个主要的功能：
 
-+ 处理poll队列（poll quenue）的事件(callback);
-+ 执行timers的callback,当到达timers指定的时间时;
++ 处理 poll 队列（poll quenue）的事件（callback）；
++ 执行 timers 的 callback，当到达 timers 指定的时间时；
 
-如果event loop进入了 poll阶段，且代码未设定timer，将会发生下面情况：
+1. 如果 event loop 进入了 poll 阶段，且代码未设定 timer，将会发生下面情况：
 
-+ 如果poll queue不为空，event loop将同步的执行queue里的callback,直至queue为空，或执行的callback到达系统上限;
-+ 如果poll queue为空，将会发生下面情况：
-  + 如果代码已经被setImmediate()设定了callback, event loop将结束poll阶段进入check阶段，并执行check阶段的queue (check阶段的queue是 setImmediate设定的)
-  + 如果代码没有设定setImmediate(callback)，event loop将阻塞在该阶段等待callbacks加入poll queue;
+   + 如果 poll queue 不为空，event loop 将同步的执行 queue 里的`callback` ,直至 queue 为空，或执行的 `callback` 数量到达系统上限；
+   + 如果 poll queue 为空，将会发生下面情况：
 
-如果event loop进入了 poll阶段，且代码设定了timer：
+     + 如果代码已经被 `setImmediate()` 设定了 callback, event loop 将结束 poll 阶段进入 check 阶段，并执行 check 阶段的 queue （check 阶段的 queue 是 `setImmediate` 设定的）；
+     + 如果代码没有设定 `setImmediate(callback)`，event loop 将阻塞在该阶段等待 `callbacks` 加入 poll queue；
 
-+ 如果poll queue进入空状态时（即poll 阶段为空闲状态），event loop将检查timers,如果有1个或多个timers时间时间已经到达，event loop将按循环顺序进入 timers 阶段，并执行timer queue.
+2. 如果 event loop 进入了 poll 阶段，且代码设定了 timer：
+
+   + 如果 poll queue 进入空状态时（即poll 阶段为空闲状态），event loop 将检查 timers，如果有1个或多个 timers 时间时间已经到达，event loop 将按循环顺序进入 timers 阶段，并执行 timer queue。
 
 #### 参考资料
 
@@ -231,6 +236,7 @@ poll 阶段有两个主要的功能：
 
 [理解nodejs的事件循环](http://coolcao.com/2016/12/22/node-js-event-loop/)
 
+[* 深入理解js事件循环机制（Node.js篇）](http://lynnelv.github.io/js-event-loop-nodejs)
 ## HTML5 调用摄像头 （未完成demo）
 
 `MediaDevices.getUserMedia()`
