@@ -431,6 +431,8 @@ The Comment interface represents textual notations within markup; although it is
 
 Node程序运行中，此进程占用的所有内存称为**常驻内存**（Resident Set）。
 
+查看内存使用状态`process.memoryUsage()`
+
 常驻内存由以下部分组成：
 
 1. 代码区（Code Segment）：存放即将执行的代码片段
