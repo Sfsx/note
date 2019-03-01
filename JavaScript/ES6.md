@@ -761,6 +761,8 @@ class MyClass {
 
 #### Symbol.toStringTag
 
+`Symbol.toStringTag` 定义的是一个对象的 `Object.prototype.toString` 方法。（注意是原型上的toString方法）
+
 对象调用 `toString` 方法返回 `[object Object]` 或 `[object Array]`，对象的这个属性可以改变 `object`后面的那个字符串
 
 ```js
@@ -826,3 +828,77 @@ WeakSet 结构与 Set 类似，也是不重复的值的集合。但是，它与 
 
 ### 3. Map
 
+#### 含义和基本用法
+
+JavaScript 的对象（Object），本质上是键值对的集合（Hash 结构）。但是传统上只能用字符串当作键。这给它的使用带来了很大的限制。
+
+Object 结构提供了 **字符串——值** 的对应
+
+Map 结构提供了 **值——值** 的对应
+
+#### 实例的属性和操作方法
+
+>（1）size属性  
+（2）`set(key, value)`  
+（3）`get(key)`  
+（4）`has(key)`  
+（5）`delete(key)`  
+（6）`clear()`
+
+#### 遍历方法
+
++ `keys()`
++ `values()`
++ `entries()`
++ `forEach()`
+
+#### 与其他结构互转
+
+Map -> Array
+
+Array -> Map
+
+Map -> Object
+
+Object -> Map
+
+Map -> JSON
+
+JSON -> Map
+
+### 4. WeakMap
+
+`WeakMap` 和 `Map` 结构类似，也是用于生产键值对的集合。但有两点区别
++ `WeakMap` 只接受对象作为键名（ `null` 除外）
++ `WeakMap` 对对象的引用为弱引用
+
+#### WeakMap 的语法
+
++ `get()`
++ `set()`
++ `has()`
++ `delete()`
+
+## Proxy
+
+### 1.概述
+
+### 2.Proxy 实例的方法
+
+#### get()
+
+拦截某个属性的读取操作，可以接收三个参数，依次为目标对象、属性名和 proxy 实例本身（严格地说，是操作行为所针对的对象）
+
+## Reflect
+
+## Promise 对象
+
+## Iterator 和 for...of 循环
+
+## Generator 函数的语法
+
+## Generator 函数的异步应用
+
+## async 函数
+
+## class 的基本语法
