@@ -869,6 +869,7 @@ JSON -> Map
 ### 4. WeakMap
 
 `WeakMap` 和 `Map` 结构类似，也是用于生产键值对的集合。但有两点区别
+
 + `WeakMap` 只接受对象作为键名（ `null` 除外）
 + `WeakMap` 对对象的引用为弱引用
 
@@ -888,6 +889,71 @@ JSON -> Map
 #### get()
 
 拦截某个属性的读取操作，可以接收三个参数，依次为目标对象、属性名和 proxy 实例本身（严格地说，是操作行为所针对的对象）
+
+#### set()
+
+#### apply()
+
+`apply`方法拦截函数的调用、`call` 和 `apply` 操作。
+
+#### has()
+
+has 方法拦截的是 `HasProperty` 操作，而不是`HasOwnProperty` 操作
+
+#### contruct()
+
+拦截 `new` 命令
+
+#### deleteProperty()
+
+#### defineProperty()
+
+#### getOwnPropertyDescrptor()
+
+#### getPropertyOf()
+
+拦截获取对象原型
+
+#### isExtensible()
+
+拦截 `Object.isExtensible()`
+
+#### ownKeys()
+
+拦截对象自身属性读取操作
+
+#### preventExtensions()
+
+拦截 `Object.preventExtensions()`
+
+#### setPrototypeOf()
+
+### 3.Proxy.revocable()
+
+该方法可以返回一个可以取消的 Proxy 实例
+
+### 4.this 问题
+
+在 Proxy 代理的情况下，目标对象内部的 `this` 关键字会指向 Proxy 代理。
+
+```js
+const _name = new WeakMap();
+
+class Person {
+  constructor(name) {
+    _name.set(this, name);
+  }
+  get name() {
+    return _name.get(this);
+  }
+}
+
+const jane = new Person('Jane');
+jane.name // 'Jane'
+
+const proxy = new Proxy(jane, {});
+proxy.name // undefined
+```
 
 ## Reflect
 
