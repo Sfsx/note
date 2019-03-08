@@ -839,11 +839,11 @@ Map 结构提供了 **值——值** 的对应
 #### 实例的属性和操作方法
 
 >（1）size属性  
-（2）`set(key, value)`  
-（3）`get(key)`  
-（4）`has(key)`  
-（5）`delete(key)`  
-（6）`clear()`
+>（2）`set(key, value)`  
+>（3）`get(key)`  
+>（4）`has(key)`  
+>（5）`delete(key)`  
+>（6）`clear()`
 
 #### 遍历方法
 
@@ -957,7 +957,87 @@ proxy.name // undefined
 
 ## Reflect
 
+### 1. 概述
+
+> （1）将 `Object` 对象的一些明显属于语言内部的方法，放到 `Reflect` 对象上  
+> （2）修改某些 `Object` 方法的返回结果，让其变得更合理。  
+> （3）让 `Object` 操作变成函数行为。  
+> （4）`Reflect` 对象的方法和 `Proxy` 对象的方法一一对应。
+
+### 2. 静态方法
+
++ `Reflect.apply(target, thisArg, args)`
++ `Reflect.construct(target, args)`
++ `Reflect.get(target, name, receiver)`
++ `Reflect.set(target, name, value, receiver)`
++ `Reflect.defineProperty(target, name, desc)`
++ `Reflect.deleteProperty(target, name)`
++ `Reflect.has(target, name)`
++ `Reflect.ownKeys(target)`
++ `Reflect.isExtensible(target)`
++ `Reflect.preventExtensions(target)`
++ `Reflect.getOwnPropertyDescriptor(target, name)`
++ `Reflect.getPrototypeOf(target)`
++ `Reflect.setPrototypeOf(target, prototype)`
+
+### 3. 实例：使用 Proxy 实现观察者模式
+
+```js
+const queueObservers = new Set();
+
+const observe = fn => queuedObservers.add(fn);
+const observable = obj => new Proxy(obj, {set});
+
+function set(target, key, value, receiver) {
+  const result = Reflect.set(target. key, value, receiver);
+  queueObservers.forEach(observer => observer());
+}
+```
+
 ## Promise 对象
+
+### 1. Promise 的含义
+
+### 2. 基本用法
+
+### 3. Promise.prototype.then()
+
+### 4. Promise.prototype.catch()
+
+`Promise.prototype.catch()` 方法是 `.then(null, rejection)` 或 `.then(undefined, rejection)` 的别名，用于指定发生错误时的回调函数。
+
+一般来说，不要在 `then` 方法里面定义 Reject 状态的回调函数（即 `then` 的第二个参数），总是使用 `catch` 方法。理由是第二种写法可以铺货前面 `then` 方法中执行的错误，也更接近同步的写法（`try/catch`）。
+
+```js
+// bad
+promise
+  .then(function(data) {
+    // success
+  }, function(err) {
+    // error
+  });
+
+// good
+promise
+  .then(function(data) { //cb
+    // success
+  })
+  .catch(function(err) {
+    // error
+  });
+```
+
+在浏览器中 “Promise 会吃掉内部的错误” （会打印错误，但不会退出进程、终止脚本执行，2 秒之后还是会输出123。）。但是在 node 环境中，Node 有一个 `unhandleRejection` 事件，专门监听未捕获的是 `reject` 错误。并抛出错误。
+
+```js
+process.on('unhandledRejection', function (err, p) {
+  throw err;
+});
+```
+
+注意，Node 有计划在未来废除 `unhandledRejection` 事件。如果 Promise 内部有未捕获的错误，会直接终止进程，并且进程的退出码不为 0。
+
+### 5. Promise.prototype.
 
 ## Iterator 和 for...of 循环
 
