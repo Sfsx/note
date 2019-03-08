@@ -37,3 +37,7 @@
 [SVG图标制作指南](https://zhuanlan.zhihu.com/p/20753791?refer=FrontendMagazine)
 
 [SVG在线制作工具](https://svg.wxeditor.com/)
+
+### 2018 js报告
+
+https://2018.stateofjs.com/cn/introduction/
