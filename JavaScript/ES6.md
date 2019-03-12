@@ -1000,9 +1000,9 @@ function set(target, key, value, receiver) {
 
 ### 2. 基本用法
 
-### 3. Promise.prototype.then()
+### 3. `Promise.prototype.then()`
 
-### 4. Promise.prototype.catch()
+### 4. `Promise.prototype.catch()`
 
 `Promise.prototype.catch()` 方法是 `.then(null, rejection)` 或 `.then(undefined, rejection)` 的别名，用于指定发生错误时的回调函数。
 
@@ -1037,7 +1037,99 @@ process.on('unhandledRejection', function (err, p) {
 
 注意，Node 有计划在未来废除 `unhandledRejection` 事件。如果 Promise 内部有未捕获的错误，会直接终止进程，并且进程的退出码不为 0。
 
-### 5. Promise.prototype.
+### 5. `Promise.prototype.finally()`
+
+原理实现
+
+```js
+Promise.prototype.finally = function (callback) {
+  let P = this.constructor;
+  return this.then(
+    value  => P.resolve(callback()).then(() => value),
+    reason => P.resolve(callback()).then(() => { throw reason })
+  );
+};
+```
+
+### 6. `Promise.all()`
+
+`Promise.all()` 中的参数如果不是 `Promise` 的实例，就会先调用 `Promise.resolve` 方法，将参数转化为 `Promise` 实例，再进一步处理。
+
+### 7. `Promise.race()`
+
+`Promise.race` 方法同样是将多个 `Promise` 实例，包装成一个新的 Pro
+
+```js
+const p = Promise.race([p1, p2, p3]);
+```
+
+上面代码中，只要`p1`、`p2`、`p3`之中有一个实例率先改变状态，`p` 的状态就跟着改变。那个率先改变的 `Promise` 实例的返回值，就传递给 `p` 的回调函数。
+
+### 8. `Promise.resolve()`
+
+`Promise.resolve` 方法的参数分为四种情况。
+
+1. 参数是一个 `Promise` 实例
+
+    不作修改，返回该实例
+
+2. 参数是一个 `thenable` 对象
+
+    转化为 `Promise` 对象，然后立即执行该实例的 `then` 方法
+
+3. 参数不是具有 `then` 方法的对象，或者根本不是对象
+
+    返回一个新的 Promise 对象，状态为 `resolved`
+
+4. 不带有任何参数
+
+    同 3。返回一个新的 Promise 对象，状态为 `resolved`
+
+### 9. `Promise.reject()`
+
+`Promise.reject(reason)` 方法返回一个新的 Promise 实例，该实例状态为 `rejected`
+
+reject 方法的参数会原封不动的传递给后续方法作为参数
+
+```js
+const thenable = {
+  then(resolve, reject) {
+    reject('出错了');
+  }
+};
+
+Promise.reject(thenable)
+.catch(e => {
+  console.log(e === thenable)
+})
+// true
+```
+
+### 10. 应用
+
+### 11. `Promise.try()`
+
+无论函数 `f` 是同步或者异步，都用 Promise 来处理它
+
+```js
+// 这种写法会导致 f 在本轮事件循环末尾才执行
+Promise.resolve().then(f)
+
+// async 封装
+;(async () => f())()
+.then(...)
+.catch(...)
+
+// new Promise() 封装
+;(
+  () => new Promise(
+    resolve => resolve(f())
+  )
+)();
+
+// 新提案
+Promise.try(f);
+```
 
 ## Iterator 和 for...of 循环
 
