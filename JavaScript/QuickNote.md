@@ -833,6 +833,7 @@ declare module 'react-snapshot' {
 
 4. IIFE模式：匿名函数自调用(闭包)
 5. IIFE模式增强 : 引入依赖
+
     ```js
     // module.js文件
     (function(window, $) {
@@ -856,6 +857,7 @@ declare module 'react-snapshot' {
       window.myModule = { foo, bar }
     })(window, jQuery)
     ```
+
 ### 规范化模块
 
 #### CommonJS规范简介
