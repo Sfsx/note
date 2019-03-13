@@ -1125,13 +1125,192 @@ Promise.resolve().then(f)
   () => new Promise(
     resolve => resolve(f())
   )
-)();
+)()
 
 // 新提案
-Promise.try(f);
+Promise.try(f)
 ```
 
 ## Iterator 和 for...of 循环
+
+### 1. Iterator（遍历器）的概念
+
+JavaScript 原有的标示 “集合” 的数据结构，主要是数组（Array）和对象（Object），ES6 又添加了 Map 和 Set。
+
+遍历器（Iterator）就是这样一种机制。它是一种接口，为各种不同的数据结构提供统一的访问机制。任何数据结构只要部署 Iterator 接口，就可以完成遍历操作。
+
+Iterator 的作用有三个：
+1. 为各种数据结构，提供一个统一的、简便的访问接口
+2. 使得结构数据成员能够按某种次序排列
+3. ES6 创造了 `for...of` 循环，Iterator 接口主要提供 `for...of` 消费
+
+Iterator 遍历过程：
+1. 创建一个指针对象，指向当前数据结构的起始位置。也就是说，遍历对象本质上，就是一个指针对象。
+2. 第一次调用指针对象的 `next` 方法，可以将指针指向数据结构的第一个成员。
+3. 第二次调用指针对象的 `next` 方法，可以将指针指向数据结构的第二个成员。
+4. 不断调用指针对象的 `next` 方法，直到它指向数据结构的结束位置。
+
+`next` 方法返回一个对象，具有 `value` 和 `done` 两个属性，其中 `done` 属性是一个布尔值表示遍历是否结束。
+
+### 2. 默认 Iterator 接口
+
+ES6 规定，默认的 Iterator 接口部署在数据结构的 `Symbol.iterator` 属性。
+
+```js
+const obj = {
+  [Symbol.iterator] : function () {
+    return {
+      next: function () {
+        return {
+          value: 1,
+          done: true
+        };
+      }
+    };
+  }
+};
+```
+
+原生具备 Iterator 接口的数据结构如下
+
++ Array
++ Map
++ Set
++ String
++ TypedArray
++ 函数的 arguments 对象
++ NodeList 对象
+
+对于类似数组的对象（存在数值键名和`length`属性），部署 Iterator 接口，有一个简便方法，就是 `Symbol.iterator` 方法直接引用数组的 Iterator 接口。
+
+```js
+NodeList.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
+// 或者
+NodeList.prototype[Symbol.iterator] = [][Symbol.iterator];
+
+[...document.querySelectorAll('div')] // 可以执行了
+```
+`NodeList` 对象是类似数组的对象，本来就具有遍历接口，可以直接遍历。上面代码中，我们将它的遍历接口改成数组的`Symbol.iterator` 属性，可以看到没有任何影响。
+
+### 3. 调用 Iterator 接口的场合
+
+1. 解构赋值
+2. 扩展运算符
+3. `yield*`
+4. 其他场合
+
+    数组作为参数的场合
+
+### 4. 字符串的 Iterator 接口
+
+### 5. Iterator 接口与 Generator 函数
+
+```js
+let myIterator = {
+  [Symbol.iterator]: function* () {
+    yield 1;
+    yield 2;
+    yield 3;
+  }
+}
+[...myIterator] // [1, 2, 3]
+
+let obj = {
+  * [Symbol.iterator]() {
+    yield 'hello';
+    yield 'world';
+  }
+};
+```
+
+### 6. 遍历器对象的 retrun()，throw()
+
+`return` 方法的试用场合是，如果 `for...of` 循环提前退出（通常是因为出错，或者有 `break` 语句），就会调用 `return` 方法。
+
+```js
+function readLinesSync(file) {
+  return {
+    [Symbol.iterator]() {
+      return {
+        next() {
+          return { done: false };
+        },
+        return() {
+          file.close();
+          return { done: true };
+        }
+      };
+    },
+  };
+}
+
+// 情况一
+for (let line of readLinesSync(fileName)) {
+  console.log(line);
+  break;
+}
+
+// 情况二
+for (let line of readLinesSync(fileName)) {
+  console.log(line);
+  throw new Error();
+}
+```
+
+上面代码中，情况一输出文件的第一行以后，就会执行 `return` 方法，关闭这个文件；情况二会在执行 `return` 方法关闭文件之后，再抛出错误。
+
+### 7. `for...of` 循环
+
+`for...of` 修复了 `for...in` 的缺陷和不足。`for...in` 循环除了遍历数组元素以外,还会遍历自定义属性。
+
+
+
+`for...of` 不能遍历普通对象的 key 或 value（不是 Iterator ）
+
+#### 数组
+
+#### Set 和 Map 结构
+
+#### 计算生成的数据结构
+
+以下方法返回
++ `entries()`
++ `keys()`
++ `values()`
+
+#### 类似数组的对象
+
+DOM NodeList对象、`arguments` 对象。
+
+#### 对象
+
+先 `Object.keys()` 在用 `for...of` 循环
+
+#### 与其他遍历语法的比较
+
+`for...in` 循环有几个缺点
+
++ 数组的键名是数字，但是for...in循环是以字符串作为键名“0”、“1”、“2”等等。
++ for...in循环不仅遍历数字键名，还会遍历手动添加的其他键，甚至包括原型链上的键。
++ 某些情况下，for...in循环会以任意顺序遍历键名。
+
+    ```js
+    const aArray = [1, 2, 3]
+    aArray.name = 'demo'
+
+    for(let index in aArray){
+        console.log(`${aArray[index]}`); //Notice!!aArray.name也被循环出来了
+    }
+    for(var value of aArray){
+        console.log(value);
+    }
+    ```
+
+`for...of` 优点
+
++ 有着同 `for...in` 一样的简洁语法，但是没有 `for...in` 那些缺点。
++ 不同于 `forEach` 方法，它可以与`break`、`continue`和`return`配合使用。
++ 提供了遍历所有数据结构的统一操作接口。
 
 ## Generator 函数的语法
 
