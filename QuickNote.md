@@ -41,3 +41,5 @@
 ### 2018 js报告
 
 https://2018.stateofjs.com/cn/introduction/
+
+### redis 主从哨兵模式
