@@ -1140,11 +1140,13 @@ JavaScript 原有的标示 “集合” 的数据结构，主要是数组（Arra
 遍历器（Iterator）就是这样一种机制。它是一种接口，为各种不同的数据结构提供统一的访问机制。任何数据结构只要部署 Iterator 接口，就可以完成遍历操作。
 
 Iterator 的作用有三个：
+
 1. 为各种数据结构，提供一个统一的、简便的访问接口
 2. 使得结构数据成员能够按某种次序排列
 3. ES6 创造了 `for...of` 循环，Iterator 接口主要提供 `for...of` 消费
 
 Iterator 遍历过程：
+
 1. 创建一个指针对象，指向当前数据结构的起始位置。也就是说，遍历对象本质上，就是一个指针对象。
 2. 第一次调用指针对象的 `next` 方法，可以将指针指向数据结构的第一个成员。
 3. 第二次调用指针对象的 `next` 方法，可以将指针指向数据结构的第二个成员。
@@ -1190,6 +1192,7 @@ NodeList.prototype[Symbol.iterator] = [][Symbol.iterator];
 
 [...document.querySelectorAll('div')] // 可以执行了
 ```
+
 `NodeList` 对象是类似数组的对象，本来就具有遍历接口，可以直接遍历。上面代码中，我们将它的遍历接口改成数组的`Symbol.iterator` 属性，可以看到没有任何影响。
 
 ### 3. 调用 Iterator 接口的场合
@@ -1263,8 +1266,6 @@ for (let line of readLinesSync(fileName)) {
 
 `for...of` 修复了 `for...in` 的缺陷和不足。`for...in` 循环除了遍历数组元素以外,还会遍历自定义属性。
 
-
-
 `for...of` 不能遍历普通对象的 key 或 value（不是 Iterator ）
 
 #### 数组
@@ -1274,6 +1275,7 @@ for (let line of readLinesSync(fileName)) {
 #### 计算生成的数据结构
 
 以下方法返回
+
 + `entries()`
 + `keys()`
 + `values()`
@@ -1313,6 +1315,85 @@ DOM NodeList对象、`arguments` 对象。
 + 提供了遍历所有数据结构的统一操作接口。
 
 ## Generator 函数的语法
+
+### 1. 简介
+
+#### 基本概念
+
+#### yield 表达式
+
+#### 与 Iterator 接口的关系
+
+```js
+var myIterable = {};
+myIterable[Symbol.iterator] = function* () {
+  yield 1;
+  yield 2;
+  yield 3;
+};
+
+[...myIterable] // [1, 2, 3]
+```
+
+### 2. next 方法的参数
+
+遍历器对象的next方法的运行逻辑如下:
+
+1. 遇到 `yield` 表达式，就暂停执行后面的操作，并将紧跟在 `yield` 后面的那个表达式的值，作为返回的对象的 `value` 属性值。
+
+2. 下一次调用 `next` 方法时，再继续往下执行，直到遇到下一个 `yield` 表达式。
+
+3. 如果没有再遇到新的 `yield` 表达式，就一直运行到函数结束，直到 `return` 语句为止，并将 `return` 语句后面的表达式的值，作为返回的对象的 `value` 属性值。
+
+4. 如果该函数没有 `return` 语句，则返回的对象的 `value` 属性值为 `undefined`。
+
+`yield` 表达式本身没有返回值，或者说总是返回 `underfined`。`next` 方法可以带一个参数，该参数被当作上一个 `yield` 表达式的返回值。
+
+### 3. `for...of` 循环
+
+### 4. Generator.prototype.throw()
+
+Generator 函数返回的遍历器对象，都有一个 `throw` 方法，可以在**函数体外抛出错误**，然后在 Generator **函数体内捕获**。
+
+`throw()` 方法会自动执行一次 `next()` 方法
+
+### 5. Generator.prototype.return() 
+
+`return` 方法，可以返回给定的值，并且终结遍历 Generator 函数。
+
+如果 Generator 函数内部有 `try...finally` 代码块，且正在执行 `try`代码块，那么执行 `return` 方法会推迟到`finally` 代码块执行完再执行。
+
+```js
+function* numbers () {
+  yield 1;
+  try {
+    yield 2;
+    yield 3;
+  } finally {
+    yield 4;
+    yield 5;
+  }
+  yield 6;
+}
+var g = numbers();
+g.next() // { value: 1, done: false }
+g.next() // { value: 2, done: false }
+g.return(7) // { value: 4, done: false }
+g.next() // { value: 5, done: false }
+g.next() // { value: 7, done: true }
+```
+
+### 6. `next()`、`throw()`、`return()` 方法的共同点
+
+这三个方法本质上是同一件事，让 Generator 函数恢复执行，并使用不同的语句替换 `yield` 表达式。
+
++ `next()` 是将 `yield` 表达式替换成一个值
++ `throw()` 是将 `yield` 表达式替换成一个 `throw` 语句
++ `return()` 是将 `yield` 表达式替换成一个 `return` 语句
+
+### 7. yield* 表达式
+
+`yield*` 表达式，用来在一个 Generator 函数里面执行另一个 Generator 函数
 
 ## Generator 函数的异步应用
 
