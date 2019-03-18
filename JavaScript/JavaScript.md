@@ -165,6 +165,7 @@ alert(data[0].name);  //Zachary
     + `call()` 第一个参数是在其中运行函数的作用域，其余参数都直接传递给函数。`(this, .., .., .., ..)`
     + `apply()` 第一个参数是在其中运行函数的作用域，另一个是参数数组。`(this, arguements)`
     + bind() 这个方法会创建一个函数的实例，其 `this` 值会被绑 定到传给 `bind()` 函数的值。
+
       ```javascript
       window.color = "red";
       var o = { color: "blue" };
@@ -209,7 +210,7 @@ alert(typeof obj);           //"object"
 #### 5.6.3 String
 
 ```js
-// replace 第二个参数为字符串时可以使用特殊的字符序列 $$, $&, $', $`, $n, $nn 参考书中P127 
+// replace 第二个参数为字符串时可以使用特殊的字符序列 $$, $&, $', $`, $n, $nn 参考书中P127
 const text = "cat, bat, sat, fat";
 result = text.replace(/(.at)/g, "world ($1)");
 console.log(result); // "world (cat), world (bat), world (sat), world (fat)"
@@ -315,6 +316,7 @@ console.log(htmlEscape("<p class=\"greeting\">Hello world!</p>"));  //&lt;p clas
     + Enumerable
     + Get
     + Set
+
     ```javascript
     var book = {
       _year: 2004,
@@ -408,6 +410,7 @@ Person.prototype.sayName = function () {
   alert(this.name);
 };
 ```
+
 与构造函数模式不同的是，新对象的这些属性和方法是由所有实例共享的。换句话说，`person1` 和 `person2` 访问的都是同一组属性和同一个 `sayName()` 函数。
 
 1. 理解原型对象  
@@ -439,6 +442,7 @@ Person.prototype.sayName = function () {
 4. 原型的动态性  
 
     调用构造函数时会为实例添加一个指向初始原型的 `[[Prototype]]` 指针，此时将原型改为另外一个对象会切断构造函数与最初原型的联系，使构造函数指向新的原型。但实例还是指向最初的原型
+
     ```js
     function Person(){ }
     var friend = new Person();
@@ -448,6 +452,7 @@ Person.prototype.sayName = function () {
     };
     friend.name; //undefined
     ```
+
 5. 原生对象的原型
 
     不推荐在程序开发过程中修改原生对象的原型
@@ -505,6 +510,7 @@ function Person(name) {
 }
 var friend = Person("Nicholas", 29, "Software Engineer");
 ```
+
 稳妥构造函数遵循与寄生构造函数类似的模式，但有两点不同：一是新创建对象的实例方法不引用 this；二是不使用 new 操作符调用构造函数。  
 无法用`instanceof`来判断对象的类型。不建议使用
 
@@ -586,6 +592,7 @@ alert(instancel.colors); //"red, blue, green, black"
     }
     var instance = new SubType();
     ```
+
     为了确保 `SuperType` 构造函数不会重写子类型的属性，可以在调用超类型构造函数后，再添加应该在子类型中定义的属性。
 
 2. 借用构造函数的问题
@@ -718,7 +725,7 @@ alert(f); // undefined
 
 ### 7.2 闭包
 
-**闭包是指一个函数有权访问另一个函数作用域中的变量**
+闭包**是指一个函数有权访问另一个函数作用域中的变量**
 
 #### 7.2.1 闭包与变量
 
@@ -870,6 +877,7 @@ delete window.age; // 报错
 #### 8.1.6 间歇调用和超时调用
 
 + 间歇调用：`setInterval()`
+
     ```js
     var num = 0;
     var max = 10;
@@ -884,7 +892,9 @@ delete window.age; // 报错
 
     intervalId = setInterval(incrementNumber, 500);
     ```
+
 + 超时调用：`setTimeout()`
+
     ```js
     var num = 0;
     var max = 10;
@@ -898,6 +908,7 @@ delete window.age; // 报错
     }
     setTimeout(increamentNumber, 500);
     ```
+
 使用超时调用来模拟间歇调用是一种最佳模式，在开发环境中，后一个间歇调用有可能在在前一个间歇调用完成之前启动。所以最好不要使用间歇调用。
 
 #### 8.1.7 系统对话框
@@ -1020,7 +1031,7 @@ http herader User-Agent
 
 ## 第10章 DOM
 
-**DOM(文档对象类型) 是针对html和xml文档的一个 API。它提供了对文档的结构化的表述，并定义了一种方式可以使从程序中对该结构进行访问，从而改变文档的结构，样式和内容。DOM 将文档解析为一个由节点和对象（包含属性和方法的对象）组成的结构集合。简言之，它会将 web 页面和脚本或程序语言连接起来。**
+**DOM(文档对象类型) 是针对html和xml文档的一个 API**。它提供了对文档的结构化的表述，并定义了一种方式可以使从程序中对该结构进行访问，从而改变文档的结构，样式和内容。DOM 将文档解析为一个由节点和对象（包含属性和方法的对象）组成的结构集合。简言之，它会将 web 页面和脚本或程序语言连接起来。
 
 + 理解包含不同层次的dom
 + 使用不同的节点类型
@@ -1183,10 +1194,10 @@ Element 是非常通用的基类，所有 `Document` 对象下的对象都继承
 1. 创建文本节点
 
     ```js
-    var element = document.createElement("div"); element.className = "message"; 
+    var element = document.createElement("div"); element.className = "message";
 
-    var textNode = document.createTextNode("Hello world!"); 
-    element.appendChild(textNode); 
+    var textNode = document.createTextNode("Hello world!");
+    element.appendChild(textNode);
 
     document.body.appendChild(element);
     ```
@@ -1314,13 +1325,13 @@ function loadScript(url) {
 
 ```js
 //取得 body 元素
-var body = document.querySelector("body"); 
+var body = document.querySelector("body");
 
 //取得 ID 为"myDiv"的元素
-var myDiv = document.querySelector("#myDiv"); 
+var myDiv = document.querySelector("#myDiv");
 
 //取得类为"selected"的第一个元素
-var selected = document.querySelector(".selected"); 
+var selected = document.querySelector(".selected");
 
 //取得类为"button"的第一个图像元素
 var img = document.body.querySelector("img.button");
@@ -1444,7 +1455,7 @@ HTML5 扩展了 HTMLDocument, 增加了新功能
 <meta http-equiv="X-UA-Compatible" content="IE=IEVersion">
 ```
 
-`document.documentMode ` 可以确定当前页面使用的是什么文档模式
+`document.documentMode` 可以确定当前页面使用的是什么文档模式
 
 #### 11.4.2 `children` 属性
 
@@ -1467,9 +1478,11 @@ alert(document.documentElement.contains(document.body));    //true
 1. `innerText` 属性
 
     设置该属性后会替换调用元素的所有内容（元素下原有的子节点都会被替换成文本，并且会过滤HTML标签）。设置 `innerText` 永远只会生成当前节点的一个子文本节点
+
     ```js
     div.innerText = div.innerText;
-    ``` 
+    ```
+
     能够清除 div 下所有子节点。
 
 2. `outerText` 属性
@@ -1481,7 +1494,7 @@ alert(document.documentElement.contains(document.body));    //true
 除 HTML5 的 `scrollIntoView()` 之外的滚动方法。他们都是对 `HTMLElement` 类型的扩展，因此在所有元素中都能调用。
 
 + `scrollIntoViewIfNeeded(alignCenter)`:  
-  当前元素在视口中不可见的情况下，才滚动浏览器窗口或容器元素，直至元素可见。如果元素可见则什么都不做。如果将可选的  `alignCenter` 参数设置为 `true`，则表示尽量将元素显示在视口中部（垂直方向）。 
+  当前元素在视口中不可见的情况下，才滚动浏览器窗口或容器元素，直至元素可见。如果元素可见则什么都不做。如果将可选的  `alignCenter` 参数设置为 `true`，则表示尽量将元素显示在视口中部（垂直方向）。
 + `scrollByLine(lineCount)`:  
   将元素的内容滚动指定的高度，lineCount可以是正值也可以是负值。
 + `scrollByPage(pageCount)`:  
@@ -1524,6 +1537,7 @@ DOM2 模块：
   </xhtml:body>
 </xhtml:html>
 ```
+
 这是一个 `XHTML` 命名空间，其中 `xhtml` 为命名空间前缀（非必需）。该命名空间是 `http://www.w3.org/1999/xhtml` 由 `xmlns` 来指定
 
 1. `Node` 类型变化
@@ -1562,10 +1576,12 @@ DOM2 模块：
 
 1. `DocumentType` 类型变化
 
-    新增属性能够完整访问  
+    新增属性能够完整访问
+
     ```html
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"     "http://www.w3.org/TR/html4/strict.dtd">
     ```
+
     中的信息
 
 2. `Document` 类型变化
@@ -1616,7 +1632,7 @@ DOM2 围绕这三种样式的机制提供一套API
     + `getProtpertyValue(propertyName)`
     + `item(index)` 返回指定位置的 CSS 属性名称是带短划线
     + `removeProperty(propertyName)`
-    + `setProperty(propertyName, value, proprity)` 
+    + `setProperty(propertyName, value, proprity)`
 
 2. 计算的样式
 
@@ -1659,8 +1675,9 @@ CSSStyleSheet 继承自 StyleSheet 属性如下：
 2. 创建规则
 
     `inserRule()` 该函数接受两个参数，规则文本和插入的规则索引
+
     ```js
-    sheet.insertRule("body { background-color: silver }", 0); 
+    sheet.insertRule("body { background-color: silver }", 0);
     ```
 
 3. 删除规则
@@ -1726,6 +1743,7 @@ DOM2 在 `Document` 类型中定义了 `createRange()` 方法
     `selectNode()` 选择整个节点，包括子节点  
     `selectNodeContents()` 只选择节点的子节点  
     这两个方法都接受一个参数，即一个 DOM 节点。
+
     ```js
     document.createRange().selectNode()
     document.createRange().selectNodeContents()
@@ -1825,7 +1843,7 @@ DOM0方法指定的事件处理程序被认为是元素的方法，此时事件�
 
 + 要处理的事件名
 + 事件处理函数
-+ Boolean 
++ Boolean
   + true表示在捕获阶段调用事件处理程序
   + flase表示在冒泡阶段调用事件处理程序
 
@@ -2203,7 +2221,7 @@ document 对象上使用 `createEvent()` 方法创建事件
 1. 模拟鼠标事件
 
     ```js
-    var btn = document.getElementById("myBtn"); 
+    var btn = document.getElementById("myBtn");
 
     //创建事件对象
     var event = document.createEvent("MouseEvents");
@@ -2216,10 +2234,10 @@ document 对象上使用 `createEvent()` 方法创建事件
 2. 模拟键盘事件
 
     ```js
-    var event = document.createEvent("KeyboardEvent"); 
+    var event = document.createEvent("KeyboardEvent");
 
     //初始化事件对象
-    event.initKeyboardEvent("keydown", true, true, document.defaultView, "a", 0, "Shift", 0); 
+    event.initKeyboardEvent("keydown", true, true, document.defaultView, "a", 0, "Shift", 0);
     ```
 
 3. 模拟其他事件
@@ -2317,6 +2335,7 @@ HTML 标签的 `<form>` 在 JavaScript 中，对应的是 HTMLFormElement 类型
 2. 取得选择的文本
 
     HTML5 给文本框元素添加了两个属性 `selectionStart` 和 `selectionEnd`
+
     ```js
     function getSelectedText(textDom) {
       return textDom.value.substring(text.selectionStart, text.selectionEnd);
@@ -2520,7 +2539,7 @@ selectbox.insertBefore(optionToMove, selectbox.options[optionToMove.index+2]);
 ```js
 EventUtil.addHandler(form, "submit", function(event){
     event = EventUtil.getEvent(event);
-    var target = EventUtil.getTarget(event); 
+    var target = EventUtil.getTarget(event);
 
     target.elements["comments"].value = frames["richedit"].document.body.innerHTML;
 
@@ -2631,12 +2650,12 @@ context.drawImage(image, 10, 10);
  * @param y
  * @param 目标图像的宽度
  * @param 目标图像的高度
- */ 
+ */
 context.drawImage(image, 50, 10, 20, 30);
 
 /**
  * @param 图像
- * @param 源图像的x坐标 
+ * @param 源图像的x坐标
  * @param 源图像的y坐标
  * @param 源图像的宽度
  * @param 源图像的高度
@@ -2664,8 +2683,8 @@ context.drawImage(image, 0, 10, 50, 50, 0, 100, 40, 60);
 `createLinearGradient(startX, startY, endX, endY)` 返回`CanvasGradient` 对象。然后用 `addColorStop()` 方法来指定色标。该方法接受2个参数：色标位置和 CSS 颜色。位置是 0（开始位置） ~ 1 （结束位置）之间的数字。
 
 ```js
-var gradient = context.createLinearGradient(30, 30, 70, 70); 
- 
+var gradient = context.createLinearGradient(30, 30, 70, 70);
+
 gradient.addColorStop(0, "white");
 gradient.addColorStop(1, "black");
 
@@ -2715,12 +2734,13 @@ WebGL 涉及复杂的计算需要提前知道数值的精度，而标准 JavaScr
 
 ```js
 // 这段代码会分配20B的内存空间
-var buffer = new ArrayBuffer(20); 
+var buffer = new ArrayBuffer(20);
 ```
 
 1. 视图
 
     `DataView(ArrayBuffer, offset, length)`
+
     ```js
     //创建一个从字节 9 开始到字节 18 的新视图
     var view = new DataView(buffer, 9, 10);
@@ -2805,11 +2825,13 @@ var gl = drawing.getContext("experimental-webgl");
 4. 视口与坐标
 
     这里的视口坐标原点在 `<canvas>` 左下角
+
     ```js
     gl.viewport(0, 0, drawing.width, drawing.height);
     ```
+
     而视口内部的坐标原点 (0, 0) 为视口中心点
- 
+
 5. 缓冲区
 
     ```js
@@ -2817,6 +2839,7 @@ var gl = drawing.getContext("experimental-webgl");
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0.5, 1]), gl.STATIC_DRAW);
     ```
+
     `gl.bufferData()` 的最后一个参数用于指定使用缓冲区的方式。
     + gl.STATIC_DRAW 数据只加载一次，在多次绘图中使用
     + gl.STREAM_DRAW 数据只加载一次，在几次绘图中使用
@@ -2861,17 +2884,17 @@ var gl = drawing.getContext("experimental-webgl");
 
 ```js
 var iframeWindow = document.getElementById("myframe").contentWindow;
-iframeWindow.postMessage("A secret", "http://www.wrox.com"); 
+iframeWindow.postMessage("A secret", "http://www.wrox.com");
 ```
 
 ```js
-EventUtil.addHandler(window, "message", function(event){ 
+EventUtil.addHandler(window, "message", function(event){
 
   //确保发送消息的域是已知的域
-  if (event.origin == "http://www.wrox.com"){ 
+  if (event.origin == "http://www.wrox.com"){
 
     //处理接收到的数据
-    processMessage(event.data); 
+    processMessage(event.data);
 
     //可选：向来源窗口发送回执
     event.source.postMessage("Received!", "http://p2p.wrox.com");
@@ -2930,7 +2953,7 @@ dragstart 触发后会持续触发 drag 事件
 + "move"：只允许值为"move"的 dropEffect。
 + "copyLink"：允许值为"copy"和"link"的 dropEffect。
 + "copyMove"：允许值为"copy"和"move"的 dropEffect。
-+ "linkMove"：允许值为"link"和"move"的 dropEffect。 
++ "linkMove"：允许值为"link"和"move"的 dropEffect。
 + "all"：允许任意 dropEffect。
 
 #### 16.2.5 可被拖动
@@ -3153,7 +3176,7 @@ DOM2 是第一个提到动态创建 XML DOM 概念的规范，DOM3 进一步增�
 #### 18.1.1 DOM2级核心
 
 ```js
-var xmldom = document.implementation.createDocument(namespaceUri, root, doctype); 
+var xmldom = document.implementation.createDocument(namespaceUri, root, doctype);
 
 //  JavaScrip中管理命名空间比较困难，所以一般不用。root 表示根元素
 var xmldom = document.implementation.createDocument("", "root", null);
@@ -3226,21 +3249,22 @@ if (result !== null) {
 
 1. 单节点结果
 
-```js
-var result = xmldom.evaluate("employee/name", xmldom.documentElement, null,                                   XPathResult.FIRST_ORDERED_NODE_TYPE, null); 
+    ```js
+    var result = xmldom.evaluate("employee/name", xmldom.documentElement, null,                                   XPathResult.FIRST_ORDERED_NODE_TYPE, null);
 
-if (result !== null) {
-  alert(result.singleNodeValue.tagName);
-}
-```
+    if (result !== null) {
+      alert(result.singleNodeValue.tagName);
+    }
+    ```
 
 2. 简单类型结果
-  + XPathResult.BOOLEAN_TYPE
-    + result.booleanValue
-  + XPathResult.NUMBER_TYPE
-    + result.numberValue
-  + XPathResult.STRING_TYPE
-    + result.stringValue
+
+     + XPathResult.BOOLEAN_TYPE
+       + result.booleanValue
+     + XPathResult.NUMBER_TYPE
+       + result.numberValue
+     + XPathResult.STRING_TYPE
+       + result.stringValue
 
 3. 默认类型结果
 
@@ -3363,7 +3387,7 @@ alert(xml.toXMLString());     //"<color>red</color>
 
 // 第二种构建方式
 var employees = <employees/>;
-employees.employee.name = "Nicholas C. Zakas"; 
+employees.employee.name = "Nicholas C. Zakas";
 employees.employee.@position = "Software Engineer";
 ```
 
@@ -3429,6 +3453,7 @@ JSON和对象的区别 1.属性名加引号 2.没有声明变量 3.末尾没有�
 1. 过滤结果
 
     单第二个参数为函数
+
     ```js
     var jsonText = JSON.stringify(book, function(key, value) {
       // 表示忽略
@@ -3437,6 +3462,7 @@ JSON和对象的区别 1.属性名加引号 2.没有声明变量 3.末尾没有�
       return value
     });
     ```
+
 2. 字符串缩进
 
     ```js
@@ -3478,7 +3504,7 @@ JSON和对象的区别 1.属性名加引号 2.没有声明变量 3.末尾没有�
 ### 21.1 XMLHttpRequest 对象
 
 ```js
-new ActiveXObject(versions); 
+new ActiveXObject(versions);
 ```
 
 #### 21.1.1 XHR 的用法
@@ -3502,9 +3528,9 @@ xhr.send(null);
 异步发送时检测 XHR 的 readyState 属性，该属性可取值如下：
 
 + 0：尚未调用 open()方法
-+ 1：已经调用 open()方法，但尚未调用 send()方法。 
-+ 2：已经调用 send()方法，但尚未接收到响应。 
-+ 3：已经接收到部分响应数据。 
++ 1：已经调用 open()方法，但尚未调用 send()方法。
++ 2：已经调用 send()方法，但尚未接收到响应。
++ 3：已经接收到部分响应数据。
 + 4：已经接收到全部响应数据，而且已经可以在客户端使用了。
 
 #### 21.1.2 HTTP 头部信息
@@ -3576,7 +3602,7 @@ onprogress 事件处理程序会接收到一个 event 对象，其 target 属性
 
 ### 21.4 跨源资源共享
 
-CORS（Cross-Origin Resource Sharing，跨源资源共享）是 W3C的一个工作草案，定义了在必须访 问跨源资源时，浏览器与服务器应该如何沟通。CORS背后的基本思想，就是使用自定义的 HTTP头部 让浏览器与服务器进行沟通，从而决定请求或响应是应该成功，还是应该失败。 
+CORS（Cross-Origin Resource Sharing，跨源资源共享）是 W3C的一个工作草案，定义了在必须访 问跨源资源时，浏览器与服务器应该如何沟通。CORS背后的基本思想，就是使用自定义的 HTTP头部 让浏览器与服务器进行沟通，从而决定请求或响应是应该成功，还是应该失败。
 
 #### 21.4.1 IE 对CORS的实现
 
@@ -3623,7 +3649,7 @@ var img = new Image();
 img.onload = img.onerror = function(){
     alert("Done!");
 };
-img.src = "http://www.example.com/test?name=Nicholas"; 
+img.src = "http://www.example.com/test?name=Nicholas";
 ```
 
 #### 21.5.2 JSONP
@@ -3724,11 +3750,11 @@ function Person(name, age, job){
         this.age = age;
         this.job = job;
     } else {
-        return new Person(name, age, job); 
+        return new Person(name, age, job);
     }
 }
 
-var person1 = Person("Nicholas", 29, "Software Engineer"); 
+var person1 = Person("Nicholas", 29, "Software Engineer");
 ```
 
 #### 22.1.3 惰性载入函数
@@ -3813,7 +3839,7 @@ function chunk(array, process, context){
         var item = array.shift();
         process.call(context, item);
 
-        if (array.length > 0){ 
+        if (array.length > 0){
             setTimeout(arguments.callee, 100);
         }
     }, 100);
@@ -3961,6 +3987,7 @@ Web Storage 规范包含了两种对象的定义：sessionStorage 和 globalStor
 #### 23.3.4 IndexedDB
 
 1. 数据库
+
     ```js
     var request, database;
 
@@ -3971,7 +3998,9 @@ Web Storage 规范包含了两种对象的定义：sessionStorage 和 globalStor
         database = event.target.result;
     };
     ```
+
 2. 对象存储空间
+
     ```js
     // users 相当于表名称 keyPath 相当于 primekey
     var store = db.createObjectStore("users", { keyPath: "username" });
@@ -3983,16 +4012,20 @@ Web Storage 规范包含了两种对象的定义：sessionStorage 和 globalStor
         //处理成功
     };
     ```
+
 3. 事务
+
     ```js
     // 创建事务只加载 users 空间中的数据
     var transaction = db.transaction("users")
     // 访问特定的存储空间
     var request = transaction.objectStore("users").get("007");
     ```
+
 4. 使用游标查询
+
     ```js
-    var store = db.transaction("users").objectStore("users"), 
+    var store = db.transaction("users").objectStore("users"),
         request = store.openCursor();
     request.onsuccess = function(event) {
         //处理成功
@@ -4004,14 +4037,17 @@ Web Storage 规范包含了两种对象的定义：sessionStorage 和 globalStor
         //处理失败
     };
     ```
+
 5. 键范围
 6. 设定游标方向
 7. 索引
+
     ```js
     var store = db.transaction("users").objectStore("users");
     // 参数 索引名 属性名 unique
     var index = store.createIndex("username", "username", { unique: false });
     ```
+
 8. 并发问题
 9. 限制
 
@@ -4047,6 +4083,7 @@ Web Storage 规范包含了两种对象的定义：sessionStorage 和 globalStor
     + 变量和函数都应使用合乎逻辑的名字，不要担心长度
 3. 变量类型透明
     初始化时就指定类型
+
     ```js
     var found = false;  //布尔型
     var count = -1;     //数字
@@ -4074,11 +4111,13 @@ Web Storage 规范包含了两种对象的定义：sessionStorage 和 globalStor
     + 创建自定义类型，继承需要进行修改的类型。然后可以为自定义类型添加额外功能
 2. 避免全局变量
 3. 避免与 `null` 进行比较
+
     ```js
         if (values != null){           //避免
 
         }
     ```
+
 4. 使用常量
     + 重复值——任何在多处用到的值都应抽取为一个常量。这就限制了当一个值变了而另一个没变的时候会造成的错误。这也包含了 CSS 类名。
     + 用户界面字符串——任何用于显示给用户的字符串，都应被抽取出来以方便国际化。
@@ -4097,6 +4136,7 @@ Web Storage 规范包含了两种对象的定义：sessionStorage 和 globalStor
 #### 24.2.2 选择正确的方法
 
 1. 避免不必要的属性查找
+
     ```js
     // 这段代码时间复杂度为 O(1)
     var values = [5, 10];
@@ -4111,10 +4151,11 @@ Web Storage 规范包含了两种对象的定义：sessionStorage 和 globalStor
 
     // 该语句包含很多属性查找
     var query = window.location.href.substring(window.location.href.indexOf("?"));
-    // 可以进行如下优化 
+    // 可以进行如下优化
     var url = window.location.href;
     var query = url.substring(url.indexOf("?"));
     ```
+
 2. 优化循环
     1. 减值迭代
     2. 简化终止条件
