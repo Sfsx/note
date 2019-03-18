@@ -1561,4 +1561,197 @@ function* doStuff() {
 
 ## async 函数
 
+### 1. async 含义
+
+### 2. async 基本用法
+
+### 3. 语法
+
+#### 返回 promise 对象
+
+#### Promise 对象状态变化
+
+#### await 命令
+
+内部 `try...catch` 的另一种写法
+
+```js
+async function f() {
+  await Promise.reject('出错了')
+    .catch(e => console.log(e));
+  return await Promise.resolve('hello world');
+}
+
+f()
+.then(v => console.log(v))
+// 出错了
+// hello world
+```
+
+#### 错误处理
+
+#### async 使用注意点
+
+1. 前面已经说过，await命令后面的Promise对象，运行结果可能是rejected，所以最好把await命令放在try...catch代码块中。
+2. 多个await命令后面的异步操作，如果不存在继发关系，最好让它们同时触发。
+
+    ```js
+    // 写法一
+    let [foo, bar] = await Promise.all([getFoo(), getBar()]);
+
+    // 写法二
+    let fooPromise = getFoo();
+    let barPromise = getBar();
+    let foo = await fooPromise;
+    let bar = await barPromise;
+    ```
+
+3. await命令只能用在async函数之中，如果用在普通函数，就会报错。
+4. async 函数可以保留运行堆栈。
+
+    ```js
+    const a = async () => {
+      await b();
+      c();
+    };
+    ```
+
+### 4. async 函数实现的原理
+
+```js
+async function fn(args) {
+  // ...
+}
+
+// 等同于
+
+function fn(args) {
+  return spawn(function* () {
+    // ...
+  });
+}
+
+function spawn(genF) {
+  return new Promise(function(resolve, reject) {
+    const gen = genF();
+    function step(nextF) {
+      let next;
+      try {
+        next = nextF();
+      } catch(e) {
+        return reject(e);
+      }
+      if(next.done) {
+        return resolve(next.value);
+      }
+      Promise.resolve(next.value).then(function(v) {
+        step(function() { return gen.next(v); });
+      }, function(e) {
+        step(function() { return gen.throw(e); });
+      });
+    }
+    step(function() { return gen.next(undefined); });
+  });
+}
+```
+
+### 5. 与其他异步方法比较
+
+### 6. 实例：按顺序完成异步操作
+
+### 7. 异步遍历器
+
+#### 异步遍历的接口
+
+异步遍历器接口，部署在`Symbol.asyncIterator`属性上面
+
+```js
+async function f() {
+  const asyncIterable = createAsyncIterable(['a', 'b']);
+  const asyncIterator = asyncIterable[Symbol.asyncIterator]();
+  console.log(await asyncIterator.next());
+  // { value: 'a', done: false }
+  console.log(await asyncIterator.next());
+  // { value: 'b', done: false }
+  console.log(await asyncIterator.next());
+  // { value: undefined, done: true }
+}
+```
+
+#### `for await...of`
+
+```js
+async function f() {
+  for await (const x of createAsyncIterable(['a', 'b'])) {
+    console.log(x);
+  }
+}
+// a
+// b
+```
+
+如果 `next` 方法返回的 Promis 对象被 `reject`，`for await...of` 就会报错，要用 `try...catch` 捕捉
+
+```js
+async function () {
+  try {
+    for await (const x of createRejectingIterable()){
+      console.log(x);
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+```
+
+Node V10 支持异步遍历器，Stream 就部署了这个接口。
+
+```js
+// 传统写法
+function main(inputFilePath) {
+  const readStream = fs.createReadStream(
+    inputFilePath,
+    { encoding: 'utf8', highWaterMark: 1024 }
+  );
+  readStream.on('data', (chunk) => {
+    console.log('>>> '+chunk);
+  });
+  readStream.on('end', () => {
+    console.log('### DONE ###');
+  });
+}
+
+// 异步遍历器写法
+async function main(inputFilePath) {
+  const readStream = fs.createReadStream(
+    inputFilePath,
+    { encoding: 'utf8', highWaterMark: 1024 }
+  );
+
+  for await (const chunk of readStream) {
+    console.log('>>> '+chunk);
+  }
+  console.log('### DONE ###');
+}
+```
+
+#### 异步 Generator 函数
+
+在语法上，异步 Generator 函数就是 async 函数与 Generator 函数的结合
+
+```js
+async function* gen() {
+  yield await Promise.resolve().then(()=> { return 'hello' });
+}
+const genObj = gen();
+genObj.next().then(x => console.log(x));
+// { value: 'hello', done: false }
+```
+
+JavaScript 就有了四种函数形式：普通函数、async 函数、Generator 函数和异步 Generator 函数。
+
+#### yield* 语句
+
+`yield*` 语句也可以跟一个异步遍历器。
+
 ## class 的基本语法
