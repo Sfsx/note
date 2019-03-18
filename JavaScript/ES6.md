@@ -194,7 +194,7 @@ ES2016 做了一点修改，规定只要函数参数使用了默认值、解构�
 
 ### 5. 箭头函数
 
-#### 基本用法
+#### 箭头函数基本用法
 
 #### 使用注意点
 
@@ -517,7 +517,7 @@ Object.is(NaN, NaN) // true
 
 ### `Object.assign()`
 
-#### 基本用法
+#### `Object.assign()` 基本用法
 
 ```js
 const v1 = 'abc';
@@ -633,7 +633,7 @@ Object.fromEntries(new URLSearchParams('foo=bar&baz=qux'))
 
 ## Symbol
 
-### 1. 概述
+### 1. Symbol概述
 
 属性名为字符串时容易冲突，故引入 `Symbol`
 
@@ -778,7 +778,7 @@ class MyClass {
 
 ### 1.Set
 
-#### 基本用法
+#### Set 基本用法
 
 ```js
 let a = new Set([1, 2, 3]);
@@ -813,7 +813,7 @@ let defference = new Set([...a].filter(x => !b.has(x)));
 
 ### 2.WeakSet
 
-#### 含义
+#### WeakSet 含义
 
 WeakSet 结构与 Set 类似，也是不重复的值的集合。但是，它与 Set 有两个区别。
 
@@ -1357,7 +1357,7 @@ Generator 函数返回的遍历器对象，都有一个 `throw` 方法，可以�
 
 `throw()` 方法会自动执行一次 `next()` 方法
 
-### 5. Generator.prototype.return() 
+### 5. Generator.prototype.return()
 
 `return` 方法，可以返回给定的值，并且终结遍历 Generator 函数。
 
@@ -1394,6 +1394,166 @@ g.next() // { value: 7, done: true }
 ### 7. yield* 表达式
 
 `yield*` 表达式，用来在一个 Generator 函数里面执行另一个 Generator 函数
+
+```js
+function* genFuncWithReturn() {
+  yield 'a';
+  yield 'b';
+  return 'The result';
+}
+function* logReturned(genObj) {
+  let result = yield* genObj;
+  console.log(result);
+}
+
+[...logReturned(genFuncWithReturn())]
+// The result
+// 值为 [ 'a', 'b' ]
+```
+
+上面这段代码，存在两次遍历。
+
+1. 是扩展运算符遍历函数 `logReturned` 返回的遍历器对象
+2. `yield*` 语句遍历 `genFuncWithReturn` 返回的遍历器对象。
+
+两次遍历的效果是叠加的，最终表现为拓展运算符遍历函数 `genFuncWithReturn` 返回的遍历器对象。但是，函数`genFuncWithReturn` 的 `return` 语句的返回值 `The result` 会返回给函数 `logReturned` 内部的 `result` 变量，因此会有终端输出。
+
+### 8. 作为对象属性的 Generator 函数
+
+```js
+// 第一种写法
+let obj = {
+  * myGeneratorMethod() {
+    ···
+  }
+};
+// 第二种写法
+let obj = {
+  myGeneratorMethod: function* () {
+    // ···
+  }
+};
+```
+
+### 9. Generator 函数的 this
+
+Generator 函数总是返回一个遍历器，ES6 规定这个遍历器是 Generator 函数的实例，也继承了 Generator 函数的 `prototype` 对象上的方法。
+
+```js
+function* gen() {
+  this.a = 1;
+  yield this.b = 2;
+  yield this.c = 3;
+}
+
+function F() {
+  return gen.call(gen.prototype);
+}
+
+var f = new F();
+
+f.next();  // Object {value: 2, done: false}
+f.next();  // Object {value: 3, done: false}
+f.next();  // Object {value: undefined, done: true}
+
+f.a // 1
+f.b // 2
+f.c // 3
+```
+
+### 10. 含义
+
+1. Generator 与**状态机**
+
+    ```js
+    var clock = function* () {
+      while (true) {
+        console.log('Tick!');
+        yield;
+        console.log('Tock!');
+        yield;
+      }
+    };
+    ```
+
+2. Generator 与协成
+
+    Generator 函数是 ES6 对协程的实现，但属于不完全实现。Generator 函数被称为“半协程”（semi-coroutine），意思是只有 Generator 函数的调用者，才能将程序的执行权还给 Generator 函数。如果是完全执行的协程，任何函数都可以让暂停的协程继续执行。
+
+    如果将 Generator 函数当作协程，完全可以将多个需要互相协作的任务写成 Generator 函数，它们之间使用yield表达式交换控制权。
+
+3. Generator 与上下文
+
+    Generator 函数不同于普通的 JavaScript 函数。它的执行产生的上下文环境，一旦遇到 `yield` 命令，就会暂时退出堆栈，但是上下文环境并不消失，里面的所有变量和对象都会冻结在当前状态。等到对它执行 `next` 命令时，这个上下文环境优惠重新加入到调用栈，冻结的变量和对象恢复执行。
+
+### 11. 应用
+
+#### 异步操作的同步化表达式
+
+目前没有找到良好使用的例子，感觉华而不实，具体应用看下一章
+
+#### 控制流管理
+
+改写回调为 Generator 函数形式
+
+```js
+step1(function (value1) {
+  step2(value1, function(value2) {
+    step3(value2, function(value3) {
+      step4(value3, function(value4) {
+        // Do something with value4
+      });
+    });
+  });
+});
+
+function* longRunningTask(value1) {
+  try {
+    var value2 = yield step1(value1);
+    var value3 = yield step2(value2);
+    var value4 = yield step3(value3);
+    var value5 = yield step4(value4);
+    // Do something with value4
+  } catch (e) {
+    // Handle any error from step1 through step4
+  }
+}
+```
+
+#### 部署 Iterator 接口
+
+```js
+function* iterEntries(obj) {
+  let keys = Object.keys(obj);
+  for (let i=0; i < keys.length; i++) {
+    let key = keys[i];
+    yield [key, obj[key]];
+  }
+}
+
+let myObj = { foo: 3, bar: 7 };
+
+for (let [key, value] of iterEntries(myObj)) {
+  console.log(key, value);
+}
+
+// foo 3
+// bar 7
+```
+
+感觉很鸡肋
+
+#### 作为数据结构
+
+Generator 可以看作是数据结构，更确切地说，可以看作是一个数组结构，因为 Generator 函数可以返回一系列的值，这意味着它可以对任意表达式，提供类似数组的接口。
+
+```js
+function* doStuff() {
+  yield fs.readFile.bind(null, 'hello.txt');
+  yield fs.readFile.bind(null, 'world.txt');
+  yield fs.readFile.bind(null, 'and-such.txt');
+}
+```
 
 ## Generator 函数的异步应用
 
