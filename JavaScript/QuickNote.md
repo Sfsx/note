@@ -167,7 +167,7 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 
 `micro-tasks: process.nextTick, Promises, Object.observe, MutationObserver`
 
-#### 执行过程
+#### 浏览器执行过程
 
 1. JavaScript引擎首先从macrotask queue中取出第一个任务，执行完毕。
 2. 将microtask queue中的所有任务取出，按顺序全部执行。
@@ -186,7 +186,7 @@ nodejs 的 event loop分为6个阶段，`MicroTask Queue` 在6个阶段结束的
 + `timers`：执行 `setTimeout()` 和 `setInterval()` 中到期的 `callback`
 + `I/O callback`：上一轮循环中有少数的 `I/O callback` 会被延迟到这一轮的这一阶段执行。
 + `idle, prepare`： 仅内部使用
-+ `poll`：最为重要的几段， 执行除了以下之外的所有 `callback` 
++ `poll`：最为重要的几段， 执行除了以下之外的所有 `callback`
   + close 事件的 `callbacks`
   + `timers` （定时器，`setTimeout`、`setInterval` 等）设定的 `callbacks`
   + `setImmediate()` 设定的 `callbacks`
@@ -195,7 +195,7 @@ nodejs 的 event loop分为6个阶段，`MicroTask Queue` 在6个阶段结束的
 
 event loop 的每一次循环都需要一次经过上述的阶段。每个阶段都有自己的 `callback` 队列，每当进入某个阶段，都会从所属的队列中取出 `callback` 来执行，当队列为空或者被执行 `callback` 的数量达到系统的最大数量时，进入下一个阶段。六个阶段执行完成称为一轮事件循环。
 
-#### 执行过程
+#### nodejs执行过程
 
 外部输入数据 --> 轮询阶段(`poll`) --> 检查阶段(`check`) --> 关闭事件回调阶段(`close callback`) --> 定时器检测阶段(`timer`) --> I/O 事件回调阶段(`I/O callback`) --> 闲置阶段(`idle, prepare`) --> 轮询阶段...
 
@@ -237,6 +237,7 @@ poll 阶段有两个主要的功能：
 [理解nodejs的事件循环](http://coolcao.com/2016/12/22/node-js-event-loop/)
 
 [* 深入理解js事件循环机制（Node.js篇）](http://lynnelv.github.io/js-event-loop-nodejs)
+
 ## HTML5 调用摄像头 （未完成demo）
 
 `MediaDevices.getUserMedia()`
@@ -290,7 +291,7 @@ import "module-name";
 
 ### EngLish
 
-#### What are HTML, XML and XHTML?
+#### What are HTML, XML and XHTML？
 
 1. HTML
 
@@ -312,7 +313,7 @@ Second, XML has draconian error-handling rules.
 
 To enable at least partial use of XHTML, the W3C came up with something called “HTML-compatible XHTML”. This is a set of guidelines for making valid XHTML documents that can still more or less be processed as HTML
 
-#### What determines if my document is HTML or XHTML?
+#### What determines if my document is HTML or XHTML？
 
 So what really determines if a document is HTML or XHTML? The one and only thing that controls whether a document is HTML or XHTML is the MIME type. If the document is served with a `text/html` MIME type, it is treated as HTML. If it is served as `application/xhtml+xml` or `text/xml`, it gets treated as XHTML. In particular, none of the following things will cause your document to be treated as XHTML:
 
@@ -372,7 +373,7 @@ The CharacterData abstract interface represents a Node object that contains char
 
 ### ProcessingInstruction
 
-#### 原文：
+#### 原文
 
 A processing instruction embeds application-specific instructions in XML which can be ignored by other applications that don't recognize them. Even if an XML processor ignores processing instructions, it will give them a place in the DOM.
 
@@ -880,13 +881,21 @@ ES6在语言规格层面上实现了模块功能，是编译时加载，完全�
 
 1. CommonJS 模块输出的是一个值的拷贝，ES6 模块输出的是值的引用。
 
+    + CommonJS 模块的输出的是值的拷贝，也就是说，一旦输出一个值，模块内部变化就影响不到这个值
+    + ES6 模块的运行机制与 CommonJS 不一样。JS 引擎对脚本静态分析的时候遇到 `import` 命令，就会生成一个只读引用。等到脚本真正执行的时候，再根据这个只读引用到被加载的模块里去取值。换句话说，ES6 的 `import` 有点像 Unix 系统的“符号连接”，原始值变了，`import` 加载的值也会跟着变。因此，ES6 模块是动态引用，并且不会缓存其中的值，模块里面的变量绑定其所在的命令。
+
 2. CommonJS 模块是运行时加载，ES6 模块是编译时输出接口。
+
+    + 运行时加载：CommonJS 模块就是对象；即在输入时是先加载整个模块，生成一个对象，然后再从这个对象上读取方法，这种加载称之为“运行时加载”。
+    + 编译时加载：ES6 模块不是对象，而是通过 `export` 命令显示的指定输出的代码，`import` 时采用静态命令的形式。即在 `import` 时可以指定加载某个输出的值，而不是加载整个模块，这种加载称之为“编译时加载”。
 
 ### 参考资料
 
 [前端模块化详解(完整版)](https://juejin.im/post/5c17ad756fb9a049ff4e0a62)
 
 [前端模块化一——规范详述](https://zhuanlan.zhihu.com/p/41568986)
+
+[前端模块化：CommonJS,AMD,CMD,ES6](https://juejin.im/post/5aaa37c8f265da23945f365c)
 
 ## RxJs
 
