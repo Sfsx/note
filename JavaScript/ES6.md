@@ -1755,3 +1755,78 @@ JavaScript 就有了四种函数形式：普通函数、async 函数、Generator
 `yield*` 语句也可以跟一个异步遍历器。
 
 ## class 的基本语法
+
+### 1. class 简介
+
+#### 类的由来
+
+ES6 的类，完全可以看作构造函数的另一种写法。类的数据类型就是函数，类本身就指向构造
+
+```js
+class Fsx { }
+
+typeof Fsx // "function"
+Point === Point.prototype.construcror
+```
+
+类的所有方法都定义在类的 `prototype` 属性上面。类实例上面调用的方法，其实就是调用 `prototype` 上的方法
+
+```js
+class B {}
+let b = new B();
+
+b.constructor = B.prototype.constructor
+```
+
+类的内部所有定义的方法都是不可枚举的（non-enumerable）
+
+```js
+class Point {
+  constructor(x, y) {
+    // ...
+  }
+
+  toString() {
+    // ...
+  }
+}
+
+Object.keys(Point.prototype)
+// []
+Object.getOwnPropertyNames(Point.prototype)
+// ["constructor","toString"]
+```
+
+#### constructor 方法
+
+`constructor` 方法是类的默认方法，如果没有显示定义，一个空的 `constructor` 方法会被默认添加
+
+类必须使用 `new` 调用，否则会报错。这是它和普通构造函数的一个主要区别。普通构造函数可以不用 `new`
+
+#### 类的实例
+
+与 ES5 一样，实例的属性除非显式定义在其本身（即定义在 `this` 对象上），否则都是定义在原型上（即定义在 `class` 上）
+
+#### 取值函数（getter）和存值函数（setter）
+
+存值函数和取值函数是设置在属性的 Descriptor 对象上。可以用 `Object.getOwnPropertyDescriptor()` 获取
+
+#### 属性表达式
+
+`[methodName]() { }`
+
+#### Class 表达式
+
+```JS
+let sfsx = class FSX { }
+```
+
+这个类的名字为 FSX 但只能在类的内部使用，在外部只能使用 sfsx
+
+#### calss 注意点
+
+1. 严格模式
+2. 不存在提升
+3. name 属性
+4. Generator 方法
+5. this 的指向
