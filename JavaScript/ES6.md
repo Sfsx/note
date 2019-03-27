@@ -1826,7 +1826,77 @@ let sfsx = class FSX { }
 #### calss 注意点
 
 1. 严格模式
+
+    类和模块的内部，默认就是严格模式，所以不需要用 `use strict` 指定运行模式。ES6 实际上把整个语言升级到了严格模式。
+
 2. 不存在提升
+
+    `class` 声明不存在变量提升，为了满足继承，必须保证子类在父类之后定义
+
 3. name 属性
 4. Generator 方法
+
+    在某个方法之前加上星号（`*`）,表示该方法是一个 Generator 函数。
+
 5. this 的指向
+
+    类的方法内部如果有 `this`，它默认指向累的实例。但是如果单独使用该方法，很可能会报错。
+
+    ```js
+    class Logger {
+      printName(name = 'there') {
+        this.print(`Hello ${name}`);
+      }
+
+      print(text) {
+        console.log(text);
+      }
+    }
+
+    const logger = new Logger();
+    const { printName } = logger;
+    printName(); // TypeError: Cannot read property 'print' of undefined
+    ```
+
+    上面代码中，`printName` 方法中的 `this`, 默认指向 `Logger` 类的实例。但是，如果将这个方法单独提取出来用，`this` 会指向该方法运行时所在的环境（由于 class 内部严格模式，所以 `this` 实际指向是 `underfined`），从而导致找不到 `print` 方法而报错
+
+    ```js
+    // 方法一 构造函数中绑定 this
+    class Logger {
+      constructor() {
+        this.printName = this.printName.bind(this);
+      }
+    }
+
+    // 方法二 使用箭头函数
+    class Obj {
+      constructor() {
+        this.getThis = () => this;
+        this.printName = (name = 'there') => this.print(`Hello ${name}`);
+      }
+    }
+
+    const myObj = new Obj();
+    myObj.getThis() === myObj // true
+
+    // 方法三 使用 proxy
+    function selfish (target) {
+      const cache = new WeakMap();
+      const handler = {
+        get (target, key) {
+          const value = Reflect.get(target, key);
+          if (typeof value !== 'function') {
+            return value;
+          }
+          if (!cache.has(value)) {
+            cache.set(value, value.bind(target));
+          }
+          return cache.get(value);
+        }
+      };
+      const proxy = new Proxy(target, handler);
+      return proxy;
+    }
+
+    const logger = selfish(new Logger());
+    ```
