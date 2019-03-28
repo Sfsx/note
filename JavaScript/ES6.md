@@ -1879,7 +1879,7 @@ let sfsx = class FSX { }
     const myObj = new Obj();
     myObj.getThis() === myObj // true
 
-    // 方法三 使用 proxy
+    // 方法三 使用 proxy 这方法太骚 需要仔细研究一下它的姿势
     function selfish (target) {
       const cache = new WeakMap();
       const handler = {
@@ -1900,3 +1900,68 @@ let sfsx = class FSX { }
 
     const logger = selfish(new Logger());
     ```
+
+### 2. class 静态方法
+
+加上 `static` 关键字。
+
+如果静态方法包含 `this` 关键字，这个 `this` **指的是类，而不是实例**。
+
+静态方法可以与非静态方法重名
+
+父类静态方法，可以被子类继承
+
+静态方法也可以从 `super` 对象上调用
+
+### 3. 实例属性的新写法
+
+实例的属性可以定义在 `constructor()` 方法里面的 `this` 上面，也可以定义在类的最顶层
+
+### 4. 静态属性
+
+```js
+class Fsx {}
+
+Fsx.prop = 1;
+Fsx.prop // 1
+```
+
+目前只有这种方法可行。有提案在属性前面加上 `static` 关键字（未实现）。这种方式在 Typescript 中已经实现
+
+### 5. 私有方法和私有属性
+
+#### 现有解决方案
+
+1. 在命名上加以区别，简单来说就是加入 `_` 下划线
+2. 将方法移除模块，因为模块内部所有方法都是对外可见
+3. 利用 `Symbol` 值的唯一性，将私有方法名字定义为一个 `Symbol` 值。
+
+#### 私有属性提案
+
+在属性名前加上 `#` 表示私有。（未实现）
+
+### 6. `new.target` 属性
+
+ES6 为 `new` 命令引入了一个 `new.target` 属性，该属性一般用在构造函数之中，返回 `new` 命令作用域的那个构造函数。如果构造函数不是通过 `new` 命令或 `Reflect.construct()` 调用的，`new.target` 会返回 `underfined`，因此这个属性可以用来确定构造函数是怎么调用的。
+
+```js
+function Person(name) {
+  if (new.target !== undefined) {
+    this.name = name;
+  } else {
+    throw new Error('必须使用 new 命令生成实例');
+  }
+}
+
+// 另一种写法
+function Person(name) {
+  if (new.target === Person) {
+    this.name = name;
+  } else {
+    throw new Error('必须使用 new 命令生成实例');
+  }
+}
+
+var person = new Person('张三'); // 正确
+var notAPerson = Person.call(person, '张三');  // 报错
+```
