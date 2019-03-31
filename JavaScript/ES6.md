@@ -1755,3 +1755,213 @@ JavaScript 就有了四种函数形式：普通函数、async 函数、Generator
 `yield*` 语句也可以跟一个异步遍历器。
 
 ## class 的基本语法
+
+### 1. class 简介
+
+#### 类的由来
+
+ES6 的类，完全可以看作构造函数的另一种写法。类的数据类型就是函数，类本身就指向构造
+
+```js
+class Fsx { }
+
+typeof Fsx // "function"
+Point === Point.prototype.construcror
+```
+
+类的所有方法都定义在类的 `prototype` 属性上面。类实例上面调用的方法，其实就是调用 `prototype` 上的方法
+
+```js
+class B {}
+let b = new B();
+
+b.constructor = B.prototype.constructor
+```
+
+类的内部所有定义的方法都是不可枚举的（non-enumerable）
+
+```js
+class Point {
+  constructor(x, y) {
+    // ...
+  }
+
+  toString() {
+    // ...
+  }
+}
+
+Object.keys(Point.prototype)
+// []
+Object.getOwnPropertyNames(Point.prototype)
+// ["constructor","toString"]
+```
+
+#### constructor 方法
+
+`constructor` 方法是类的默认方法，如果没有显示定义，一个空的 `constructor` 方法会被默认添加
+
+类必须使用 `new` 调用，否则会报错。这是它和普通构造函数的一个主要区别。普通构造函数可以不用 `new`
+
+#### 类的实例
+
+与 ES5 一样，实例的属性除非显式定义在其本身（即定义在 `this` 对象上），否则都是定义在原型上（即定义在 `class` 上）
+
+#### 取值函数（getter）和存值函数（setter）
+
+存值函数和取值函数是设置在属性的 Descriptor 对象上。可以用 `Object.getOwnPropertyDescriptor()` 获取
+
+#### 属性表达式
+
+`[methodName]() { }`
+
+#### Class 表达式
+
+```JS
+let sfsx = class FSX { }
+```
+
+这个类的名字为 FSX 但只能在类的内部使用，在外部只能使用 sfsx
+
+#### calss 注意点
+
+1. 严格模式
+
+    类和模块的内部，默认就是严格模式，所以不需要用 `use strict` 指定运行模式。ES6 实际上把整个语言升级到了严格模式。
+
+2. 不存在提升
+
+    `class` 声明不存在变量提升，为了满足继承，必须保证子类在父类之后定义
+
+3. name 属性
+4. Generator 方法
+
+    在某个方法之前加上星号（`*`）,表示该方法是一个 Generator 函数。
+
+5. this 的指向
+
+    类的方法内部如果有 `this`，它默认指向累的实例。但是如果单独使用该方法，很可能会报错。
+
+    ```js
+    class Logger {
+      printName(name = 'there') {
+        this.print(`Hello ${name}`);
+      }
+
+      print(text) {
+        console.log(text);
+      }
+    }
+
+    const logger = new Logger();
+    const { printName } = logger;
+    printName(); // TypeError: Cannot read property 'print' of undefined
+    ```
+
+    上面代码中，`printName` 方法中的 `this`, 默认指向 `Logger` 类的实例。但是，如果将这个方法单独提取出来用，`this` 会指向该方法运行时所在的环境（由于 class 内部严格模式，所以 `this` 实际指向是 `underfined`），从而导致找不到 `print` 方法而报错
+
+    ```js
+    // 方法一 构造函数中绑定 this
+    class Logger {
+      constructor() {
+        this.printName = this.printName.bind(this);
+      }
+    }
+
+    // 方法二 使用箭头函数
+    class Obj {
+      constructor() {
+        this.getThis = () => this;
+        this.printName = (name = 'there') => this.print(`Hello ${name}`);
+      }
+    }
+
+    const myObj = new Obj();
+    myObj.getThis() === myObj // true
+
+    // 方法三 使用 proxy 这方法太骚 需要仔细研究一下它的姿势
+    function selfish (target) {
+      const cache = new WeakMap();
+      const handler = {
+        get (target, key) {
+          const value = Reflect.get(target, key);
+          if (typeof value !== 'function') {
+            return value;
+          }
+          if (!cache.has(value)) {
+            cache.set(value, value.bind(target));
+          }
+          return cache.get(value);
+        }
+      };
+      const proxy = new Proxy(target, handler);
+      return proxy;
+    }
+
+    const logger = selfish(new Logger());
+    ```
+
+### 2. class 静态方法
+
+加上 `static` 关键字。
+
+如果静态方法包含 `this` 关键字，这个 `this` **指的是类，而不是实例**。
+
+静态方法可以与非静态方法重名
+
+父类静态方法，可以被子类继承
+
+静态方法也可以从 `super` 对象上调用
+
+### 3. 实例属性的新写法
+
+实例的属性可以定义在 `constructor()` 方法里面的 `this` 上面，也可以定义在类的最顶层
+
+### 4. 静态属性
+
+```js
+class Fsx {}
+
+Fsx.prop = 1;
+Fsx.prop // 1
+```
+
+目前只有这种方法可行。有提案在属性前面加上 `static` 关键字（未实现）。这种方式在 Typescript 中已经实现
+
+### 5. 私有方法和私有属性
+
+#### 现有解决方案
+
+1. 在命名上加以区别，简单来说就是加入 `_` 下划线
+2. 将方法移除模块，因为模块内部所有方法都是对外可见
+3. 利用 `Symbol` 值的唯一性，将私有方法名字定义为一个 `Symbol` 值。
+
+#### 私有属性提案
+
+在属性名前加上 `#` 表示私有。（未实现）
+
+### 6. `new.target` 属性
+
+ES6 为 `new` 命令引入了一个 `new.target` 属性，该属性一般用在构造函数之中，返回 `new` 命令作用域的那个构造函数。如果构造函数不是通过 `new` 命令或 `Reflect.construct()` 调用的，`new.target` 会返回 `underfined`，因此这个属性可以用来确定构造函数是怎么调用的。
+
+```js
+function Person(name) {
+  if (new.target !== undefined) {
+    this.name = name;
+  } else {
+    throw new Error('必须使用 new 命令生成实例');
+  }
+}
+
+// 另一种写法
+function Person(name) {
+  if (new.target === Person) {
+    this.name = name;
+  } else {
+    throw new Error('必须使用 new 命令生成实例');
+  }
+}
+
+var person = new Person('张三'); // 正确
+var notAPerson = Person.call(person, '张三');  // 报错
+```
