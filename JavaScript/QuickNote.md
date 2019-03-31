@@ -492,7 +492,7 @@ c -> m -> v
 
 ## JavaScript `this`
 
-### 什么是 `this` ?
+### 什么是 `this` ？
 
 JavaScript 的 `this` 关键字指向它所属的对象
 
@@ -507,11 +507,11 @@ JavaScript 的 `this` 关键字指向它所属的对象
 
 ```js
 var preson = {
-    firstName: '',
-    lastName: '',
-    fullName : function() {
+  firstName: '',
+  lastName: '',
+  fullName : function() {
     return this.firstName + " " + this.lastName;
-    }
+  }
 }
 ```
 
@@ -525,7 +525,11 @@ var x = this;
 
 ### 在函数中的 `this`
 
-在严格模式下 `this` 是 `undefined`。在函数中的 `this` 只有在调用的时候才能确定，指向调用它的对象。
+在严格模式下 `this` 是 `undefined`。在函数中的 `this` 只有在**调用的时候才能确定**，指向调用它的对象。
+
+但在 ES6 的箭头函数按**词法作用域**来绑定它的上下文，所以 `this` 实际上会引用到原来的上下文（词法作用域：函数的作用域在函数定义的时候就决定了）
+
+箭头函数 不能用 `call` 方法修改里面的 `this`
 
 ```js
 function myFunction() {
