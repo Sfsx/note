@@ -1965,3 +1965,172 @@ function Person(name) {
 var person = new Person('张三'); // 正确
 var notAPerson = Person.call(person, '张三');  // 报错
 ```
+
+## Class 的继承
+
+### 1. Class 的继承简介
+
+继承关键字 `extends`
+
+子类必须在 `constructor` 方法中调用 `super` 方法，如果子类没有定义
+
+```js
+class Child extends Parent { }
+
+// 等同于
+class Child extends Parent {
+  construct(...arg) {
+    super(...arg);
+  }
+}
+```
+
+继承的构造函数中必须调用 `super()` 。并且只有调用了 `super()` 才可以使用 `this` 关键字，否则会报错。
+
+ES5 的继承，实际是先创造子类的实例对象 `this`，再将父类的方法添加到 `this` 上面 （`Parent.apply(this)`）。ES6 的继承机制完全不一样，实质是先将父类实例对象的属性和方法，添加到 `this` 上面（先调用 `super()`），然后在用子类的构造函数修改 `this`。
+
+### 2 `Object.getPrototypeOf()`
+
+`Object.getPrototypeOf()` 方法可以用来从子类上获取父类
+
+### 3. super 关键字
+
+`super` 这个关键字，既可以当作函数使用，也可以当作对象使用。
+
++ 作为函数时 `super()` 相当于 `A.prototype.constructor.call(this)`
++ 作为对象时 `super` 相当于 `A.prototype`。当通过`super` 调用父类的方法时，方法内部的 `this` 指向当前子类。如果对 `super` 的某个属性赋值，就是对 `this` 的某个属性赋值
+
+在子类的构造函数中必须调用 `super()` 否则JavaScript引擎会报错。
+
+在子类的静态方法中通过 `super` 调用父类的方法时，方法内部的 `this` 指向当前的子类。
+
+### 4. 类的 `prototype` 属性和 `__proto__` 属性
+
+对象的 `__proto__` 属性，指向对应的构造函数的 `prototype` 属性。Class 作为构造函数的语法糖，同时有 `prototype` 属性和 `__proto__` 属性，因此**同时存在两条继承链**。
+
+1. 子类的 `__proto__` 属性表示构造函数的继承，总是指向父类
+2. 子类的 `prototype` 属性的 `__proto__` 属性，表示方法的继承，总是指向父类的 `prototype`
+
+`extends` 关键字后面可以跟多种类型的值。只要是一个有 `prototype`属性的函数，就能被继承。
+
+以下有两种情况
+
+1. 继承于 `Object` 类
+
+    ```js
+    class A extends Object { }
+
+    A.__proto__ === Object // true
+    A.prototype.__proto__ === Object.prototype // true
+    ```
+
+    这种情况下 `A` 就是 `Object` 的赋值，`A` 的实例就是 `Object` 的实例
+
+2. 不存在任何继承
+
+    ```js
+    class A { }
+
+    A.__proto__ === Function.prototype // true
+    A.prototype.__proto__ === Object.prototype // true
+    ```
+
+#### 实例的 `__proto__` 属性
+
+子类实例的 `__proto__`属性的 `__proto__`，指向父类实例的 `__proto__`
+
+```js
+var p1 = new Point(2, 3);
+var p2 = new ColorPoint(2, 3, 'red');
+
+p2.__proto__ === p1.__proto__ // false
+p2.__proto__.__proto__ === p1.__proto__ // true
+
+// 因
+p2.__proto__ === ColorPoint.prototype // true
+// 故
+p2.__proto__.__proto__ = ColorPoint.prototype.__proto__ = Point.prototype = p1.__proto__
+```
+
+### 5. 原生构造函数的继承
+
++ Boolean()
++ Number()
++ String()
++ Array()
++ Date()
++ Function()
++ RegExp()
++ Error()
++ Object()
+
+在 ES6 之前以上原生构造函数是无法继承的，比如，不能自己定义一个 `Array` 的子类。
+
+```js
+function MyArray() {
+  Array.apply(this, arguments);
+}
+
+MyArray.prototype = Object.create(Array.prototype, {
+  constructor: {
+    value: MyArray,
+    writable: true,
+    configurable: true,
+    enumerable: true
+  }
+});
+```
+
+通过 `Array.apply()` 或者分配给原型对象都不行。原生构造函数会忽略 `apply` 传入的 `this`，也就是说，原生构造函数的 `this` 无法绑定，导致拿不到内部属性。
+
+**ES5 是先建子类的实例对象 `this`，再将父类的属性添加到子类上**，由于父类构造函内部属性无法获取，导致无法继承原生的构造函数。
+
+**ES6 是先建父类的实例对象 `this` ，再用子类的构造函数修饰 `this`**，使得父类的所有行为都可以继承。
+
+注意，继承 `Object` 的子类，有一个行为差异
+
+```js
+// 这也说明了 consrtuctor 函数的特殊性 既可以使用 ...arg 参数结构又可以使用 arguments 关键字
+class NewObj extends Object {
+  constructor() {
+    super(...arguments);
+  }
+}
+var o = new NewObj({attr: true});
+o.attr === true // false
+```
+
+因为 ES6 改变了构造函数的行为，一旦发现 `Object` 方法不是通过 `new Object()` 这种形式调用的，ES6 规定 `Object` 构造函数会自动忽略参数。
+
+### 6. Mixin 模式的实现
+
+```js
+function mix(...mixins) {
+  class Mix {
+    constructor() {
+      for (let mixin of mixins) {
+        copyProperties(this, new mixin()); // 拷贝实例属性
+      }
+    }
+  }
+
+  for (let mixin of mixins) {
+    copyProperties(Mix, mixin); // 拷贝静态属性
+    copyProperties(Mix.prototype, mixin.prototype); // 拷贝原型属性
+  }
+
+  return Mix;
+}
+
+function copyProperties(target, source) {
+  for (let key of Reflect.ownKeys(source)) {
+    if ( key !== 'constructor'
+      && key !== 'prototype'
+      && key !== 'name'
+    ) {
+      let desc = Object.getOwnPropertyDescriptor(source, key);
+      Object.defineProperty(target, key, desc);
+    }
+  }
+}
+```
