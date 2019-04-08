@@ -2134,3 +2134,59 @@ function copyProperties(target, source) {
   }
 }
 ```
+
+## Module 语法
+
+### 1. Module 概述
+
+CommonJS 模块为运行时加载，即加载整个文件，生成一个对象，运行时在从这个对象上面取方法。
+
+ES6 则是通过 export 命令显示指定输出代码，再通过 import 命令指定输入，而不是加载整个模块，这个称为“编译时加载”或者静态加载
+
+### 2. 严格模式
+
+ES6 模块自动采用严格模式，不管你有没有在模块头部加上 `"user seript"`
+
++ 变量必须声明后再使用
++ 函数的参数不能有同名属性
++ 不能使用 `with` 语句
++ 不能对只读属性赋值
++ 不能使用前缀 0 表示八进制数
++ 不能删除不可删除的属性
++ 不能删除变量
++ `eval` 不会再它的外层作用域引入变量
++ `eval` 和 `arguments` 不能被重新赋值
++ `arguments` 不会自动反应函参数的变化
++ 不能使用 `arguments.callee`
++ 不能使用 `arguments.caller`
++ 禁止 `this` 指向全局对象
++ 不能使用 `fn.caller` 和 `fn.arguments` 获取函数调用的堆栈
++ 增加保留字段 `protected`, `static`, `interface`
+
+ES6 中顶层 `this` 指向 `underfined`
+
+### 3. export 命令
+
+`export` 命令只能处于模块的顶层，不能处于块级作用域内。
+
+### 4. import 命令
+
+`import` 命令具有提升效果，会自动提升到模块的头部
+
+```js
+import 'lodash'
+```
+
+`import` 命令会运行所加载的模块，上面代码仅仅执行 `lodash` 模块，但是不输入任何值。
+
+```js
+import { foo } from 'my_module';
+import { bar } from 'my_module';
+
+// 等同于
+import { foo, bar } from 'my_module';
+```
+
+上面代码中，虽然 `foo` 和 `bar` 在两个语句中加载，但是它们对应的是同一个 `my_module` 实例。也就是说，`import` 语句是 `Singleton` 模式。
+
+### 5. 模块的整体加载
