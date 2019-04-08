@@ -169,7 +169,7 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 
 #### 浏览器执行过程
 
-1. JavaScript引擎首先从macrotask queue中取出第一个任务，执行完毕。
+1. script里的代码被列为一个task，放入macrotask queue。JavaScript引擎首先从macrotask queue中取出第一个任务，执行完毕。
 2. 将microtask queue中的所有任务取出，按顺序全部执行。
 3. 然后再从macrotask queue中取下一个，执行完毕。
 4. 再次将microtask queue中的全部取出，按顺序全部执行。
