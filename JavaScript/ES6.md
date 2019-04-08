@@ -2190,3 +2190,60 @@ import { foo, bar } from 'my_module';
 上面代码中，虽然 `foo` 和 `bar` 在两个语句中加载，但是它们对应的是同一个 `my_module` 实例。也就是说，`import` 语句是 `Singleton` 模式。
 
 ### 5. 模块的整体加载
+
+```js
+import * as circle from 'circle'
+```
+
+### 6. export default 命令
+
+`export default` 命令只能使用一次
+
+### 7. export 和 import 的复合写法
+
+```js
+export { foo, bar } from 'my_module';
+
+// 可以简单理解为
+import { foo, bar } from 'my_module';
+export { foo, bar };
+```
+
+```js
+export { es6 as default } from './someModule';
+
+// 等同于
+import { es6 } from './someModule';
+export default es6;
+```
+
+### 8. 模块的继承
+
+假设有一个 `circleplus` 模块，继承了 `circle` 模块。
+
+```js
+// circleplus.js
+
+export * from 'circle';
+export var e = 2.71828182846;
+export default function(x) {
+  return Math.exp(x);
+}
+```
+
+### 9. 模块常量
+
+可以建一个专门的 `constants` 目录，将各种常量写在不同的文件里面，保存在该目录下。
+
+### 10. import()
+
+引入 `import()` 函数，完成动态加载。
+
+```js
+import('./myModule.js')
+.then(({export1, export2}) => {
+  // ...·
+});
+```
+
+`import()` 返回一个 `Promise` 对象。
