@@ -2247,3 +2247,88 @@ import('./myModule.js')
 ```
 
 `import()` 返回一个 `Promise` 对象。
+
+## Module 的加载实现
+
+### 1. 浏览器加载
+
+#### 传统方法
+
+```html
+<script src="" defer></script>
+<script src="" async></script>
+```
+
+`<script>` 标签打开 `defer` 或 `async` 属性，脚本就会异步加载
+
+`defer`: 要等到整个页面在内存中正常渲染结束（DOM 结构完全生成，以及其他脚本执行完成），才会执行。多个 `defer` 脚本会按顺序执行
+
+`async`：一旦下载完，渲染引擎就会终端渲染，执行这个脚本以后，再继续渲染。多个 `async` 不能保证按顺序执行
+
+#### 加载规则
+
+浏览器加载 ES6 模块，也是用 `<script>` 标签，但是要加入 `type="module"` 属性。
+
+```html
+<script type="module" src="./foo.js"></script>
+```
+
+浏览器对于带有 `type="module"` 的 `<script>`，都是异步加载，不会造成堵塞浏览器，即等到整个页面渲染完，再执行模块脚本
+
+当然也可在 `type="module"` 中添加 `async` 属性。
+
+对于外部模块脚本（上例是 `foo.js`），有几点需要注意。
+
++ 代码是在模块作用域之中运行，而不是在全局作用域运行。模块内部的顶层变量，外部不可见。
++ 模块脚本自动采用严格模式，不管有没有声明 `use strict`
++ 模块之中，可以使用 `import` 命令加载其他模块（`.js` 后缀不可省略，需要提供绝对 URL 或相对 URL），也可使用 `export` 命令输出对外接口。
++ 模块之中，顶层的 `this` 关键字返回 `underfined`
++ 同一个模块如果加载多次，将只执行一次。
+
+### 2. ES6 模块与 CommonJS 模块的差异
+
++ CommonJS 模块输出的是值得拷贝，ES6 模块输出的是值的引用
++ CommonJS 模块是运行时加载，ES6 模块是编译时加载
+
+### 3. Node 加载
+
+#### Node 加载概述
+
+由于 ES6 模块与 CommonJS 模块格式是不兼容的，目前 Node 是分开加载。
+
+ES6 模块采用 `.mjs` 后缀的文件名。
+
+目前，这项功能还在试验阶段。安装 Node v8.5.0 或以上版本，要用 `--experimental-modules` 参数才能打开该功能。
+
+```sh
+node --experimental-modules my-app.mjs
+```
+
+为了与浏览器的 `import` 加载规则相同，Node 的 `.mjs` 文件支持 URL 路径。
+
+```js
+import './foo?query=1'; // 加载 ./foo 传入参数 ?query=1
+```
+
+故当文件名存在 `:`、`%`、`#`、`?`等特殊字符最好进行转译。
+
+目前，Node 的 `import` 命令只支持加载本地模块（ `file:` 协议），不支持加载远程模块。
+
+如果脚本文件省略了后缀名。Node 会一次尝试四个后缀名：`./**.mjs`、`./**.js`、`./**.json`、`./**.node`。如果这些脚本文件都不存在，Node 就会去加载 `./foo/package.json` 的 `main` 字段指定的脚本。如果 `./foo/package.json` 不存在或者没有 `main` 字段，那么就会依次加载 `./foo/index.mjs`、`./foo/index.js`、`./foo/index.json`、`./foo/index.node`。如果以上四个文件还是都不存在，就会抛出错误。
+
+#### 内部变量
+
+为了保证 ES6 模块不用修改，即可在浏览器环境使用也可在服务器环境使用。Node 规定，ES6 模块之中不能使用 CommonJS 模块的特有的一些内部变量。
+
+首先是 ES6 中 `this` 指向 `undefined`；CommonJS 模块的顶层 `this` 指向当前模块。
+
+这些变量在 ES6 模块之中都不存在的
+
++ arguments
++ require
++ module
++ exports
++ __filename
++ __dirname
+
+#### ES6 模块加载 CommonJS 模块
