@@ -2392,3 +2392,136 @@ CommonJS 的一个模块，就是一个脚本文件。`require` 命令第一次�
 #### ES6 模块的循环加载
 
 ### 5. ES6 模块的转码
+
+## 修饰器
+
+### 1. 类的修饰器
+
+```js
+@testable
+class MyTestableClass {
+  // ...
+}
+
+function testable(target) {
+  target.isTestable = true;
+}
+
+MyTestableClass.isTestable // true
+
+// 可以这么理解
+
+@decorator
+class A {}
+
+// 等同于
+
+class A {}
+A = decorator(A) || A;
+
+// 如果觉得一个参数不够用，可以在修饰器外面再封装一层函数。
+
+function testable(isTestable) {
+  return function(target) {
+    target.isTestable = isTestable;
+  }
+}
+
+@testable(true)
+class MyTestableClass {}
+MyTestableClass.isTestable // true
+
+@testable(false)
+class MyClass {}
+MyClass.isTestable // false
+```
+
+注意，修饰器对类的行为的改变，是代码编译时发生的，而不是在运行时。这意味着，修饰器能在编译阶段运行代码。也就是说，修饰器本质就是编译时执行的函数。
+
+### 2. 方法的修饰
+
+```js
+function readonly(target, name, descriptor){
+  // descriptor对象原来的值如下
+  // {
+  //   value: specifiedFunction,
+  //   enumerable: false,
+  //   configurable: true,
+  //   writable: true
+  // };
+  descriptor.writable = false;
+  return descriptor;
+}
+
+readonly(Person.prototype, 'name', descriptor);
+// 类似于
+Object.defineProperty(Person.prototype, 'name', descriptor);
+```
+
+修饰器的本意是要“修饰”类的实例，但是这个时候实例还没生成，所以只能去修饰原型。方法的修饰器的第一个参数为**类的原型**，第二个参数为所要修饰的**属性名**，第三个参数是该**属性的描述对象**。
+
+### 3. 为什么修饰器不能用于函数？
+
+```js
+var counter = 0;
+
+var add = function () {
+  counter++;
+};
+
+@add
+function foo() { }
+
+// 上面代码的意图是执行后 counter 等于 1，但实际结果是 counter 等于 0。因为函数提升。实际执行代码如下
+
+@add
+function foo() {}
+
+var counter
+var add
+
+counter = 0;
+
+add = function () {
+  counter++;
+}
+```
+
+### 4. core-decorators.js
+
+一个第三方模块
+
+### 5. 使用修饰器实现自动发布事件
+
+```js
+const postal = require("postal/lib/postal.lodash");
+
+export default function publish(topic, channel) {
+  const channelName = channel || '/';
+  const msgChannel = postal.channel(channelName);
+  msgChannel.subscribe(topic, v => {
+    console.log('频道: ', channelName);
+    console.log('事件: ', topic);
+    console.log('数据: ', v);
+  });
+
+  return function(target, name, descriptor) {
+    const fn = descriptor.value;
+
+    descriptor.value = function() {
+      let value = fn.apply(this, arguments);
+      msgChannel.publish(topic, value);
+    };
+  };
+}
+```
+
+请参考 mobx 源码解析
+
+### 6. Mixin
+
+### 7. Trait
+
+traits-decorator 第三方库
+
+### 8. bable 转码器的支持
