@@ -2332,3 +2332,63 @@ import './foo?query=1'; // 加载 ./foo 传入参数 ?query=1
 + __dirname
 
 #### ES6 模块加载 CommonJS 模块
+
+CommonJS 模块的输出都定义在 `module.exports` 这个属性上面。Node 的 `import` 命令加载 CommonJS 模块，Node 会自动将 `module.exports` 属性，当作模块的默认输出，即等同于 `export default xxx`
+
+`import` 命令加载 CommonJS 模块，实际上拿到的是 `{ default: module.exports }`
+
+```js
+// 写法一
+import baz from './a';
+// baz = {foo: 'hello', bar: 'world'};
+
+// 写法二
+import {default as baz} from './a';
+// baz = {foo: 'hello', bar: 'world'};
+
+// 写法三
+import * as baz from './a';
+// baz = {
+//   get default() {return module.exports;},
+//   get foo() {return this.default.foo}.bind(baz),
+//   get bar() {return this.default.bar}.bind(baz)
+// }
+```
+
+由于 ES6 模块是编译时确定输出接口，CommonJS 模块是运行时确定输出接口，所以采用 `import` 命令加载 CommonJS 模块时，不允许采用下面的写法。
+
+```js
+import { redFile } from 'fs';
+```
+
+#### CommonJS 模块加载 ES6 模块
+
+CommonJS 模块加载 ES6 模块，不能使用 `require` 命令，而要使用 `import()` 函数。ES6 模块的所有输出接口，会成为输入对象的属性。
+
+```js
+// es.mjs
+let foo = { bar: 'my-default' };
+export default foo;
+
+// cjs.js
+const es_namespace = await import('./es.mjs');
+// es_namespace = {
+//   get default() {
+//     ...
+//   }
+// }
+console.log(es_namespace.default);
+// { bar:'my-default' }
+```
+
+### 4. 循环加载
+
+#### CommonJS 模块的加载原理
+
+CommonJS 的一个模块，就是一个脚本文件。`require` 命令第一次加载该脚本，就会执行整个脚本，然后生成一个内存对象。
+
+需要用到这个模块的时候，就会到对象的 `exports` 属性上面取值。即使再次执行 `require` 命令，也不会再次执行该模块。
+
+#### ES6 模块的循环加载
+
+### 5. ES6 模块的转码
