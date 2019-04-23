@@ -932,8 +932,6 @@ ES6在语言规格层面上实现了模块功能，是编译时加载，完全�
     + 运行时加载：CommonJS 模块就是对象；即在输入时是先加载整个模块，生成一个对象，然后再从这个对象上读取方法，这种加载称之为“运行时加载”。
     + 编译时加载：ES6 模块不是对象，而是通过 `export` 命令显示的指定输出的代码，`import` 时采用静态命令的形式。即在 `import` 时可以指定加载某个输出的值，而不是加载整个模块，这种加载称之为“编译时加载”。
 
-### 参考资料
-
 [前端模块化详解(完整版)](https://juejin.im/post/5c17ad756fb9a049ff4e0a62)
 
 [前端模块化一——规范详述](https://zhuanlan.zhihu.com/p/41568986)
@@ -947,8 +945,6 @@ ES6在语言规格层面上实现了模块功能，是编译时加载，完全�
 RxJS 是使用 Observables 的响应式编程的库， 它使编写一部或基于回调的代码更容易。
 
 ReactiveX 结合了 观察者模式、迭代器模式 和 使用集合的函数式编程，以满足以一种理想方式来管理事件序列所需要的一切。
-
-### 参考资料
 
 [中文官网](https://cn.rx.js.org/)
 
@@ -1027,10 +1023,10 @@ for(var i = 0; i < lis.length ; i++){
 }
 
 // Demo 2
-var ul = document.getElementsByTagName('ul')[0], 
-    lis = ul.getElementsByTagName("li"); 
+var ul = document.getElementsByTagName('ul')[0],
+    lis = ul.getElementsByTagName("li");
 for(var i = 0; i < lis.length ; i++){
-    ul.appendChild(document.createElement("li")); 
+    ul.appendChild(document.createElement("li"));
 }
 ```
 
