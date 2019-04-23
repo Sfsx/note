@@ -530,9 +530,9 @@ ES5 中在严格模式下 `this` 是 `undefined`。
 1. 在函数中的 `this` 只有在**调用的时候才能确定**，指向调用它的对象。
 2. 多层嵌套的对象，内部方法的this指向离被调用函数最近的对象
 
-但在 ES6 的箭头函数按**词法作用域**来绑定它的上下文，所以 `this` 实际上会引用到原来的上下文（词法作用域：函数的作用域在函数定义的时候就决定了）
+但在 ES6 的箭头函数按**词法作用域**来绑定它的上下文，所以 `this` 实际上会引用到原来的上下文（词法作用域：函数的作用域在函数定义的时候就决定了，无论函数在哪里被调用，也无论它如何被调用，它的词法作用域都只由函数被声明时所处的位置决定）
 
-箭头函数 不能用 `call` 方法修改里面的 `this`
+箭头函数 无法使用 `call`，`apply`，`bind` 方法修改里面的 `this`
 
 ```js
 function myFunction() {
@@ -542,20 +542,51 @@ function myFunction() {
 
 ### 在事件处理中
 
+#### 内联事件
+
+1. 当代码被内联处理函数调用时，它的 `this` 指向监听器所在的DOM元素
+2. 当代码被包括在函数内部执行时，其 `this` 指向等同于**函数直接调用**的情况，即在非严格模式指向全局对象 `window`， 在严格模式指向 `undefined`
+
 ```html
 <button onclick="this.style.display='none'">
   Click to Remove Me!
 </button>
+<button onclick="(function () {console.log(this);})();">
+  use strict
+</button>
 ```
+
+#### 事件处理函数
+
+当函数被当做监听事件处理函数时， 其 `this` 指向触发该事件的元素
 
 ```js
-var elements = document.getElementsByTagName('div');
-
+function bluify(e){
+  //在控制台打印出所点击元素
+  console.log(this);
+  //阻止事件冒泡
+  e.stopPropagation();
+  //阻止元素的默认事件
+  e.preventDefault();
+  this.style.backgroundColor = '#A5D9F3';
+}
+var elements = document.getElementById('this');
+elements.addEventListener('click', bluify, false);
 ```
 
-### 函数绑定
+**小知识**（`addEventListener` 的第三个参数为布尔值，指定事件是否在捕获或冒泡阶段执行。事件监听可以使用对应的 `removeEventListener` 来移除）
+
+#### setTimeout & setInterval
+
+对于演示函数内部的回调函数的 `this` 指向全局对象 `window`
+
+#### 函数绑定
 
 [原文链接](https://www.w3schools.com/js/js_this.asp)
+
+[深入理解JavaScript this](http://caibaojian.com/deep-in-javascript-this.html)
+
+[this 指向详细解析（箭头函数）](https://www.cnblogs.com/dongcanliang/p/7054176.html)
 
 ## JavaScript 高阶函数
 
