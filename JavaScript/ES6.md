@@ -1000,7 +1000,11 @@ function set(target, key, value, receiver) {
 
 ### 2. 基本用法
 
+注意调用 `resulve` 或 `reject` 并不会终结 Promise 的参数函数执行。
+
 ### 3. `Promise.prototype.then()`
+
+`then` 方法返回的是一个新的 Promise 实例（注意，不是原来那个 Promise 实例）。
 
 ### 4. `Promise.prototype.catch()`
 
