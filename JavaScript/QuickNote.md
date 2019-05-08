@@ -1058,6 +1058,68 @@ HTMLCollection 对象只会包含文档中的 `Element` 节点。
 
 [原文链接](https://www.zhihu.com/question/24702250)
 
+## csrf
+
+### 1、什么是CSRF攻击？
+
+2011年的解决方案：
+
+[CSRF 攻击的应对之道](https://www.ibm.com/developerworks/cn/web/1102_niugang_csrf/)
+
+### 2、有哪些防御方案？
+
+1. 用户操作限制，比如验证码；
+2. 请求来源限制，比如限制HTTP Referer才能完成操作；
+3. token验证机制，比如请求数据字段中添加一个token，响应请求时校验其有效性；
+
+**token验证的CSRF防御机制是公认最合适的方案**，也是本文讨论的重点。
+
+### 3、前后端分离下有何不同？
+
+这个基本过时，现在 nodejs 配合 redis 拥有完美的 session 解决方案。
+
+### 实现思路
+
+#### 1、可行性方案
+
+token防御的整体思路是：
+
++ 第一步：后端随机产生一个 token，把这个 token 保存在 SESSION 状态中；同时，后端把这个 token 交给前端页面；
++ 第二步：下次前端需要发起请求（比如发帖）的时候把这个 token 加入到请求数据或者头信息中，一起传给后端；
++ 第三步：后端校验前端请求带过来的 token 和 SESSION 里的 token 是否一致；
++ 第四步：定时更新 token 防止 token 被解析，每5分钟更新一次
+
+这里依旧有个细节值得提一下：**Nodejs 的上层一般是 nginx，而 nginx 默认会过滤头信息中不合法的字段（比如头信息字段名包含“_”的），这里在写头信息的时候需要注意。**
+
+### "One more thing..."
+
+上文也提到，通过cookie及http头信息传递加密token会有很多弊端；有没有更优雅的实现方案呢？
+
+#### 1、cookie中samesite属性
+
+回溯下 CSRF 产生的根本原因：cookie 会被第三方发起的跨站请求携带，这本质上是 HTTP 协议设计的漏洞。
+
+那么，我们能不能通过 cookie 的某个属性禁止 cookie 的这个特性呢？
+
+好消息是，在最新的 RFC规范中已经加入了 `samesite` 属性。细节这里不再赘述，可以参考：
+
+1. [SameSite Cookie，防止 CSRF 攻击](http://www.cnblogs.com/ziyunfei/p/5637945.html)
+2. [Same-site Cookies](https://tools.ietf.org/html/draft-west-first-party-cookies-07#page-8)
+
+### 实践
+
+#### axios csrf
+
+`headers: { 'X-CSRF-TOKEN': 获取上面csrf返回的数据 }`
+
+开坑待填。。。
+
+#### fetch csrf
+
+开坑代填。。。
+
+[前后端分离架构下CSRF防护机制](https://github.com/xiongwilee/blog/issues/7)
+
 ## 节流函数与防抖函数
 
 ### 节流函数
