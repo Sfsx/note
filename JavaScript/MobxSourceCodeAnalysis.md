@@ -117,31 +117,97 @@ export class Reaction implements IDerivation, IReactionPublic {
 
 ## Obaservable
 
-1. 使用 Object.freeze() 用来冻结配置项
-2. 条件判断封装成语义化的函数
+### createObservable
 
-    ```js
+**策略设计模式**：将多种数据类型（Object、Array、Map）情况的转换封装起来，好让调用者不需要关心实现细节
+
+```js
+function createObservable(v: any, arg2?: any, arg3?: any) {
+
+    // ...
+
+    // something that can be converted and mutated?
     const res = isPlainObject(v)
-      ? observable.object(v, arg2, arg3)
-      : Array.isArray(v)
-        ? observable.array(v, arg2)
-        : isES6Map(v)
-          ? observable.map(v, arg2)
-          : isES6Set(v)
-            ? observable.set(v, arg2)
-            : v
-    ```
+        ? observable.object(v, arg2, arg3)
+        : Array.isArray(v)
+            ? observable.array(v, arg2)
+            : isES6Map(v)
+                ? observable.map(v, arg2)
+                : isES6Set(v)
+                    ? observable.set(v, arg2)
+                    : v
 
-3. 魔术。通过 `forEach` 将 `observableFactories` 中的方法注入到 `observable`。
+    // this value could be converted to a new observable data structure, return it
+    if (res !== v) return res
 
-    ```js
-    // weird trick to keep our typings nicely with our funcs, and still extend the observable function
-    Object.keys(observableFactories).forEach(name => (observable[name] = observableFactories[name]))
-    ```
+    // ...
 
-4. 通过 `asObservableObject` 方法创建一个空对象。 `ObservableObjectAdministration` 里面封装了后续被拦截的原生方法的改写，并存放于空对象的 `Symbol('mobx administration')` 属性中
-5. 通过 `createDynamicObservableObject` 对空对象进行代理
-6. `extendObservableObjectWithProperties`,最终会给原始对象的属性进行装饰，最后调用`ObservableObjectAdministration` 的 `addObservableProp` 方法，针对每一个原始对象的 `key` 生成一个 `ObservableValue`对象，并保存在 `ObservableObjectAdministration` 对象的 `values` 中
+}
+```
+
+魔术。通过 `forEach` 将 `observableFactories` 中的方法注入到 `observable`。并将 `createObservable` 赋给 `observable`。
+
+```js
+export const observable: IObservableFactory &
+    IObservableFactories & {
+        enhancer: IEnhancer<any>
+    } = createObservable as any
+
+// weird trick to keep our typings nicely with our funcs, and still extend the observable function
+Object.keys(observableFactories).forEach(name => (observable[name] = observableFactories[name]))
+```
+
+### observable.box
+
+```js
+box<T = any>(value?: T, options?: CreateObservableOptions): IObservableValue<T> {
+    if (arguments.length > 2) incorrectlyUsedAsDecorator("box")
+    const o = asCreateObservableOptions(options)
+    return new ObservableValue(value, getEnhancerFromOptions(o), o.name, true, o.equals)
+}
+```
+
+仅仅只是返回 `ObservableValue` 实例
+
+#### ObservableValue
+
+`ObservableValue` 继承于 `Atom`
+
+`Atom` 实例有两项重大的使命：
+
+1. `reportObserved()`
+2. `reportChanged()`
+
+`ObservableValue` 其实就是继承一下 `Atom` 这个类，然后再添加许多辅助的方法和属性就可以了。我们讲一下其中比较有意思的 `Intercept()` 和 `Observe()` 方法
+
+如果把 “对象变更” 作为事件，那么我们可以在 **事件发生之前** 和 **事件方法之后** 这两个 “切面” 分别可以安插回调函数（callback），方便程序动态扩展，这属于 **面向切面编程的思想**。
+
+### observable.object
+
+```js
+object<T = any>(
+        props: T,
+        decorators?: { [K in keyof T]: Function },
+        options?: CreateObservableOptions
+    ): T & IObservableObject {
+        if (typeof arguments[1] === "string") incorrectlyUsedAsDecorator("object")
+        const o = asCreateObservableOptions(options)
+        if (o.proxy === false) {
+            return extendObservable({}, props, decorators, o) as any
+        } else {
+            const defaultDecorator = getDefaultDecoratorFromObjectOptions(o)
+            const base = extendObservable({}, undefined, undefined, o) as any
+            const proxy = createDynamicObservableObject(base)
+            extendObservableObjectWithProperties(proxy, props, decorators, defaultDecorator)
+            return proxy
+        }
+    }
+```
+
+1. `extendObservable()` 方法中通过 `asObservableObject` 方法创建一个空对象。
+通过 `ObservableObjectAdministration` 里面封装了后续被拦截的原生方法的改写，并存放于空对象的 `Symbol('mobx administration')` 属性中
+2. `createDynamicObservableObject()` 将处理方法对象 `objectProxyTraps` 代理到空对象上。
+3. `extendObservableObjectWithProperties`,最终会给原始对象的属性进行装饰，最后调用`ObservableObjectAdministration` 的 `addObservableProp()` 方法，针对每一个原始对象的 `key` 生成一个 `ObservableValue` 对象，并保存在 `ObservableObjectAdministration` 对象的 `values` 中
 
 ## Derivation
 
@@ -172,32 +238,41 @@ export interface IDerivation extends IDepTreeNode {
 computed 具体流程
 
 ```js
-reportChanged
-  -> propagateChanged
-  -> propagateMaybeChanged
-  -> runReaction
-  -> track
-  -> get
-  -> computeValue
-  -> bindDependencies
+(O1) reportChange
+-> (O1) startBatch
+  -> (O1) propagateChanged // O1.l -1 -> 2，C1.d 0 -> 2
+    -> (C1) propagateMaybeChanged // C1.l 0 -> 1， R1.d 0 -> 1
+    -> (R1) onBecomeStale // 这里并不会让探长 runReaction
+-> (O1) endBatch
+  -> (R1) runReaction // 到这里才让探长执行 runReaction
+    -> (C1) get
+      -> (C1) reportObserved
+      -> (C1) shouldCompute
+        -> (C1) trackAndCompute
+          -> (C1) trackDerivedFunction // C1.d 2 -> 0 O1.l 2 -> 0
+        -> (C1) propagateChangeConfirmed // C1.l 1 -> 2，R1.d 1 -> 2
+      -> (R1) trackDerivedFunction // R1.d 2 -> 0，C1.l 2 -> 0
+        -> fn() // 即执行 autorun 中的回调
 ```
 
 ## autorun
 
 ## shouldCompute
 
-Derivation 的 dependenciesState 属性  
-Observable 的 lowestObserverState 属性  
+`Derivation` 的 `dependenciesState` 属性  
+`Observable` 的 `lowestObserverState` 属性  
 4个枚举值：
 
-1. `NOT_TRACKING`：在执行之前，或事务之外，或未被观察(计算值)时，所处的状态。此时 Derivation 没有任何关于依赖树的信息。枚举值 `-1`
+1. `NOT_TRACKING`：在执行之前，或事务之外，或未被观察(计算值)时，所处的状态。此时 `Derivation` 没有任何关于依赖树的信息。枚举值 `-1`
 2. `UP_TO_DATE`：表示所有依赖都是最新的，这种状态下不会重新计算。枚举值 `0`
 3. `POSSIBLY_STALE`：计算值才有的状态，表示深依赖发生了变化，但不能确定浅依赖是否变化，在重新计算之前会检查。枚举值 `1`
-4. `STALE`：过期状态，即浅依赖发生了变化，Derivation 需要重新计算。枚举值 `2`
+4. `STALE`：过期状态，即浅依赖发生了变化，`Derivation` 需要重新计算。枚举值 `2`
 
-shouldCompute 则依据这四个状态执行相应的调整策略
+`shouldCompute` 则依据这四个状态执行相应的调整策略
 
-### only autorun
+### case only autorun
+
+code 代码:
 
 ```js
 var bankUser = mobx.observable({
@@ -212,18 +287,22 @@ mobx.autorun(() => {
 bankUser.income = 4;
 ```
 
+flow 流程:
+
 ```js
 (O1) reportChange
-  -> (O1) startBatch
-    -> (O1) propagateChanged
-    -> (R1) onBecomeStale
-  -> (O1) endBatch
-    -> (R1) runReaction（到这里才让探长执行 `runReaction`）
-      -> (R1) trackDerivedFunction
-        -> fn(即执行 autorun 中的回调)
+    -> (O1) startBatch
+      -> (O1) propagateChanged
+        -> (R1) onBecomeStale
+    -> (O1) endBatch
+      -> (R1) runReaction // 到这里才让探长执行 runReaction
+        -> (R1) trackDerivedFunction
+          -> fn() // 即执行 autorun 中的回调
 ```
 
-### 1 compute
+### case 1 compute
+
+code 代码:
 
 ```js
 var bankUser = mobx.observable({
@@ -242,25 +321,29 @@ mobx.autorun(() => {
 bankUser.income = 4;
 ```
 
+flow 流程:
+
 ```js
 (O1) reportChange
 -> (O1) startBatch
-  -> (O1) propagateChanged （O1.l -1 -> 2，C1.d 0 -> 2）
-    -> (C1) propagateMaybeChanged （C1.l 0 -> 1， R1.d 0 -> 1）
-    -> (R1) onBecomeStale（这里并不会让探长 `runReaction`）
+  -> (O1) propagateChanged // O1.l -1 -> 2，C1.d 0 -> 2
+    -> (C1) propagateMaybeChanged // C1.l 0 -> 1， R1.d 0 -> 1
+    -> (R1) onBecomeStale // 这里并不会让探长 runReaction
 -> (O1) endBatch
-  -> (R1) runReaction（到这里才让探长执行 `runReaction`）
+  -> (R1) runReaction // 到这里才让探长执行 runReaction
     -> (C1) get
       -> (C1) reportObserved
       -> (C1) shouldCompute
         -> (C1) trackAndCompute
-          -> (C1) trackDerivedFunction （C1.d 2 -> 0 O1.l 2 -> 0）
-        -> (C1) propagateChangeConfirmed （C1.l 1 -> 2，R1.d 1 -> 2）
-      -> (R1) trackDerivedFunction （R1.d 2 -> 0，C1.l 2 -> 0）
-        -> fn(即执行 autorun 中的回调)
+          -> (C1) trackDerivedFunction // C1.d 2 -> 0 O1.l 2 -> 0
+        -> (C1) propagateChangeConfirmed // C1.l 1 -> 2，R1.d 1 -> 2
+      -> (R1) trackDerivedFunction // R1.d 2 -> 0，C1.l 2 -> 0
+        -> fn() // 即执行 autorun 中的回调
 ```
 
-### 2 compute
+### case 2 compute
+
+code 代码:
 
 ```js
 var bankUser = mobx.observable({
@@ -283,23 +366,25 @@ mobx.autorun(() => {
 bankUser.debit = 4;
 ```
 
+flow 流程:
+
 ```js
 (O2) reportChange
-  -> (O2) propagateChanged（O2.l -1 -> 2，C1.d 0 -> 2）
-    -> (C1) propagateMaybeChanged（C1.l 0 -> 1， C2.d 0 -> 1）
-    -> (C2) propagateMaybeChanged（C2.l 0 -> 1， R1.d 0 -> 1）
-    -> (R1) onBecomeStale（这里并不会让探长 `runReaction`）
+  -> (O2) propagateChanged // O2.l -1 -> 2，C1.d 0 -> 2）
+    -> (C1) propagateMaybeChanged // C1.l 0 -> 1， C2.d 0 -> 1）
+    -> (C2) propagateMaybeChanged // C2.l 0 -> 1， R1.d 0 -> 1）
+    -> (R1) onBecomeStale // 这里并不会让探长 runReaction
 -> (O2) endBatch
-  -> (R1) runReaction（到这里才让探长执行 `runReaction`）
+  -> (R1) runReaction // 到这里才让探长执行runReaction
     -> (R1) shouldCompute
       -> (C2) shouldCompute
         -> (C1) shouldCompute
-        -> (C1) trackAndCompute（C1.d 2 -> 0 O1.l 2 -> 0）
-        -> (C1) propagateChangeConfirmed（C1.l 1 -> 2，C2.d 1 -> 2）
-      -> (C2) trackAndCompute（C2.d 2 -> 0 C1.l 2 -> 0）
-      -> (C2) propagateChangeConfirmed（C2.l 1 -> 2，R1.d 1 -> 2）
-    -> (R1)trackDerivedFunction（R1.d 2 -> 0，C2.l 2 -> 0）
-      -> fn(即执行 autorun 中的回调)
+        -> (C1) trackAndCompute // C1.d 2 -> 0 O1.l 2 -> 0
+        -> (C1) propagateChangeConfirmed // C1.l 1 -> 2，C2.d 1 -> 2
+      -> (C2) trackAndCompute // C2.d 2 -> 0 C1.l 2 -> 0
+      -> (C2) propagateChangeConfirmed // C2.l 1 -> 2，R1.d 1 -> 2
+    -> (R1)trackDerivedFunction // R1.d 2 -> 0，C2.l 2 -> 0
+      -> fn() // 即执行 autorun 中的回调
 ```
 
 ## 参考资料
