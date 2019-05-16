@@ -1062,6 +1062,8 @@ HTMLCollection 对象只会包含文档中的 `Element` 节点。
 
 ### 1、什么是CSRF攻击？
 
+CSRF 攻击是黑客借助受害者的 cookie 骗取服务器的信任，但是黑客并不能拿到 cookie，也看不到 cookie 的内容。另外，对于服务器返回的结果，由于**浏览器同源策略**的限制，黑客也无法进行解析。因此，黑客无法从返回的结果中得到任何东西，他所能做的就是给服务器发送请求，以执行请求中所描述的命令，在服务器端直接改变数据的值，而非窃取服务器中的数据。
+
 2011年的解决方案：
 
 [CSRF 攻击的应对之道](https://www.ibm.com/developerworks/cn/web/1102_niugang_csrf/)
@@ -1119,6 +1121,117 @@ token防御的整体思路是：
 开坑代填。。。
 
 [前后端分离架构下CSRF防护机制](https://github.com/xiongwilee/blog/issues/7)
+
+## 浏览器同源策略
+
+### 同源的概念
+
++ 协议相同
++ 域名相同
++ 端口相同
+
+举例来说，`http://www.example.com/dir/page.html` 这个网址，协议是 `http://`，域名是 `www.example.com`，端口是 `80`
+
++ `http://www.example.com/dir2/other.html`：同源
++ `http://example.com/dir/other.html`：不同源（域名不同）
++ `http://v2.www.example.com/dir/other.html`：不同源（域名不同）
++ `http://www.example.com:81/dir/other.html`：不同源（端口不同）
+
+### 限制范围
+
+#### 1. cookie、localStorage、indexDB 无法获取
+
+csrf 跨站伪造请求
+
+#### 2. DOM 无法获得
+
+如果没有 DOM 同源策略，也就是说不同域的 iframe 之间可以相互访问，那么黑客可以这样进行攻击：
+
+1. 做一个假网站，里面用 iframe 嵌套一个银行网站 `http://mybank.com`。
+2. 把 iframe 宽高啥的调整到页面全部，这样用户进来除了域名，别的部分和银行的网站没有任何差别。
+3. 这时如果用户输入账号密码，我们的主网站可以跨域访问到 `http://mybank.com` 的 dom 节点，就可以拿到用户的账户密码了。
+
+#### 3. http 请求无法发送
+
+1. 做个假网站，通过跨域请求 GET，获取某个银行网站的 `http://mybank.com` html 文档。
+2. 将文档展示在自己的页面中
+3. 这时如果用户输入账号密码，就可以拿到用户的账户密码了。
+
+### cookie
+
+页面可以改变本身的源，但是会有一些限制。脚本可以将 `document.domain` 设置为当前域或者当前域的超级域，该较短的域会用于后续源检查。
+
+### DOM
+
+h5 的 `window.postMessage` api
+
+### http 请求
+
+CORS
+
+浏览器将CORS请求分成两类：简单请求（simple request）和非简单请求（not-so-simple request）。
+
+1. 请求方法是以下三种方法之一：
+
+    + HEAD
+    + GET
+    + POST
+
+2. HTTP的头信息不超出以下几种字段：
+
+   + Accept
+   + Accept-Language
+   + Content-Language
+   + Last-Event-ID
+   + Content-Type：
+     + application/x-www-form-urlencoded
+     + multipart/form-data
+     + text/plain
+
+### 简单请求
+
+头部
+
+```html
+Origin: http://www.laixiangran.cn
+Access-Control-Request-Headers: authorization
+```
+
+服务器返回
+
+```html
+Access-Control-Allow-Origin：http://www.laixiangran.cn
+Access-Control-Allow-Credentials: true
+```
+
+### 非简单请求
+
+浏览器在发送真正的请求之前，会先发送一个 Preflight 请求给服务器，这种请求使用 OPTIONS 方法，发送下列头部
+
+```html
+Origin: http://www.laixiangran.cn
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: NCZ
+```
+
+服务器返回
+
+```html
+Access-Control-Allow-Origin: http://www.laixiangran.cn
+Access-Control-Allow-Methods: GET, POST
+Access-Control-Allow-Headers: NCZ
+Access-Control-Max-Age: 1728000
+```
+
+### localStorage、indexDB
+
+目前无解
+
+[Same Origin Policy](https://github.com/acgotaku/WebSecurity/blob/master/docs/content/Browser_Security/Same-Origin-Policy.md)
+
+[为什么浏览器要限制跨域访问?](https://www.zhihu.com/question/26379635)
+
+[浏览器同源策略及跨域的解决方法](https://juejin.im/post/5ba1d4fe6fb9a05ce873d4ad)
 
 ## 节流函数与防抖函数
 
