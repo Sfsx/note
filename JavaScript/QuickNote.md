@@ -1167,7 +1167,7 @@ h5 的 `window.postMessage` api
 
 ### http 请求
 
-CORS
+#### CORS
 
 浏览器将CORS请求分成两类：简单请求（simple request）和非简单请求（not-so-simple request）。
 
@@ -1188,7 +1188,11 @@ CORS
      + multipart/form-data
      + text/plain
 
-### 简单请求
+凡是不同时满足上面两个条件，就属于非简单请求。
+
+浏览器对这两种请求的处理，是不一样的。
+
+##### 简单请求
 
 头部
 
@@ -1204,7 +1208,7 @@ Access-Control-Allow-Origin：http://www.laixiangran.cn
 Access-Control-Allow-Credentials: true
 ```
 
-### 非简单请求
+##### 非简单请求
 
 浏览器在发送真正的请求之前，会先发送一个 Preflight 请求给服务器，这种请求使用 OPTIONS 方法，发送下列头部
 
