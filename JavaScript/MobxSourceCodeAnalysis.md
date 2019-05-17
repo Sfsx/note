@@ -1,114 +1,5 @@
 # Mobx
 
-## 代码姿势
-
-### 使用 Object.freeze() 用来冻结配置项
-
-### 条件判断封装成语义化的函数
-
-```js
-const res = isPlainObject(v)
-  ? observable.object(v, arg2, arg3)
-  : Array.isArray(v)
-    ? observable.array(v, arg2)
-    : isES6Map(v)
-      ? observable.map(v, arg2)
-      : isES6Set(v)
-        ? observable.set(v, arg2)
-        : v
-```
-
-### 先将方法与处理逻辑分开写，将方法写在一个对象中，逻辑写在函数中，再将对象方法注入进函数
-
-```js
-// weird trick to keep our typings nicely with our funcs, and still extend the observable function
-Object.keys(observableFactories).forEach(name => (observable[name] = observableFactories[name]))
-```
-
-### 错误处理
-
-Mobx 从 React 借鉴了 invariant，在条件为 false 时抛出错误：
-
-```js
-export function invariant(check: false, message?: string | boolean): never
-export function invariant(check: true, message?: string | boolean): void
-export function invariant(check: any, message?: string | boolean): void
-export function invariant(check: boolean, message?: string | boolean) {
-    if (!check) throw new Error("[mobx] " + (message || OBFUSCATED_ERROR))
-}
-```
-
-还有基于 invariant 的 fail：
-
-```js
-export function fail(message: string | boolean): never {
-    invariant(false, message)
-    throw "X" // unreachable
-}
-```
-
-对于一些逻辑检测可以写的很简单，不用考虑中断程序，直接写好自己预想的错误信息即可
-
-```js
-export function checkIfStateModificationsAreAllowed(atom: IAtom) {
-    const hasObservers = atom.observers.size > 0
-    // Should never be possible to change an observed observable from inside computed, see #798
-    if (globalState.computationDepth > 0 && hasObservers)
-        fail(
-          // ...
-        )
-    // Should not be possible to change observed state outside strict mode, except during initialization, see #563
-    if (!globalState.allowStateChanges && (hasObservers || globalState.enforceActions === "strict"))
-        fail(
-          // ...
-        )
-}
-```
-
-### 将计数和判断写在同一行
-
-```js
-if (++iterations === MAX_REACTION_ITERATIONS) {
-  // ...
-}
-```
-
-```js
-function runReactionsHelper() {
-
-    // ...
-
-    while (allReactions.length > 0) {
-        if (++iterations === MAX_REACTION_ITERATIONS) {
-            console.error(
-                `Reaction doesn't converge to a stable state after ${MAX_REACTION_ITERATIONS} iterations.` +
-                    ` Probably there is a cycle in the reactive function: ${allReactions[0]}`
-            )
-            allReactions.splice(0) // clear reactions
-        }
-
-        // ...
-  
-    }
-    globalState.isRunningReactions = false
-}
-```
-
-### 将类的属性直接定义再构造函数的参数中 仅在typescript有效
-
-```js
-export class Reaction implements IDerivation, IReactionPublic {
-
-    // ...
-
-    constructor(
-        public name: string = "Reaction@" + getNextId(),
-        private onInvalidate: () => void,
-        private errorHandler?: (error: any, derivation: IDerivation) => void
-    ) {}
-}
-```
-
 ## 思想
 
 ![流程图](https://pic1.zhimg.com/80/v2-0f09f47435d29ac7a01a12228e0f73b4_hd.jpg)
@@ -123,9 +14,7 @@ export class Reaction implements IDerivation, IReactionPublic {
 
 ```js
 function createObservable(v: any, arg2?: any, arg3?: any) {
-
-    // ...
-
+    ...
     // something that can be converted and mutated?
     const res = isPlainObject(v)
         ? observable.object(v, arg2, arg3)
@@ -139,9 +28,7 @@ function createObservable(v: any, arg2?: any, arg3?: any) {
 
     // this value could be converted to a new observable data structure, return it
     if (res !== v) return res
-
-    // ...
-
+    ...
 }
 ```
 
@@ -171,16 +58,49 @@ box<T = any>(value?: T, options?: CreateObservableOptions): IObservableValue<T> 
 
 #### ObservableValue
 
+##### Atom
+
 `ObservableValue` 继承于 `Atom`
 
 `Atom` 实例有两项重大的使命：
 
-1. `reportObserved()`
-2. `reportChanged()`
++ `reportObserved()`
++ `reportChanged()`
+
+##### Intercept & Observe
 
 `ObservableValue` 其实就是继承一下 `Atom` 这个类，然后再添加许多辅助的方法和属性就可以了。我们讲一下其中比较有意思的 `Intercept()` 和 `Observe()` 方法
 
-如果把 “对象变更” 作为事件，那么我们可以在 **事件发生之前** 和 **事件方法之后** 这两个 “切面” 分别可以安插回调函数（callback），方便程序动态扩展，这属于 **面向切面编程的思想**。
+如果把 “对象变更” 作为事件，那么我们可以在 **事件发生之前** 和 **事件方法之后** 这两个 “切面” 分别可以安插回调函数（callback），方便程序动态扩展，这属于 **[面向切面编程的思想](https://www.zhihu.com/question/24863332)**。
+
++ `intercept`: change 事件发生之前
++ `observe`: change 事件发生之后
+
+Intercept & Observe 这两个函数返回一个 disposer 函数，这个函数是 解绑函数，调用该函数就可以取消拦截器或者监听器 了。这里有一个最佳实践，如果不需要某个拦截器或者监听器了，记得要及时清理自己绑定的监听函数 永远要清理 reaction —— 即调用 disposer 函数
+
+##### enhancer
+
+```js
+export class ObservableValue<T> extends Atom
+    implements IObservableValue<T>, IInterceptable<IValueWillChange<T>>, IListenable {
+    ...
+    constructor(
+        value: T,
+        public enhancer: IEnhancer<T>,
+        public name = "ObservableValue@" + getNextId(),
+        notifySpy = true,
+        private equals: IEqualsComparer<any> = comparer.default
+    ) {
+        super(name)
+        this.value = enhancer(value, undefined, name)
+        if (notifySpy && isSpyEnabled() && process.env.NODE_ENV !== "production") {
+            // only notify spy if this is a stand-alone observable
+            spyReport({ type: "create", name: this.name, newValue: "" + this.value })
+        }
+    }
+    ...
+}
+```
 
 ### observable.object
 
@@ -204,10 +124,37 @@ object<T = any>(
     }
 ```
 
-1. `extendObservable()` 方法中通过 `asObservableObject` 方法创建一个空对象。
-通过 `ObservableObjectAdministration` 里面封装了后续被拦截的原生方法的改写，并存放于空对象的 `Symbol('mobx administration')` 属性中
-2. `createDynamicObservableObject()` 将处理方法对象 `objectProxyTraps` 代理到空对象上。
-3. `extendObservableObjectWithProperties`,最终会给原始对象的属性进行装饰，最后调用`ObservableObjectAdministration` 的 `addObservableProp()` 方法，针对每一个原始对象的 `key` 生成一个 `ObservableValue` 对象，并保存在 `ObservableObjectAdministration` 对象的 `values` 中
+上面代码可知主要调用了三个方法，分别是：`createDynamicObservableObject` 、`createDynamicObservableObject` 和 `extendObservableObjectWithProperties` 下面我们来分析一下这三个方法。
+
+#### `extendObservable()`
+
+```js
+export function extendObservable<A extends Object, B extends Object>(
+    target: A,
+    properties?: B,
+    decorators?: { [K in keyof B]?: Function },
+    options?: CreateObservableOptions
+): A & B {
+    ...
+    initializeInstance(target) // Fixes #1740
+    asObservableObject(target, options.name, defaultDecorator.enhancer) // make sure object is observable, even without initial props
+    ...
+}
+```
+
+通过 `extendObservable` 函数的调用参数可以看出，target 是一个空对象，即该函数主要目的就是装饰这个空对象。实际执行的语句只有上图所示的两句。
+
+`asObservableObject` 通过 `ObservableObjectAdministration` 里面封装了后续被拦截的原生方法的改写，并存放于空对象的 `Symbol('mobx administration')` 属性中
+
+#### `createDynamicObservableObject()`
+
+将 `objectProxyTraps` 对象通过 `proxy` 代理到上一步生成的对象。
+
+查看源码可以发现 `objectProxyTraps` 对象中，封装了对 `get`、`has`、`set`、`deleteProperty`、`ownKeys` 操作的代理，这个代理的本质就是调用对象 `Symbol('mobx administration')` 属性上的 `ObservableObjectAdministration` 对象中封装的相应方法，来代替对象的原生操作。
+
+#### `extendObservableObjectWithProperties`
+
+`extendObservableObjectWithProperties`，挨个让原始对象的每个属性经过 `decorator` 改造后重新安装到 `target` 上
 
 ## Derivation
 
@@ -387,6 +334,137 @@ flow 流程:
       -> fn() // 即执行 autorun 中的回调
 ```
 
+## 代码姿势
+
+### 使用 Object.freeze() 用来冻结配置项
+
+### 条件判断封装成语义化的函数
+
+```js
+const res = isPlainObject(v)
+  ? observable.object(v, arg2, arg3)
+  : Array.isArray(v)
+    ? observable.array(v, arg2)
+    : isES6Map(v)
+      ? observable.map(v, arg2)
+      : isES6Set(v)
+        ? observable.set(v, arg2)
+        : v
+```
+
+### 先将方法与处理逻辑分开写，将方法写在一个对象中，逻辑写在函数中，再将对象方法注入进函数
+
+```js
+// weird trick to keep our typings nicely with our funcs, and still extend the observable function
+Object.keys(observableFactories).forEach(name => (observable[name] = observableFactories[name]))
+```
+
+### 错误处理
+
+Mobx 从 React 借鉴了 invariant，在条件为 false 时抛出错误：
+
+```js
+export function invariant(check: false, message?: string | boolean): never
+export function invariant(check: true, message?: string | boolean): void
+export function invariant(check: any, message?: string | boolean): void
+export function invariant(check: boolean, message?: string | boolean) {
+    if (!check) throw new Error("[mobx] " + (message || OBFUSCATED_ERROR))
+}
+```
+
+还有基于 invariant 的 fail：
+
+```js
+export function fail(message: string | boolean): never {
+    invariant(false, message)
+    throw "X" // unreachable
+}
+```
+
+对于一些逻辑检测可以写的很简单，不用考虑中断程序，直接写好自己预想的错误信息即可
+
+```js
+export function checkIfStateModificationsAreAllowed(atom: IAtom) {
+    const hasObservers = atom.observers.size > 0
+    // Should never be possible to change an observed observable from inside computed, see #798
+    if (globalState.computationDepth > 0 && hasObservers)
+        fail(
+          ...
+        )
+    // Should not be possible to change observed state outside strict mode, except during initialization, see #563
+    if (!globalState.allowStateChanges && (hasObservers || globalState.enforceActions === "strict"))
+        fail(
+          ...
+        )
+}
+```
+
+### 将计数和判断写在同一行
+
+```js
+if (++iterations === MAX_REACTION_ITERATIONS) {
+  // ...
+}
+```
+
+```js
+function runReactionsHelper() {
+    ...
+    while (allReactions.length > 0) {
+        if (++iterations === MAX_REACTION_ITERATIONS) {
+            console.error(
+                `Reaction doesn't converge to a stable state after ${MAX_REACTION_ITERATIONS} iterations.` +
+                    ` Probably there is a cycle in the reactive function: ${allReactions[0]}`
+            )
+            allReactions.splice(0) // clear reactions
+        }
+        ...
+    }
+    globalState.isRunningReactions = false
+}
+```
+
+### 将类的属性直接定义再构造函数的参数中 仅在typescript有效
+
+```js
+export class Reaction implements IDerivation, IReactionPublic {
+    ...
+    constructor(
+        public name: string = "Reaction@" + getNextId(),
+        private onInvalidate: () => void,
+        private errorHandler?: (error: any, derivation: IDerivation) => void
+    ) {}
+    ...
+}
+```
+
+### 闭包运用
+
+```js
+export function registerListener(listenable: IListenable, handler: Function): Lambda {
+    const listeners = listenable.changeListeners || (listenable.changeListeners = [])
+    listeners.push(handler)
+    return once(() => {
+        const idx = listeners.indexOf(handler)
+        if (idx !== -1) listeners.splice(idx, 1)
+    })
+}
+
+function once(func) {
+  var invoked = false;
+  return function() {
+    if (invoked) return;
+    invoked = true;
+    return func.apply(this, arguments);
+  };
+}
+```
+
+上面的代码中有两个闭包
+
++ 通过闭包保存标识符 `handler`，返回一个删除函数，使用者无需知道标识符，只要调用删除函数，就能删除监听队列中的 `handler`
++ `once` 函数，将闭包的精髓运用到恰到好处
+
 ## 参考资料
 
 [郭琛 Mobx 源码解读 系列](https://zhuanlan.zhihu.com/p/31704920)
@@ -394,3 +472,58 @@ flow 流程:
 [修范 Mobx 源码分析 系列](https://zhuanlan.zhihu.com/p/42150181)
 
 [用故事解读 Mobx 源码 系列](https://segmentfault.com/a/1190000013682735#articleHeader13)
+
+## 相关补充
+
+### 策略模式
+
+策略模式指的是定义一系列的算法，把它们一个个封装起来，将不变的部分和变化的部分隔开，实际就是将算法的使用和实现分离出来
+
+```js
+var calculateBouns = function(salary,level) {
+    if(level === 'A') {
+        return salary * 4;
+    }
+    if(level === 'B') {
+        return salary * 3;
+    }
+    if(level === 'C') {
+        return salary * 2;
+    }
+};
+// 调用如下：
+console.log(calculateBouns(4000,'A')); // 16000
+console.log(calculateBouns(2500,'B')); // 7500
+```
+
+代码缺点如下：
+
+1. calculateBouns 函数包含了很多if-else语句。
+2. calculateBouns 函数缺乏弹性，假如还有D等级的话，那么我们需要在calculateBouns 函数内添加判断等级D的if语句；
+3. 算法复用性差，如果在其他的地方也有类似这样的算法的话，但是规则不一样，我们这些代码不能通用。
+
+Javascript版本的策略模式重构：
+
+```js
+var obj = {
+    "A": function(salary) {
+        return salary * 4;
+    },
+    "B" : function(salary) {
+        return salary * 3;
+    },
+    "C" : function(salary) {
+        return salary * 2;
+    }
+};
+var calculateBouns =function(level, salary) {
+    return obj[level](salary);
+};
+console.log(calculateBouns('A', 10000)); // 40000
+```
+
+可以看到代码更加简单明了；
+
+[深入理解JavaScript系列（33）：设计模式之策略模式](http://www.cnblogs.com/TomXu/archive/2012/03/05/2358552.html)
+
+[理解 JavaScript 中的策略模式](https://juejin.im/entry/59e565f35188250989512689)
