@@ -1227,6 +1227,10 @@ Access-Control-Allow-Headers: NCZ
 Access-Control-Max-Age: 1728000
 ```
 
+#### WebSocket
+
+协议不实行同源政策，只要服务器支持，就可以通过它进行跨源通信。
+
 ### localStorage、indexDB
 
 目前无解
