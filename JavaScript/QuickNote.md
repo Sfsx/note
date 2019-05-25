@@ -445,16 +445,6 @@ Buffer对象本身属于普通对象，保存在堆，由V8管理，但是其储
 
 [原文链接](https://www.jianshu.com/p/4129a3fce7bb)
 
-## MVC MVP MVVM 概念
-
-MVC
-
-c -> m -> v
-
-[相关文章](http://www.ruanyifeng.com/blog/2015/02/mvcmvp_mvvm.html)
-
-[相关文章](https://juejin.im/post/593021272f301e0058273468)
-
 ## vue 双向绑定
 
 [原文链接](https://jiongks.name/blog/vue-code-review/)
