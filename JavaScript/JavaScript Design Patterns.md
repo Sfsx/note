@@ -128,6 +128,134 @@ console.log(SingletonEnforcer.staticMethod());
 
 [Singleton pattern in ES6](https://medium.com/@dmnsgn/singleton-pattern-in-es6-d2d021d150ae)
 
+## module 模式
+
+模块是任何强大应用程序架构中不可或缺的一部分，它通常能够帮助我们清晰地分离和组织项目中的代码单元。
+
+在 JavaScript 中，有几种用于实现模块的方法，包括：
+
++ 对象字面量
++ Module 模式
++ AMD 模块
++ CommonJS 模块
++ ES6 模块化
+
+优点：
+
++ 分离： 代码需要分离成小块，以便能为人所理解。
++ 可组合性： 在一个文件中编码，被许多其他文件重复使用。这提升了代码库的灵活性。
++ 解决全局变量重名问题
++ 提高复用性
+
+### 无模块化时代  前端js代码较少
+
+```html
+<script>
+if(true) {
+    ...
+} else {
+    ...
+}
+for(var i=0; i< 100; i++){
+    ...
+}
+document.getElementById('button').onClick = function () {
+    ...
+}
+</script>
+```
+
+### 全局function模式 : 将不同的功能封装成不同的全局函数
+
+```js
+function m1(){
+    //...
+}
+function m2(){
+    //...
+}
+```
+
+### 对象自变量模式 : 简单对象封装
+
+```js
+let myModule = {
+    data: 'www.baidu.com',
+    foo() {
+    console.log(`foo() ${this.data}`)
+    },
+    bar() {
+    console.log(`bar() ${this.data}`)
+    }
+}
+myModule.data = 'other data' //能直接修改模块内部的数据
+myModule.foo() // foo() other data
+```
+
+### IIFE模式（module模式）：匿名函数自调用(闭包)
+
+### IIFE模式增强 : 引入依赖
+
+```js
+// module.js文件
+(function(window, $) {
+    let data = 'www.baidu.com'
+    //操作数据的函数
+    function foo() {
+    //用于暴露有函数
+    console.log(`foo() ${data}`)
+    $('body').css('background', 'red')
+    }
+    function bar() {
+    //用于暴露有函数
+    console.log(`bar() ${data}`)
+    otherFun() //内部调用
+    }
+    function otherFun() {
+    //内部私有的函数
+    console.log('otherFun()')
+    }
+    //暴露行为
+    window.myModule = { foo, bar }
+})(window, jQuery)
+```
+
+### 模块化规范
+
+#### CommonJS规范简介
+
+同步加载
+
+#### AMD
+
+异步加载
+
+#### CMD
+
+异步加载
+
+#### ES6模块化
+
+ES6在语言规格层面上实现了模块功能，是编译时加载，完全可以取代现有的CommonJS和AMD规范，可以成为浏览器和服务器通用的模块解决方案。
+
+#### ES6模块与CommonJS模块加载区别
+
+1. CommonJS 模块输出的是一个值的拷贝，ES6 模块输出的是值的引用。
+
+    + CommonJS 模块的输出的是值的拷贝，也就是说，一旦输出一个值，模块内部变化就影响不到这个值
+    + ES6 模块的运行机制与 CommonJS 不一样。JS 引擎对脚本静态分析的时候遇到 `import` 命令，就会生成一个只读引用。等到脚本真正执行的时候，再根据这个只读引用到被加载的模块里去取值。换句话说，ES6 的 `import` 有点像 Unix 系统的“符号连接”，原始值变了，`import` 加载的值也会跟着变。因此，ES6 模块是动态引用，并且不会缓存其中的值，模块里面的变量绑定其所在的命令。
+
+2. CommonJS 模块是运行时加载，ES6 模块是编译时输出接口。
+
+    + 运行时加载：CommonJS 模块就是对象；即在输入时是先加载整个模块，生成一个对象，然后再从这个对象上读取方法，这种加载称之为“运行时加载”。
+    + 编译时加载：ES6 模块不是对象，而是通过 `export` 命令显示的指定输出的代码，`import` 时采用静态命令的形式。即在 `import` 时可以指定加载某个输出的值，而不是加载整个模块，这种加载称之为“编译时加载”。
+
+[前端模块化详解(完整版)](https://juejin.im/post/5c17ad756fb9a049ff4e0a62)
+
+[前端模块化一——规范详述](https://zhuanlan.zhihu.com/p/41568986)
+
+[前端模块化：CommonJS,AMD,CMD,ES6](https://juejin.im/post/5aaa37c8f265da23945f365c)
+
 ## MVC MVP MVVM 概念
 
 ### MVC
