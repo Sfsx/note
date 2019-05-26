@@ -4,7 +4,21 @@
 
 ### 单例模式定义
 
-确保一个类仅有一个实例，并提供一个访问它的全局访问点。
+确保一个类仅有一个实例，并提供一个访问它的全局访问点。Singleton 不同于静态类（或对象），因为我们可以推延他们的初始化，这通常是因为他需要一些信息，而这些信息在初始化期间可能无法获得。
+
+### 单例模式适用性
+
+Singleton 充当共享资源命名空间，从全局命名空间中隔离出代码实现，从而为函数提供单一访问点。
+
++ 当类只有有一个实例而且客户可以从一个众所周知的访问点访问它
++ 该唯一实例应该是通过子类化可扩展的，并且客户应该无需扩展就可以使用的一个扩展实例。
+
+优点
+
++ 延迟构建
++ 直到使用静态实例前，无需使用资源或内存
+
+Singleton 的存在往往表明系统中的模块要么是系统紧密耦合，要么是逻辑过于分散在代码库的多个部分。由于一系列问题：从隐藏的依赖到创建多个实例的难度、底层依赖的难度等等，Singleton 的测试会更加困难。
 
 ### 单例模式实现
 
@@ -129,6 +143,12 @@ console.log(SingletonEnforcer.staticMethod());
 [Singleton pattern in ES6](https://medium.com/@dmnsgn/singleton-pattern-in-es6-d2d021d150ae)
 
 ## module 模式
+
+### 模块模式定义
+
+Module 模式最初被定义为一种在传统软件工程中为类提供私有和公有封装的方法。
+
+### 模块模式适用性
 
 模块是任何强大应用程序架构中不可或缺的一部分，它通常能够帮助我们清晰地分离和组织项目中的代码单元。
 
@@ -255,6 +275,62 @@ ES6在语言规格层面上实现了模块功能，是编译时加载，完全�
 [前端模块化一——规范详述](https://zhuanlan.zhihu.com/p/41568986)
 
 [前端模块化：CommonJS,AMD,CMD,ES6](https://juejin.im/post/5aaa37c8f265da23945f365c)
+
+## Observer 观察者模式
+
+### 观察者模式定义
+
+一个或多个观察者对目标的状态感兴趣，它们通过将自己依附在目标对象上以便注册所感兴趣的内容。目标装填发生改变并且观察者可能对这些改变有兴趣，就会发送一个通知消息，调用每个观察者的更新方法。当观察者不在对目标感兴趣的时，也可以简单的将自己从中分离。
+
+优点
+
+解耦合，让耦合双方都依赖与抽象，从而使得各自变化都不会影响到对方
+
+### 观察者模式实现
+
+```js
+
+const observerList = new Set()
+
+function observe(fn) {
+  observerList.add(fn)
+}
+
+observer.prototype.delete(fn) {
+  oberverList.delete(fn)
+}
+
+function observable(value) {
+  observerList.forEach(observe => observe(value))
+}
+
+const print = function(value) {
+  console.log(`hello, ${value}`);
+}
+
+observe(print)
+
+observable('Sfsx') // 输出 hello, Sfsx
+```
+
+## Publish/Subscribe
+
+### Observer 模式 和 Publish/Subscribe 模式的区别
+
+Observer 模式和 Publish/Subscribe 模式最大的区别就是 Observer 模式中，observer 直接订阅 subject 内容改变的事件。而 Publish/Subscribe 模式中 Subscriber 订阅的是 事件通道（事件通道可以同时存在很多条），Subscriber 获得的是一个事件通知，而不是直接调用其他对象的方法。
+
+优点
+
+可以用于将应用分解为更小、更松散耦合的块，以改进代码管理和潜在复用
+
+缺点
+
++ 由于是松散耦合，当订阅者执行任务失败，发布者将无法察觉
++ 订阅者五十彼此的存在，并对变化发布者产生的成本视而不见。由于订阅者和发布者之间的动态关系，很难跟踪依赖更新。
+
+### 发布/订阅模式实现
+
+todo
 
 ## MVC MVP MVVM 概念
 
