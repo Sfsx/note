@@ -171,16 +171,16 @@ Module 模式最初被定义为一种在传统软件工程中为类提供私有�
 
 ```html
 <script>
-if(true) {
-    ...
+if (true) {
+  ...
 } else {
-    ...
+  ...
 }
-for(var i=0; i< 100; i++){
-    ...
+for(var i=0; i< 100; i++) {
+  ...
 }
 document.getElementById('button').onClick = function () {
-    ...
+  ...
 }
 </script>
 ```
@@ -189,10 +189,10 @@ document.getElementById('button').onClick = function () {
 
 ```js
 function m1(){
-    //...
+  //...
 }
 function m2(){
-    //...
+  //...
 }
 ```
 
@@ -200,13 +200,13 @@ function m2(){
 
 ```js
 let myModule = {
-    data: 'www.baidu.com',
-    foo() {
+  data: 'www.baidu.com',
+  foo() {
     console.log(`foo() ${this.data}`)
-    },
-    bar() {
+  },
+  bar() {
     console.log(`bar() ${this.data}`)
-    }
+  }
 }
 myModule.data = 'other data' //能直接修改模块内部的数据
 myModule.foo() // foo() other data
@@ -219,24 +219,24 @@ myModule.foo() // foo() other data
 ```js
 // module.js文件
 (function(window, $) {
-    let data = 'www.baidu.com'
-    //操作数据的函数
-    function foo() {
+  let data = 'www.baidu.com'
+  //操作数据的函数
+  function foo() {
     //用于暴露有函数
     console.log(`foo() ${data}`)
     $('body').css('background', 'red')
-    }
-    function bar() {
+  }
+  function bar() {
     //用于暴露有函数
     console.log(`bar() ${data}`)
     otherFun() //内部调用
-    }
-    function otherFun() {
+  }
+  function otherFun() {
     //内部私有的函数
     console.log('otherFun()')
-    }
-    //暴露行为
-    window.myModule = { foo, bar }
+  }
+  //暴露行为
+  window.myModule = { foo, bar }
 })(window, jQuery)
 ```
 
@@ -348,6 +348,96 @@ user
 
 view 和 model 之间的观察者模式，view 观察 model，事先在此 model 上注册，以便 view 可以了解在数据 model 上发生的改变。view 和 controller 之间的策略模式
 
+#### 前后端分离下的MVC
+
+![MVC](https://raw.githubusercontent.com/Draveness/analyze/master/contents/architecture/images/mvx/MVC-MVC.jpg)
+
+客户端和服务端通过网络进行连接，并且组成了一个更大的 MVC 架构；从这个角度看，服务端的模型层才储存了真正的数据，而客户端的模型层只不过是一个存储在苦海端设备中的本地缓存和临时数据的集合；同理，服务端的试图从也不是整个应用的视图层，用于为用户展示数据的视图层位于客户端，也就是整个架构的最顶部；中间的五个部分，也就是从低端的模型层到最上面的视图共同组成了整个应用的控制器，将模型中的数据以合理的方式传递给最上层的视图层用于展示。
+
+#### MVC 代码实例
+
+Model
+
+```js
+myapp.Model = function() {
+    var val = 0;
+
+    this.add = function(v) {
+        if (val < 100) val += v;
+    };
+
+    this.sub = function(v) {
+        if (val > 0) val -= v;
+    };
+
+    this.getVal = function() {
+        return val;
+    };
+
+    /* 观察者模式 */
+    var self = this,
+        views = [];
+
+    this.register = function(view) {
+        views.push(view);
+    };
+
+    this.notify = function() {
+        for(var i = 0; i < views.length; i++) {
+            views[i].render(self);
+        }
+    };
+};
+```
+
+View
+
+```js
+myapp.View = function(controller) {
+    var $num = $('#num'),
+        $incBtn = $('#increase'),
+        $decBtn = $('#decrease');
+
+    this.render = function(model) {
+        $num.text(model.getVal() + 'rmb');
+    };
+
+    /*  绑定事件  */
+    $incBtn.click(controller.increase);
+    $decBtn.click(controller.decrease);
+};
+```
+
+Controller
+
+```js
+myapp.Controller = function() {
+    var model = null,
+        view = null;
+
+    this.init = function() {
+        /* 初始化Model和View */
+        model = new myapp.Model();
+        view = new myapp.View(this);
+
+        /* View向Model注册，当Model更新就会去通知View啦 */
+        model.register(view);
+        model.notify();
+    };
+
+    /* 让Model更新数值并通知View更新视图 */
+    this.increase = function() {
+        model.add(1);
+        model.notify();
+    };
+
+    this.decrease = function() {
+        model.sub(1);
+        model.notify();
+    };
+};
+```
+
 缺点
 
 可以明显感觉到，MVC 模式的业务逻辑主要集中在 Controller，而前端的View 其实已经具备了独立处理用户事件的能力，**当每个事件都流经Controller 时，这层会变得十分臃肿**。而且 MVC 中 View 和 Controller 一般是一一对应的，捆绑起来表示一个组件，视图与控制器间的过于紧密的连接让 Controller 的复用性成了问题
@@ -359,6 +449,68 @@ View 与 Model 不发生联系，都通过 Presenter 传递
 ![MVP](https://raw.githubusercontent.com/Draveness/analyze/master/contents/architecture/images/mvx/Standard-MVP.jpg)
 
 进化为 MVP 的切入点是修改 controller-view 的捆绑关系，为了解决controller-view 的捆绑关系，将进行改造，使 view 不仅拥有 UI 组件的结构，还拥有处理用户事件的能力，这样就能将 controller 独立出来。为了对用户事件进行统一管理，view 只负责将用户产生的事件传递给controller，由 controller 来统一处理，这样的好处是多个 view 可共用同一个 controller。此时的 controller 也由组件级别上升到了应用级别，然而更新 view 的方式仍然与经典 MVC 一样：通过 Presenter 更新 model，通过观察者模式更新 view。
+
+#### MVP 实例
+
+Model
+
+```js
+myapp.Model = function() {
+    var val = 0;
+
+    this.add = function(v) {
+        if (val < 100) val += v;
+    };
+
+    this.sub = function(v) {
+        if (val > 0) val -= v;
+    };
+
+    this.getVal = function() {
+        return val;
+    };
+};
+```
+
+View
+
+```js
+myapp.View = function(presenter) {
+    var $num = $('#num'),
+        $incBtn = $('#increase'),
+        $decBtn = $('#decrease');
+
+    this.render = function(model) {
+        $num.text(model.getVal() + 'rmb');
+    };
+
+    this.init = function() {
+        $incBtn.click(presenter.increase);
+        $decBtn.click(presenter.decrease);
+    };
+};
+```
+
+Presenter
+
+```js
+myapp.Presenter = function(view) {
+    var _model = new myapp.Model();
+    var _view = view.init(this);
+
+    _view.render(_model);
+
+    this.increase = function() {
+        _model.add(1);
+        _view.render(_model);
+    };
+
+    this.decrease = function() {
+        _model.sub(1);
+        _view.render(_model);
+    };
+};
+```
 
 缺点
 
@@ -395,3 +547,5 @@ ViewModel 层把 View 需要的层数据暴露，并对 View 层的 数据绑定
 [MVC，MVP 和 MVVM 的图示](http://www.ruanyifeng.com/blog/2015/02/mvcmvp_mvvm.html)
 
 [浅析前端开发中的 MVC/MVP/MVVM 模式](https://juejin.im/post/593021272f301e0058273468)
+
+[浅谈 MVC、MVP 和 MVVM 架构模式](https://draveness.me/mvx)
