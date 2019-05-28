@@ -330,7 +330,61 @@ Observer 模式和 Publish/Subscribe 模式最大的区别就是 Observer 模式
 
 ### 发布/订阅模式实现
 
-todo
+```js
+var pubsub = {};
+
+(function (q) {
+  var topics = {};
+  var subUid = -1;
+
+  q.publish = function (topic, args) {
+    if (!topics[topic]) {
+      return;
+    }
+
+    var subscribers = topics[topic]
+    var len = subscribers ? subscribers.length : 0
+
+    while (len--) {
+      subscribers[len].func(topic, args)
+    }
+  }
+
+  q.subscribe = function (topc, func) {
+    if (!topics[topic]) {
+      topics[topic] = [];
+    }
+
+    var token = (++subUid).toString();
+    topics[topic].push({
+      token: token,
+      func: func
+    })
+
+    return token;
+  }
+
+  q.unsubscribe = function (token) {
+    for (var m in topics) {
+      if (topics[m]) {
+        for (var i = 0, j = topics[m].length; i < j; i++) {
+          if (topics[m][i].token === token) {
+            topics[m].splice(i, 1)
+            return token;
+          }
+        }
+      }
+    }
+    return this
+  }
+})(pubsub);
+```
+
+## Mediator （中介者）模式
+
+如果各个系统的各个组件之间看起来有太多的直接联系，也许是时候需要一个中心控制点了，以便各个组件可以通过这个中心控制点进行通信。Mediator 模式促进松散耦合的方式是：确保组件的较号是通过这个中心点来处理的，而不是通过显示的引用彼此。这种模式可以帮助我们解耦系统并提高组件的可重用性。
+
+就实现而言，Mediator 模式本质上是 Observer 模式的共享目标。它假色该系统中对象或模块之间的订阅和发布关系被牺牲掉了，从而维护中心联络点。
 
 ## MVC MVP MVVM 概念
 
