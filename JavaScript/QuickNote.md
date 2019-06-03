@@ -626,6 +626,152 @@ const curry = (fn, arr = []) => (...args) => (
 )([...arr, ...args])
 ```
 
+#### 为什么扼要柯里化
+
+##### 移除重复
+
+```js
+const createURL = (baseURL, path) => {
+  const protocol = "https";
+  return `${protocol}://${baseURL}/${path}`;
+};
+
+// create URLs for our main site
+const homeURL = createURL("mysite.com", "");
+const loginURL = createURL("mysite.com", "login");
+const productsURL = createURL("mysite.com", "products");
+const contactURL = createURL("mysite.com", "contact-us");
+
+// create URLs for our careers site
+const careersHomeURL = createURL("mysite-careers.com", "");
+const careersLoginURL = createURL("mysite-careers.com", "login");
+```
+
+柯里化
+
+```js
+const createURL = baseURL => {
+  const protocol = "https";
+
+  // we now return a function, that accepts a 'path' as an argument
+  return path => {
+    return `${protocol}://${baseURL}/${path}`;
+  };
+};
+
+// we create a new functions with the baseURL value in it's closure scope
+const createSiteURL = createURL("mysite.com");
+const createCareersURL = createURL("mysite-careers.com");
+
+// create URLs for our main site
+const homeURL = createSiteURL("");
+const loginURL = createSiteURL("login");
+const productsURL = createSiteURL("products");
+const contactURL = createSiteURL("contact-us");
+
+// create URLs for our career site
+const careersHomeURL = createCareersURL("");
+const careersLoginURL = createCareersURL("login");
+```
+
+##### 隔离昂贵程序
+
+```js
+// given a database of global parcels like this...
+const allGlobalParcels = [
+  {
+    created: 576424800000,
+    location: "aus",
+    properties: { ... },
+  },
+  {
+    created: 1558163267311,
+    location: "us",
+    properties: { ... },
+  },
+  ...2701201201 more items
+];
+
+const sortParcelsByCountry = (parcels, country, order) => {
+  // 1. Filter our list to only include parcels from 'country;
+  const countryParcels = parcels.filter(parcel => parcel.location === country);
+
+  // 2. Sort the list of parcels by date created
+  const sortedResult = [...countryParcels].sort((a, b) => {
+    if (order === "ascending") return a.created - b.created;
+    // by default return packages by descending order
+    return b.created - a.created;
+  });
+
+  return sortedResult;
+};
+
+const ausParcelsAsc = sortParcelsByCountry(allGlobalParcels, "aus", "ascending");
+const ausParcelsDsc = sortParcelsByCountry(allGlobalParcels, "aus", "descending");
+```
+
+柯里化（实际上就是将中间步骤的结果进行缓存，然后在交给不同的分支，直到得出最终结果）
+
+```js
+// given a database of global parcels like this...
+const allGlobalParcels = [
+  {
+    created: 576424800000,
+    location: "aus",
+    properties: { ... },
+  },
+  {
+    created: 1558163267311,
+    location: "us",
+    properties: { ... },
+  },
+  ...2701201201 more items
+];
+
+const sortParcelsByCountry = parcels => country => {
+  // 1. Filter our list to only include parcels from 'country;
+  const countryParcels = parcels.filter(parcel => parcel.location === country);
+
+  // we now return a function that sorts the parcels by date created
+  return order => {
+    // 2. Sort the list of packages by date
+    const sortedResult = [...countryParcels].sort((a, b) => {
+      if (order === "ascending") return a.created - b.created;
+
+      // by default return packages by descending order
+      return b.created - a.created;
+    });
+
+    return sortedResult;
+  };
+};
+
+// we create a new function with the filtered list of parcels by country in it's closure scope
+const sortAusParcelsBy = sortParcelsByCountry(allGlobalParcels)("aus");
+
+const ausParcelsAsc = sortAusParcelsBy("ascending");
+const ausParcelsDsc = sortAusParcelsBy("descending");
+```
+
+#### 语义化
+
+获取 object 中某个键名对应的健值
+
+```js
+var objects = [{ id: 1, title: 'sward' }, { id: 2, title: 'art' }, { id: 3, title: 'online' }]
+
+objects.map(function(o){ return o.id })
+```
+
+柯里化
+
+```js
+var get = curry(function(property, object){ return object[property] })
+
+objects.map(get('id')) // [1, 2, 3]
+objects.map(get('title')) // [sward, art, online]
+```
+
 ### 组合函数
 
 将多个函数的能力合并，创造一个新的函数。
