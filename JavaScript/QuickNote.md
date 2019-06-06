@@ -18,7 +18,7 @@ for (let item of data) {
 
 ## 内存
 
-    JavaScript
+  JavaScript
 
 ## koa源码
 
@@ -619,10 +619,10 @@ var curry = function curry (fn, arr) {
 }
 
 // ES6
-const curry = (fn, arr = []) => (...args) => (
+const curry = (fn, ...arr) => (...args) => (
   arg => arg.length >= fn.length
     ? fn(...arg)
-    : curry(fn, arg)
+    : curry(fn, ...arg)
 )([...arr, ...args])
 ```
 
