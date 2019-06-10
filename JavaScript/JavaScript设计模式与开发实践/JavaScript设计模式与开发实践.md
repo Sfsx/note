@@ -327,3 +327,53 @@ func('cat')
     ```
 
 3. 函数节流
+
+    场景
+
+    + window.onresize 事件
+    + mousemove 事件
+    + scroll 事件
+    + 上传进度
+
+    原理
+
+    setTimeout
+
+    实现
+
+    ```js
+    function throttle (fn, time) {
+        var canDo = true;
+        return function() {
+            var self = this;
+            if (!canDo) return;
+            canDo = false;
+            setTimeout(function() {
+                fn.apply(self, arguments);
+                canDo = true;
+            }, time)
+        }
+    }
+    ```
+
+4. 分时函数
+
+    这里的分时函数我理解为与防抖函数一致
+
+5. 惰性加载函数
+
+    在第一次进入分支条件后，在函数内部重写这个函数，之后就会避免不必要的分支判断。
+
+    ```js
+    var addEvent = function(elem, type, handler) {
+        if (window.addEventListener) {
+            addEvent = function(elem, type, handler) {
+                elem.addEventListener(type, handler, false);
+            }
+        } else if (window.attachEvent) {
+            addEvent = function(elem, type, handler) {
+                elem.attachEvent('on' + type, handler);
+            }
+        }
+    }
+    ```
