@@ -73,6 +73,41 @@ var a = singleton(createLogin)(param);
 var b = singleton(createLogin)(param);
 
 console.log(a===b); // true
+
+// 创建实例对象1
+var c = new singleton(createLogin)(param);
+// 创建实例对象2
+var d = new singleton(createLogin)(param);
+
+console.log(c===d); // true
+
+var login = singleton(createLogin)
+
+// 创建实例对象1
+var e = new login(param);
+// 创建实例对象2
+var f = new login(param);
+
+console.log(e===f); // false
+
+// 创建实例对象1
+var g = login(param);
+// 创建实例对象2
+var h = login(param);
+
+console.log(g===h); // true
+```
+
+经过试验调整
+
+```js
+// fn 为构造函数
+var singleton = function(fn) {
+    var instance;
+    return function(arg) {
+        return instance || (instance = new fn(arg));
+    }
+};
 ```
 
 ### ES6版本
