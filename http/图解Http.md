@@ -124,3 +124,143 @@ HADE /index.html HTTP/1.1
 TRACE 方法是让 Web 服务器端将之前的请求通信返回给客户端的方法。
 
 #### CONNNECT: 要求用隧道协议连接代理
+
+### 2.6 使用方法下达命令
+
+### 2.7 持久连接节省通信
+
+#### 2.7.1 持久连接
+
+HTTP keep-alive
+
+在 HTTP/1.1 中所有的连接默认都是持久连接。
+
+#### 2.7.2 管线化
+
+持久连接使得多数连接请求以管线化（pipelining）方式发送成为可能。
+
+### 2.8 使用 cookie 管理状态
+
+## 第三章 HTTP 报文内的 HTTP 信息
+
+### 3.1 HTTP 报文
+
+报文首部  
+空行（CR+LF）  
+报文主体  
+
+### 3.2 请求报文以及响应报文的结构
+
+请求报文
+
+```html
+GET /search?hl=zh-CN&source=hp&q=domety&aq=f&oq= HTTP/1.1  
+Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/vnd.ms-excel, application/vnd.ms-powerpoint,
+application/msword, application/x-silverlight, application/x-shockwave-flash, */*  
+Referer: http://www.google.cn/
+Accept-Language: zh-cn  
+Accept-Encoding: gzip, deflate  
+User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; TheWorld)  
+Host: www.google.cn  
+Connection: Keep-Alive  
+Cookie: PREF=ID=80a06da87be9ae3c:U=f7167333e2c3b714:NW=1:TM=1261551909:LM=1261551917:S=ybYcq2wpfefs4V9g;
+NID=31=ojj8d-IygaEtSxLgaJmqSjVhCspkviJrB6omjamNrSm8lZhKy_yMfO2M4QMRKcH1g0iQv9u-2hfBW7bUFwVh7pGaRUb0RnHcJU37y-
+FxlRugatx63JLv7CWMD6UB_O_r
+```
+
+响应报文
+
+```html
+HTTP/1.1 200 OK
+Server: bfe/1.0.8.18
+Date: Wed, 04 Apr 2018 02:39:19 GMT
+Content-Type: text/html
+Content-Length: 2381
+Last-Modified: Mon, 23 Jan 2017 13:27:56 GMT
+Connection: Keep-Alive
+ETag: "588604dc-94d"
+Cache-Control: private, no-cache, no-store, proxy-revalidate, no-transform
+Pragma: no-cache
+Set-Cookie: BDORZ=27315; max-age=86400; domain=.baidu.com; path=/
+Accept-Ranges: bytes
+
+<!DOCTYPE html>
+<!--STATUS OK--><html> <head>...
+```
+
+### 3.3 编码提升传输速率
+
+#### 3.3.1 报文主体和实体的差异
+
++ 报文
+  
+    是 HTTP 通信的基本单位，由8位组字节流组成，通过HTTP通信传输
+
++ 实体
+
+    作为请求或响应的有效载荷数据被传输，其内容由实体首部和实体主体组成。
+
+#### 3.3.2 压缩传输的内容编码
+
++ gzip（GUN zip）
++ compress（UNIX 系统的标志压缩）
++ deflate（zlib）
++ identity（不进行编码）
+
+#### 3.3.3 分割发送的分块传输编码
+
+### 3.4 发送多种数据的多部分对象集合
+
+Content-type 为以下值时可以分块。其中 boundary 属性值表示分割字符串
+
++ `multipart/form-data; boundary=AaBo3x`
++ `multipart/byteranges; bondary=THIS_STRING_SEPARATES`
+
+RFC2046
+
+### 3.5 获取部分内容的范围请求
+
+首部字段 Range。
+
+### 3.6 内容协商返回最合适的内容
+
++ Accept
++ Accept-Charset
++ Accept-Encoding
++ Accept-Language
+
+## 第四章 返回结果的HTTP状态码
+
+### 4.1 状态码告知从服务器端返回的请求结果
+
+### 4.2 2XX 成功
+
+#### 4.2.1 200 OK
+
+#### 4.2.2 204 No Content
+
+#### 4.2.3 206 Partial Content
+
+该状态码表示客户端进行了范围请求（报文含有 Range 首部），而服务器成功执行了这部分的 GET 请求。
+
+#### 4.3.1 301 Moved Permanently
+
+永久性重定向
+
+#### 4.3.2 302 Found
+
+临时性重定向
+
+302 和 301 对于用户来说是没有区别的，对于搜索引擎会有些许差异。302 会出现url 劫持
+
+#### 4.3.3 303 See Other
+
+该状态码表示由于请求对应的资源存在另一个 url，使用 get 方法重定向获取资源。（事实上 几乎所有浏览器在遇到 301，302，303 时都会把 POST 请求 改成 GET，并删除请求报文主体，之后请求会自动再次发送）
+
+#### 4.3.4 304 Not Modified
+
+资源未过期，客户端直接使用缓存，304返回步包含任何响应的主体部分。
+
+#### 4.3.5 307 Temporary Redirect
+
+重定向时不会从 POST 转为 GET，但是对于处理响应时的行为，每种浏览器有可能出现不同的情况。
