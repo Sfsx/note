@@ -104,8 +104,8 @@ console.log(g===h); // true
 // fn 为构造函数
 var singleton = function(fn) {
     var instance;
-    return function(arg) {
-        return instance || (instance = new fn(arg));
+    return function(...arg) {
+        return instance || (instance = new fn(...arg));
     }
 };
 ```
