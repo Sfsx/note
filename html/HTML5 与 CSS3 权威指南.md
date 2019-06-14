@@ -19,6 +19,9 @@
 #### 2.2.1 新增结构元素
 
 + section
+  + 不要将 section 元素设置样式的页面 容器，因为那是div的工作
+  + 如果 article 元素、aside 元素或 nav 元素更符合情况，不要使用setion 元素
+  + 不要为没有标题的内容区块使用 section 元素
 + article
 + aside
 + header
