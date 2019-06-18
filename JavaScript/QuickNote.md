@@ -110,7 +110,7 @@ Object.prototype.hasOwnProperty.call(foo, 'bar'); // true
 node 遇到 await 先执行后面的函数，将 resolve 压进回调队列再让出线程  
 chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 压进回调队列
 
-### 上面这段说法有误，当年年轻不懂事，不打算删了，引以为戒。
+上面这段说法有误，当年年轻不懂事，不打算删了，**引以为戒**
 
 ```js
 /**
@@ -149,7 +149,7 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 
 [详细答案](https://zhuanlan.zhihu.com/p/52000508)
 
-### async 做一件什么事情？
+### async 做一件什么事情
 
 带 `async` 关键字的函数，它使得你的函数的返回值必定是 `promise` 对象
 
@@ -281,7 +281,7 @@ import "module-name";
     `<input checked>`
 5. 在 xhtml 中，name 属性是不赞成使用的，在以后的版本中将被删除。
 
-#### 再说说为什么网页编码要从html>>xhtml>>xml这么发展？
+#### 再说说为什么网页编码要从html>>xhtml>>xml这么发展
 
 话说早起的网页使用html语言编写的，但是它拥有三个严重的缺点：
 
@@ -291,7 +291,7 @@ import "module-name";
 
 ### EngLish
 
-#### What are HTML, XML and XHTML？
+#### What are HTML, XML and XHTML
 
 1. HTML
 
@@ -313,7 +313,7 @@ Second, XML has draconian error-handling rules.
 
 To enable at least partial use of XHTML, the W3C came up with something called “HTML-compatible XHTML”. This is a set of guidelines for making valid XHTML documents that can still more or less be processed as HTML
 
-#### What determines if my document is HTML or XHTML？
+#### What determines if my document is HTML or XHTML
 
 So what really determines if a document is HTML or XHTML? The one and only thing that controls whether a document is HTML or XHTML is the MIME type. If the document is served with a `text/html` MIME type, it is treated as HTML. If it is served as `application/xhtml+xml` or `text/xml`, it gets treated as XHTML. In particular, none of the following things will cause your document to be treated as XHTML:
 
@@ -363,17 +363,11 @@ So what really determines if a document is HTML or XHTML? The one and only thing
 
 ### CharacterData
 
-#### 翻译：  
-
 CharacterData 抽象接口（abstract interface）代表 Node 对象包含的字符。这是一个抽象接口，意味着没有 CharacterData 类型的对象。 它是在其他接口中被实现的，如 Text、Comment 或 ProcessingInstruction 这些非抽象接口。
-
-#### 原文：
 
 The CharacterData abstract interface represents a Node object that contains characters. This is an abstract interface, meaning there aren't any object of type CharacterData: it is implemented by other interfaces, like Text, Comment, or ProcessingInstruction which aren't abstract.
 
 ### ProcessingInstruction
-
-#### 原文
 
 A processing instruction embeds application-specific instructions in XML which can be ignored by other applications that don't recognize them. Even if an XML processor ignores processing instructions, it will give them a place in the DOM.
 
@@ -482,7 +476,7 @@ Buffer对象本身属于普通对象，保存在堆，由V8管理，但是其储
 
 ## JavaScript `this`
 
-### 什么是 `this` ？
+### 什么是 `this`
 
 JavaScript 的 `this` 关键字指向它所属的对象
 
@@ -1014,7 +1008,7 @@ ReactiveX 结合了 观察者模式、迭代器模式 和 使用集合的函数�
 3. 对象没有赋值的属性，该属性的值为 `underfined`
 4. 函数没有返回值时，默认返回 `underfined`
 
-## querySelectorAll 方法相比 getElementsBy 系列方法有什么区别？
+## querySelectorAll 方法相比 getElementsBy 系列方法有什么区别
 
 ### 1. W3C 标准
 
@@ -1036,7 +1030,7 @@ var c3 = document.getElementsByClassName('b2')[0].getElementsByClassName('c');
 
 **小知识**（CSS 选择器中的元素名，类和 ID 均不能以数字为开头。）
 
-### 4. querySelectorAll 返回的是一个 Static Node List，而 getElementsBy 系列的返回的是一个 Live Node List。
+### 4. querySelectorAll 返回的是一个 Static Node List，而 getElementsBy 系列的返回的是一个 Live Node List
 
 ```js
 // Demo 1
@@ -1084,7 +1078,7 @@ HTMLCollection 对象只会包含文档中的 `Element` 节点。
 
 ## csrf
 
-### 1、什么是CSRF攻击？
+### 1、什么是CSRF攻击
 
 CSRF 攻击是黑客借助受害者的 cookie 骗取服务器的信任，但是黑客并不能拿到 cookie，也看不到 cookie 的内容。另外，对于服务器返回的结果，由于**浏览器同源策略**的限制，黑客也无法进行解析。因此，黑客无法从返回的结果中得到任何东西，他所能做的就是给服务器发送请求，以执行请求中所描述的命令，在服务器端直接改变数据的值，而非窃取服务器中的数据。
 
@@ -1092,7 +1086,7 @@ CSRF 攻击是黑客借助受害者的 cookie 骗取服务器的信任，但是�
 
 [CSRF 攻击的应对之道](https://www.ibm.com/developerworks/cn/web/1102_niugang_csrf/)
 
-### 2、有哪些防御方案？
+### 2、有哪些防御方案
 
 1. 用户操作限制，比如验证码；
 2. 请求来源限制，比如限制HTTP Referer才能完成操作；
@@ -1100,7 +1094,7 @@ CSRF 攻击是黑客借助受害者的 cookie 骗取服务器的信任，但是�
 
 **token验证的CSRF防御机制是公认最合适的方案**，也是本文讨论的重点。
 
-### 3、前后端分离下有何不同？
+### 3、前后端分离下有何不同
 
 这个基本过时，现在 nodejs 配合 redis 拥有完美的 session 解决方案。
 
