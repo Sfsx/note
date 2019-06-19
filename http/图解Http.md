@@ -415,6 +415,9 @@ Cookie、Set-Cookie、Conten-Disposition
 #### SPDY
 
 1. 多路复用流
+
+    通过单一的 TCP 连接，可以处理多个 HTTP 请求。
+
 2. 赋予请求优先级
 3. 压缩 HTTP 首部
 4. 推送功能
@@ -423,3 +426,64 @@ Cookie、Set-Cookie、Conten-Disposition
 SPDY 协议已被 HTTP/2 协议取代。
 
 ### 9.3 webSocket
+
+### 9.4 HTTP/2.0
+
+HTTP/2.0 致力于突破上一代标准众所周知的性能限制，但它也是对之前1.x 标准的扩展，**而非替代**。之所以要递增一个大版本到2.0，主要是因为它改变了客户端与服务器之间交换数据的方式，HTTP 2.0 增加了新的二进制分帧数据层
+
++ SPDY
+
+    Google 主导
+
++ HTTP Speed + Mobility
+
+    微软起草
+
++ Network-Friendly HTTP Upgrade
+
+HTTP-WG（HTTP Working Group）在2012 年初把HTTP/2.0提到了议事日程，吸收`SPDY` 、`HTTP Speed + Mobility`、`Network-Friendly HTTP Upgrade`，并在此基础上制定官方标准
+
+1. 多路复用
+
+    多路复用允许同时通过单一的 HTTP/2 连接发起多重的请求-响应消息。
+
+2. 二进制分帧层
+3. 首部压缩
+4. 服务的推送
+
+二进制分帧
+
++ HTTP2.0 将所有传输的信息分割为更小的消息和帧，并对它们采用二进制格式的编码。
++ HTTP 2.0 的所有帧都采用二进制编码，所有首部数据都会被压缩。
++ 所有通信都在一个 TCP 连接上完成。
++ HTTP 2.0 把HTTP协议通信的基本单位缩小为一个一个的帧，这些帧对应着逻辑流中的消息。相应地，很多流可以并行地在同一个TCP 连接上交换消息
++ 把HTTP 消息分解为独立的帧，交错发送，然后在另一端重新组装。
+
+这个机制会在整个Web 技术栈中引发一系列连锁反应，从而带来巨大的性能提升。
+
+> 可以并行交错地发送请求，请求之间互不影响；  
+可以并行交错地发送响应，响应之间互不干扰；  
+只使用一个连接即可并行发送多个请求和响应；  
+消除不必要的延迟，从而减少页面加载的时间；  
+不必再为绕过 HTTP 1.x 限制而多做很多工作；
+
+### 9.5 Web 服务器管理文件的 WebDAV
+
+新增方法
+
++ PROPFIND 获取属性
++ PROPPATCH 修改属性
++ MKCOL 创建集合
++ COPY 复制资源及属性
++ MOVE 移动资源
++ LOCK 资源加锁
++ UNLOCK 资源解锁
+
+新增状态码
+
++ 102 Processing: 可正常处理请求，但目前是处理中状态
++ 207 Multi-Status: 存在多种状态
++ 422 Unprocessible Entity: 格式正确，内容有误
++ 423 Locked: 资源已被加锁
++ 424 Failed Dependency: 处理与某请求关联的请求失败，因此不在维护依赖关系
++ 507 Insufficient Storage: 保存空间不足
