@@ -1317,6 +1317,14 @@ function debounce(fn, interval = 300) {
 }
 ```
 
+## window.requestAnimationFrame()
+
+[原文链接](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/requestAnimationFrame)
+
+## window.requestIdleCallback()
+
+[原文链接](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/requestIdleCallback)
+
 ## `Object.freeze()` vs `Object.seal()`
 
 ### `Object.freeze()`
