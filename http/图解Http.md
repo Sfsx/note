@@ -427,6 +427,30 @@ SPDY 协议已被 HTTP/2 协议取代。
 
 ### 9.3 webSocket
 
+握手请求
+
+```html
+GET / HTTP/1.1
+Upgrade: websocket
+Connection: Upgrade
+Host: example.com
+Origin: http://example.com
+Sec-WebSocket-Key: sN9cRrP/n9NdMgdcy2VJFQ==
+Sec-WebSocket-Version: 13
+```
+
+握手响应
+
+```html
+HTTP/1.1 101 Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Accept: fFBooB7FAkLlXgRSz0BT3v4hq5s=
+Sec-WebSocket-Location: ws://example.com/
+```
+
+在这里之所以提到 socket.io 而未说 websocket 服务，是因为 socket.io 在封装 websocket 基础上又保证了可用性。**在客户端未提供 websocket 功能的基础上使用 xhr polling、jsonp 或 forever iframe 的方式进行兼容**，**同时在建立 ws 连接前往往通过几次 http 轮训确保ws服务可用**，**因此 socket.io 并不等于 websocket**。再往底层深入研究，socket.io 其实并没有做真正的 websocket 兼容，而是提供了上层的接口以及 namespace 服务，真正的逻辑则是在“engine.io”模块。该模块实现握手的 http 代理、连接升级、心跳、传输方式等，因此研究 engine.io 模块才能清楚的了解socket.io 实现机制。
+
 ### 9.4 HTTP/2.0
 
 HTTP/2.0 致力于突破上一代标准众所周知的性能限制，但它也是对之前1.x 标准的扩展，**而非替代**。之所以要递增一个大版本到2.0，主要是因为它改变了客户端与服务器之间交换数据的方式，HTTP 2.0 增加了新的二进制分帧数据层
@@ -452,6 +476,8 @@ HTTP-WG（HTTP Working Group）在2012 年初把HTTP/2.0提到了议事日程，
 4. 服务的推送
 
 二进制分帧
+
+![二进制分帧](https://user-gold-cdn.xitu.io/2019/3/1/16937284bf9b1d57?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
 + HTTP2.0 将所有传输的信息分割为更小的消息和帧，并对它们采用二进制格式的编码。
 + HTTP 2.0 的所有帧都采用二进制编码，所有首部数据都会被压缩。
