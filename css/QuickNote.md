@@ -27,9 +27,16 @@
 ## 脱离文档流
 
 ### float
+
 ### position absolute
-    
+
     可以使用 top left 相对浏览器窗口进行定位
     可以使用 margin-top margin-left 相对父节点进行定位
 
 ### position fixed
+
+## flex
+
+`flex` 布局时，若某个子元素没有设置 `width`，当这个子元素的内部某个字体文本特别长时，就会导致该子元素撑大超出父元素宽度
+
+解决方案为设置该子元素 `width: 0;` 即可保证该子元素不超出父元素。

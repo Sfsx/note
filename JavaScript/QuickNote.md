@@ -165,7 +165,7 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 
 `macro-tasks: script(整体代码),setTimeout, setInterval, setImmediate, I/O, UI rendering`
 
-`micro-tasks: process.nextTick, Promises, Object.observe, MutationObserver`
+`micro-tasks:Promises, Object.observe, MutationObserver`
 
 #### 浏览器执行过程
 
@@ -176,6 +176,10 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 5. 循环往复，直到两个queue中的任务都取完。
 
 ### nodejs 中的 event loop
+
+nodejs 中的宏任务和微任务与浏览器一致
+
+这里有一点要强调一下就是 `process.nextTick()` 这个**不属于事件循环**。可以理解为底层 c++ 中在微任务开始前的一个操作。可以参考[官方文档](https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/#process-nexttick)
 
 ![avatar](http://lynnelv.github.io/img/article/event-loop/ma(i)crotask-in-node.png)
 
@@ -546,12 +550,14 @@ function myFunction() {
 
 ```js
 function bluify(e){
-  //在控制台打印出所点击元素
+  // 在控制台打印出所点击元素
   console.log(this);
-  //阻止事件冒泡
+  // 阻止捕获和冒泡阶段中当前事件的进一步传播
   e.stopPropagation();
-  //阻止元素的默认事件
+  // 阻止事件的默认动作
   e.preventDefault();
+  // 阻止事件冒泡并且阻止相同事件的其他侦听器被调用
+  e.stopImmediatePropagation();
   this.style.backgroundColor = '#A5D9F3';
 }
 var elements = document.getElementById('this');
@@ -1337,6 +1343,12 @@ function debounce(fn, interval = 300) {
 2. 为对象的每一个属性设置，`configurable: false`，**禁止删除属性**
 
 与 `Object.freeze` 不同的是，`Object.seal` 后的对象是可写的 `writable: true`。
+
+## Document.createDocumentFragment()
+
+创建一个新的空白的文档片段
+
+[原文链接](https://developer.mozilla.org/zh-CN/docs/Web/API/Document/createDocumentFragment)
 
 ## 重定向
 
