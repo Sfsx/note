@@ -163,9 +163,26 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 
 #### macrotask queue and microtask queue
 
-`macro-tasks: script(整体代码),setTimeout, setInterval, setImmediate, I/O, UI rendering`
+`macro-tasks: script(整体代码),setTimeout, setInterval, setImmediate, I/O, UI rendering, requestAnimationFrame`
 
-`micro-tasks:Promises, Object.observe, MutationObserver`
+`micro-tasks:Promises, MutationObserver`
+
+`MutationObserver` 介绍
+
+```js
+let counter = 1
+const observer = new MutationObserver(callbacks)
+const textNode = document.createTextNode(String(counter))
+observer.observe(textNode, {
+  characterData: true
+})
+
+// 执行下面的代码就能够触发回调函数
+counter = (counter + 1) % 2
+textNode.data = String(counter)
+```
+
+[参考链接](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserver)
 
 #### 浏览器执行过程
 
@@ -177,7 +194,9 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 
 ### nodejs 中的 event loop
 
-nodejs 中的宏任务和微任务与浏览器一致
+`macro-tasks: script(整体代码),setTimeout, setInterval, setImmediate, I/O`
+
+`micro-tasks:Promises`
 
 这里有一点要强调一下就是 `process.nextTick()` 这个**不属于事件循环**。可以理解为底层 c++ 中在微任务开始前的一个操作。可以参考[官方文档](https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/#process-nexttick)
 
