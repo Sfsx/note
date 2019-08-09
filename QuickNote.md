@@ -32,14 +32,69 @@
   + CodeSandbox 容器。支持在线编写前端demo，可以将编写好的demo链接嵌入博文。
   + [首页](https://codesandbox.io/)
 
-### SVG 在线制作工具
+## SVG 在线制作工具
 
 [SVG图标制作指南](https://zhuanlan.zhihu.com/p/20753791?refer=FrontendMagazine)
 
 [SVG在线制作工具](https://svg.wxeditor.com/)
 
-### 2018 js报告
+## 2018 js报告
 
 https://2018.stateofjs.com/cn/introduction/
 
-### redis 主从哨兵模式
+## redis 主从哨兵模式
+
+## flux
+
+### flux 核心概念
+
++ View
++ Store
++ Action
++ Dispatcher
+
+#### Action Creattor
+
+Action creator 负责创建 action。一旦创建了action 信息, Action creator 就会将 action 传送给 dispatcher（调度员）。可以将 action 理解为修改数据的 api，也可以将 action 理解为 event（触发状态改变的事件）
+
+#### Dispatcher
+
+将 action 分发到对应的 store 中，是一个分发中心。对每一个 action 进行记录，使得数据修改的来源可以被记录。
+
+#### Store
+
+Store 存储应用所有的 state，控制所有业务逻辑和数据处理。它和 View 是一个观察者模式，store 更新完成之后，会触发 change 事件通知视图
+
+#### View
+
+View 是视图，使用户看得见摸得着的地方，同事也是产生用户交互的主要地方。它应该是一个纯函数，一个纯粹的展示者，只在意传到他手的数据，并将这些数据展示出来。它能够触发数据修改，触发 action，但不能在 View 直接修改 Store
+
+### 对比传统 MVC
+
+![mvc](http://cc.cocimg.com/api/uploads/20150928/1443408397390295.jpg)
+
+传统 MVC 中在 View 层直接修改 model 层，当应用比较简单时，还可以维护。但是当应付复杂度提高之后，model 修改有可能触发其他 model 修改，model 之间错综复杂的联系导致很难发现状态的修改是由谁造成的，难以 debug。
+
+![flux](http://cc.cocimg.com/api/uploads/20150928/1443408411494724.jpg)
+
+1. Action 不仅仅把修改 Store 的方式约束了起来，同时还加大了 Store 操作的颗粒度，让琐碎的数据变更变得清晰有意义
+
+2. 所有的数据变更都发生在 Store 里，所以可以根据 Action 的历史记录确定 Store 的状态。这个让很多撤销恢复管理等场景成为了可能。
+
+3. 数据的渲染是自上而下的
+
+    `Action -> Dispatch -> Store -> View`
+
+4. view层变得很薄，真正的组件化由于2、3两条原因，View 自身需要做的事情就变得很少了。业务逻辑被 Store 做了，状态变更被 controller-view 做了，View 自己需要做的只是根据交互触发不同的 Action，仅此而已。这样带来的好处就是，整个 View 层变得很薄很纯粹，完全的只关注 ui 层的交互，各个 View 组件之前完全是松耦合的，大大提高了 View 组件的复用性。
+
+5. 中心化管理数据，避免数据孤立，一旦数据被孤立，就需要通过其它程序做串联，导致复杂。这是避免各路行为乱改数据导致混乱的一个潜在条件，或者说这是一个结论
+
+### 参考资料
+
+[我理解的 Flux 架构](https://yq.aliyun.com/articles/59357)
+
+[[译]看漫画理解Flux](https://medium.com/@icyfish/%E8%AF%91-%E7%9C%8B%E6%BC%AB%E7%94%BB%E7%90%86%E8%A7%A3flux-4e4aa508eade)
+
+## linux nc 命令
+
+ncat 或者说 nc 是一款功能类似 cat 的工具，但是是用于网络的。它是一款拥有多种功能的 CLI 工具，可以用来在网络上读、写以及重定向数据。 它被设计成可以被脚本或其他程序调用的可靠的后端工具。同时由于它能创建任意所需的连接，因此也是一个很好的网络调试工具。
