@@ -1167,7 +1167,7 @@ token防御的整体思路是：
 
 #### SameSite
 
-开坑待填。。。
+已验证
 
 [跨站请求伪造与 Same-Site Cookie](https://www.jianshu.com/p/66f77b8f1759)
 
