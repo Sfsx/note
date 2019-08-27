@@ -1167,7 +1167,16 @@ token防御的整体思路是：
 
 #### SameSite
 
-开坑待填。。。
+已验证
+
+##### Strict
+
+Strict 为严格模式，另一个域发起的任何请求都不会携带该类型的 cookie，能够完美的阻止 CSRF 攻击。通过一个导航网站的超链接打开另一个域的网页也不能携带该类型的 cookie
+
+##### Lax
+
+Lax 相对于 Strict 模式来说，放宽了一些。简单来说就是，用**安全的 HTTP 方法（GET、HEAD、OPTIONS 和 TRACE）改变了当前页面或者打开了新页面时**，可以携带该类型的 cookie。
+
 
 [跨站请求伪造与 Same-Site Cookie](https://www.jianshu.com/p/66f77b8f1759)
 
