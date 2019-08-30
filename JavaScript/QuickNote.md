@@ -1485,6 +1485,28 @@ alert(e2 === 4) //false === 操作符不进行隐式转换
 
 ## webpack
 
+## webpack 编译后的 bundle.js
+
+```js
+(function(modules) {
+
+  // 模拟 require 语句
+  function __webpack_require__() {
+  }
+
+  // 执行存放所有模块对象中的第1个模块，这里的路径为 webpack.config.js 里面配置的 entry
+  return __webpack_require__(__webpack_require__.s = "./src/index.js");
+
+})({/*存放所有模块的对象*/
+  // 相对于webpack.config.js的相对路径作为 key
+  './src/index.js': function() {
+    eval("文件中的具体代码 ...")
+  }
+})
+```
+
+bundle.js 的实质是一个匿名自执行函数，将模块加载后放在一个对象上面
+
 ### 为什么需要模块化
 
 前端开发和其他开发工作的主要区别，首先是前端是基于多语言、多层次的编码和组织工作，其次前端产品的交付是基于浏览器，这些资源是通过增量加载的方式运行到浏览器端，如何在开发环境组织好这些碎片化的代码和资源，并且保证他们在浏览器端快速、优雅的加载和更新，就需要一个模块化系统
@@ -1516,7 +1538,7 @@ webpack 侧重于模块打包，将开发中的所有资源（图片、js文件�
 
 ### Loader 和 Plugin 的不同
 
-+ loader：webpack 将一切文件视为模块，但是 webpack 原生是只能解析 js 文件，如果需要将其他文件也打包的话，就会用到 loader。loader 的作用就是让 webpack 拥有了加载和解**析非JavaScript文件**的能力
++ loader：webpack 将一切文件视为模块，但是 webpack 原生是只能解析 js 文件，如果需要将其他文件也打包的话，就会用到 loader。loader 的作用就是让 webpack 拥有了加载和**解析非JavaScript文件**的能力
 + plugin：在 webpack 运行的什么周期中会广播出许多事件，plugin 可以监听这些事件，通过 webpack 提供的 API 改变输出结果
 
 ### webpack 的构建流程是什么？ 请详述从读取配置到输出文件这个过程
