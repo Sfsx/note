@@ -185,7 +185,11 @@ webpack 侧重于模块打包，将开发中的所有资源（图片、js文件�
 
 ## 有哪些常见的 plugin ？他们是解决什么问题的
 
-+ uglifyjs-webpack-plugin：通过 UglifyES 压缩 ES6 代码
++ UglifyJsPlugin：通过 UglifyES 压缩 ES6 代码
++ HotModuleReplacementPlugin: 热更新
++ happypack：通过多进程模型，来加速代码构建
++ compression-webpack-plugin：生产环境可采用gzip压缩JS和CSS
++ DefinePlugin：编译时配置全局变量
 
 ## Loader 和 Plugin 的不同
 
@@ -203,7 +207,27 @@ webpack 侧重于模块打包，将开发中的所有资源（图片、js文件�
 
 ## 抽象语法树 AST
 
+### 什么是 抽象语法树
 
+抽象语法树（Abstract Syntax Tree）也称为AST语法树，指的是源代码语法所对应的树状结构。通俗的讲就是将 JavaScript 代码解析成一个 json 对象
+
+### AST 的三板斧
+
++ 通过 esprima 生成 AST
++ 通过 estraverse 遍历和更新 AST
++ 通过 escodegen 将 AST 重新生成源码
+
+[一看就懂的JS抽象语法树](https://juejin.im/post/5a2bf2dd6fb9a044fd11b0d2)
+
+### 常用解析代码构建抽象语法树的工具
+
++ Esprima
++ recast
++ UglifyJS2
++ Traceur
++ acorn
++ espree eslint
++ Shift
 
 ## 是否写过 Loader 和 Plugin ？描述一下编写 loader 或 plugin 的思路
 
