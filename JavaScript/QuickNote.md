@@ -813,10 +813,43 @@ var f = str => str.toUpperCase().split(' ');
 
 // good
 var toUpperCase = word => word.toUpperCase();
-var split = x => (str => str.split(x));
+var splitBySpace = str => str.split(' '));
 
-var f = compose(split(' '), toUpperCase);
+var f = compose(splitBySpace, toUpperCase);
 f("abdf efgh");
+```
+
+可以看到，整个运算由两个步骤构成，每个步骤都有语义化的名称，非常的清晰。这就是 Pointfree 风格的优势
+
+再看一个例子
+
+```js
+// 下面是一个字符串，请问其中最长的单词有多少个字符？
+var str = 'Lorem ipsum dolor sit amet consectetur adipiscing elit';
+
+// 以空格分割单词
+var splitBySpace = s => s.split(' ');
+
+// 每个单词的长度
+var getLength = w => w.length;
+
+// 词的数组转换成长度的数组
+var getLengthArr = arr => R.map(getLength, arr); 
+
+// 返回较大的数字
+var getBiggerNumber = (a, b) => a > b ? a : b;
+
+// 返回最大的一个数字
+var findBiggestNumber = 
+  arr => R.reduce(getBiggerNumber, 0, arr);
+
+var getLongestWordLength = R.pipe(
+  splitBySpace,
+  getLengthArr,
+  findBiggestNumber
+);
+
+getLongestWordLength(str) // 11
 ```
 
 ### Hindley-Milner 类型签名
