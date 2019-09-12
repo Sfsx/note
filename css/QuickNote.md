@@ -78,3 +78,19 @@
 4. BFC 就是页面上的一个隔离的独立容器，容器里面的子元素不会影响到外面的元素，反之亦然；
 5. 计算 BFC 的高度时，考虑 BFC 所包含的所有元素，连浮动元素也参与计算；
 6. 浮动盒区域不叠加到 BFC 上；
+
+## 图片文字居中
+
+方案一
+
+`vertical-align: middle;`
+
+该方法适用于：当图片处于 `display: inline-block;` 文字处于 `display: inline;`
+
+方案二
+
+图片的 `height` 与文字的 `line-height` 相等
+
+该方法适用于：图片与文字都处于 `display: block;`
+
+[实例](http://cocoscript.com/lab/detail/55afc4c5cec07270384d87fa)

@@ -7,3 +7,9 @@
 ### Standard request fields
 
 ### Standard response fields
+
+## cookie
+
+### secure
+
+### httpOnly

@@ -23,7 +23,15 @@
 
 bundle.js 的实质是一个匿名自执行函数（IIFE），函数参数是我们写的各个模块组成的对象，只不过我们的代码被 webpack 包装在了一个函数的内部，也就是说我们的模块，在这里就是一个函数。为什么要这样做，是因为浏览器本身不支持模块化，那么 webpack 就用函数作用域来 hack 模块化的效果。
 
+[output.libraryTarget](https://www.webpackjs.com/configuration/output/#output-librarytarget) 属性可以设置打包后的模块用何种模块化规范
+
 将模块加载后放在一个对象上面
+
+### 对于 commonjs 规范的代码编译
+
+除去了 `__webpack_require__.r()` 的调用。
+
+对于 module.export 没有用到 `__webpack_exports__` 去替换 export。也没有在 module.export 上添加 default 属性
 
 ### 对于懒加载的编译
 
@@ -151,6 +159,51 @@ bundle.js 的实质是一个匿名自执行函数（IIFE），函数参数是我
 
 [webpack-打包后代码分析](http://echizen.github.io/tech/2019/03-17-webpack-bundle-code)
 
+## webpack 对于 es6 module 打包与 commonJS 打包的区别
+
+### commonJS
+
+```js
+/***/ "./src/commonJS/bar.js":
+/*!*****************************!*\
+  !*** ./src/commonJS/bar.js ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = function bar(value) {\r\n  console.log(value)\r\n}\n\n//# sourceURL=webpack:///./src/commonJS/bar.js?");
+
+/***/ }),
+```
+
+直接将值放在 module.exports 对象上，如果这个值是一个非 Object 的基本类型变量，那么就符合 commonJS 规范中的模块输出为值的拷贝，一旦输出一个值，模块内部的编号就影响不到这个值
+
+### es6 module
+
+```js
+/***/ "./src/es6Module/b.js":
+/*!****************************!*\
+  !*** ./src/es6Module/b.js ***!
+  \****************************/
+/*! exports provided: foo */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"foo\", function() { return foo; });\nlet foo = 1;\r\nsetTimeout(() => {\r\n  foo = 2;\r\n  console.log('b:', foo);\r\n}, 500);\r\n\n\n//# sourceURL=webpack:///./src/es6Module/b.js?");
+
+/***/ }),
+
+
+// define getter function for harmony exports
+__webpack_require__.d = function(exports, name, getter) {
+  if(!__webpack_require__.o(exports, name)) {
+    Object.defineProperty(exports, name, { enumerable: true, get: getter });
+  }
+};
+```
+
+请注意这里的 `__webpack_require__.d` 方法将 `function() { return foo; }` 设置对象属性的访问器属性，虽然与 commonJS 的访问方式是一直的，但是当内部变量改变时，函数返回结果也会跟着改变，所以 es6module 输出的是值的引用
+
 ## 既然模块规范有很多，webpack 是如何去解析不同的规范呢
 
 webpack 根据 webpack.config.js 中的入口文件，自动递归模块依赖，无论这里的模块依赖使用 CommonJS、ES6 Module、或 AMD 规范写的，webpack 都会自动进行分析，并通过转换、编译代码，打包成最终的文件。
@@ -235,7 +288,17 @@ webpack 侧重于模块打包，将开发中的所有资源（图片、js文件�
 
 ## 如何利用 webpack 来优化前端性能
 
++ 压缩代码文件。
++ 利用 CDN 加速，要注意部署环境是否有网络支持，不支持则不能使用该方法
++ 删除死代码（Tree Shaking）
++ 自己编写代码时要注意避免重复写重复功能的代码，利用设计模式去提炼代码
+
 ## 如何提高 webpack 的构建速度
+
++ 多入口情况下，使用 CommonsChunkPlugin 来提取公共代码
++ 通过 externals 配置来提取常用库
+
+[Webpack 4 构建大型项目实践 / 优化](https://juejin.im/post/5d2450c6f265da1ba64813a4)
 
 ## 怎么配置单页应用？怎么配置多页应用
 
