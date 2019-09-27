@@ -1,3 +1,5 @@
+# 快速笔记
+
 + 前端使用固定 salt 加密后送给后端
 + 后端生成强大的 salt 将前端送来的值加密储存
 + 使用安全的 hash 函数
@@ -40,7 +42,7 @@
 
 ## 2018 js报告
 
-https://2018.stateofjs.com/cn/introduction/
+[2018 js报告](https://2018.stateofjs.com/cn/introduction/)
 
 ## redis 主从哨兵模式
 
@@ -83,7 +85,9 @@ View 是视图，使用户看得见摸得着的地方，同事也是产生用户
 
 3. 数据的渲染是自上而下的
 
-    `Action -> Dispatch -> Store -> View`
+    ```mark
+    Action -> Dispatch -> Store -> View
+    ```
 
 4. view层变得很薄，真正的组件化由于2、3两条原因，View 自身需要做的事情就变得很少了。业务逻辑被 Store 做了，状态变更被 controller-view 做了，View 自己需要做的只是根据交互触发不同的 Action，仅此而已。这样带来的好处就是，整个 View 层变得很薄很纯粹，完全的只关注 ui 层的交互，各个 View 组件之前完全是松耦合的，大大提高了 View 组件的复用性。
 
@@ -154,7 +158,9 @@ ncat 或者说 nc 是一款功能类似 cat 的工具，但是是用于网络的
 
 解析HTML到构建出DOM当然过程可以简述如下：
 
-    Bytes → characters → tokens → nodes → DOM
+```mark
+Bytes → characters → tokens → nodes → DOM
+```
 
 ![解析](https://user-gold-cdn.xitu.io/2018/8/30/16589bedac1b0c18?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
@@ -172,7 +178,9 @@ ncat 或者说 nc 是一款功能类似 cat 的工具，但是是用于网络的
 
 CSS规则树的生成也是类似。简述为：
 
-    Bytes → characters → tokens → nodes → CSSOM
+```mark
+Bytes → characters → tokens → nodes → CSSOM
+```
 
 要了解 CSS 处理所需的时间，您可以在 DevTools 中记录时间线并寻找“Recalculate Style”事件：与 DOM 解析不同，该时间线不显示单独的“Parse CSS”条目，而是在这一个事件下一同捕获解析和 CSSOM 树构建，以及计算的样式的递归计算。
 
@@ -226,6 +234,8 @@ CSS规则树的生成也是类似。简述为：
 
 ![盒模型](http://taligarsiel.com/Projects/image046.jpg)
 
+[Web Fundamentals](https://developers.google.com/web/fundamentals/performance/critical-rendering-path/constructing-the-object-model?hl=zh-cn)
+
 ## 浏览器介绍
 
 ### 浏览器进程
@@ -245,3 +255,31 @@ JS 引擎线程
 当 JS 引擎线程执行任务的时候，会挂起其他一切线程。JS 引擎线程为单线程。执行机制就是 JavaScript 事件循环。
 
 [浏览器的加载过程](http://wuduoyi.com/note/what-happen-when-browser-loading-the-page/)
+
+## JSONP
+
+## 后端路由
+
+带 `.asp` 或 `.html` 的路径，这就是所谓的 SSR(Server Side Render)，通过服务端渲染，直接返回页面。
+
+## 前端路由
+
+### Hash
+
+看看这个路由 [https://react-1251415695.cos-website.ap-chengdu.myqcloud.com/docs/react-api.html#reactmemo](https://react-1251415695.cos-website.ap-chengdu.myqcloud.com/docs/react-api.html#reactmemo)。大家肯定会发现：这串 url 的最后有以 # 号开始的一串标识。
+
+在支持 HTML5 的浏览器中，当 URL 的 hash 值变化时会触发 hashchange 事件，我们可以通过监听这个事件来说一些处理：
+
+```js
+// 在 window 下监听 hashchange 事件
+window.onhashchange = function() {
+  // 当事件触发时输出当前的 hash 值
+  console.log(window.location.hash)
+}
+```
+
+#### hash 定位文档片段
+
+在 [MDN](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/a) 官方文档中 `<a>` 标签的 herf 属性可以是 url 或 url 片段。这里的 url 片段就是哈希标记（#），哈希标记指定当前文档中的内部目标位置（HTML 元素 ID）。
+
+[前端路由是什么东西？](https://www.zhihu.com/question/53064386)
