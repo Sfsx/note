@@ -313,9 +313,25 @@ ES2017 允许函数的最后一个参数有逗号（trailing comma）。
 
 ### 2. `Array.from()`
 
-`Array.from()` 将两类对象转为真正的数组：类数组对象（array-like-object）和可遍历对象（iterable）的对象（包括 ES6 新增的数据结构 Set 和 Map）。
+`Array.from()` 将两类对象转为真正的数组：类数组对象（array-like-object）和可遍历对象（iterable）的对象（包括 ES6 新增的数据结构 Set 和 Map）。**所谓类似数组的对象，本质特征只有一点，即必须有 length 属性。**
 
 `Array.from()` 也是浅拷贝
+
+`Array.from()` 还可以接受第二个参数，作用类似于数组的 map 方法，用来对每个元素进行处理，将处理后的值放入返回的数组。
+
+```js
+Array.from(arrayLike, x => x * x);
+// 等同于
+Array.from(arrayLike).map(x => x * x);
+
+Array.from([1, 2, 3], (x) => x * x)
+// [1, 4, 9]
+
+Array.form({ length: 3 }, () => ({}))
+// [{}, {}, {}]
+```
+
+尤其注意上面最后一个例子得到的数组，其中每个 {} 都是独立。不同于 `new Array(3).fill({})` 这里生成的每个 {} 都是指向同一个 object，只要修改其中某一个数组中的另外两个会跟着一起变化。
 
 ### 3. `Array.of()`
 

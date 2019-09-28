@@ -1,3 +1,5 @@
+# 快速笔记
+
 + 前端使用固定 salt 加密后送给后端
 + 后端生成强大的 salt 将前端送来的值加密储存
 + 使用安全的 hash 函数
@@ -40,7 +42,7 @@
 
 ## 2018 js报告
 
-https://2018.stateofjs.com/cn/introduction/
+[2018 js报告](https://2018.stateofjs.com/cn/introduction/)
 
 ## redis 主从哨兵模式
 
@@ -83,7 +85,9 @@ View 是视图，使用户看得见摸得着的地方，同事也是产生用户
 
 3. 数据的渲染是自上而下的
 
-    `Action -> Dispatch -> Store -> View`
+    ```mark
+    Action -> Dispatch -> Store -> View
+    ```
 
 4. view层变得很薄，真正的组件化由于2、3两条原因，View 自身需要做的事情就变得很少了。业务逻辑被 Store 做了，状态变更被 controller-view 做了，View 自己需要做的只是根据交互触发不同的 Action，仅此而已。这样带来的好处就是，整个 View 层变得很薄很纯粹，完全的只关注 ui 层的交互，各个 View 组件之前完全是松耦合的，大大提高了 View 组件的复用性。
 
@@ -98,3 +102,184 @@ View 是视图，使用户看得见摸得着的地方，同事也是产生用户
 ## linux nc 命令
 
 ncat 或者说 nc 是一款功能类似 cat 的工具，但是是用于网络的。它是一款拥有多种功能的 CLI 工具，可以用来在网络上读、写以及重定向数据。 它被设计成可以被脚本或其他程序调用的可靠的后端工具。同时由于它能创建任意所需的连接，因此也是一个很好的网络调试工具。
+
+## 浏览器加载页面过程
+
+1. DNS 查询
+2. TCP 连接
+3. HTTP 请求即响应
+4. 服务器响应
+5. 客户端渲染
+
+### 客户端渲染
+
+1. 处理 HTML 标记并构建 DOM tree
+2. 处理 CSS 标记并构建 CSSOM tree
+3. 将 DOM 与 CSSOM 合并成一个 render tree
+4. 布局（layout），根据 render tree 计算每个节点的位置大小等信息
+5. 绘制 render tree
+
+![webkit main flow](https://images0.cnblogs.com/blog/118511/201303/30174613-aea0f7a683574d87a7fa049dc52f5ae3.png)
+
+![Gecko main flow](https://images0.cnblogs.com/blog/118511/201303/30174629-d2e8eba07c05420dbc3a049a0de099a7.jpg)
+
+其中 1、2、3 非常快，但是 4 和 5 比较耗时，有三个术语：
+
+“重排”和“回流” 值的是重新执行步骤 4
+
+“重绘”至重新执行步骤 5
+
+重排意味着重新计算节点的位置大小等信息，重新再草稿本上画了草图，所以一定会重绘。但重绘不一定会重排，比如背景颜色变化。
+
+#### reflow 重排
+
+1. 页面第一次渲染（初始化）
+2. DOM 树变化（如：增删节点，改变元素内容）
+3. Render 树变化（如：padding 改变、元素位置改变、元素字体大小改变）
+4. 浏览器窗口 resize
+5. 获取元素的某些属性：浏览器为了获得正确的值也会提前触发回流，这样就使得浏览器的优化失效了，这些属性包括offsetLeft、offsetTop、offsetWidth、offsetHeight、 scrollTop/Left/Width/Height、clientTop/Left/Width/Height、调用了getComputedStyle()或者IE的currentStyle
+
+#### repaint 重绘
+
+1. reflow回流必定引起repaint重绘，重绘可以单独触发
+2. 背景色、颜色、字体改变（注意：字体大小发生变化时，会触发 reflow）
+
+#### 优化reflow、repaint触发次数
+
+1. 避免逐个修改节点样式，尽量一次性修改
+2. 使用DocumentFragment将需要多次修改的DOM元素缓存，最后一次性append到真实DOM中渲染
+3. 可以将需要多次修改的DOM元素设置display: none，操作完再显示。（因为隐藏元素不在render树内，因此修改隐藏元素不会触发回流重绘）
+4. 避免多次读取某些属性（见上）
+5. 将复杂的节点元素脱离文档流，降低回流成本
+
+[How browsers work](http://taligarsiel.com/Projects/howbrowserswork1.htm)
+
+#### HTML 解析
+
+解析HTML到构建出DOM当然过程可以简述如下：
+
+```mark
+Bytes → characters → tokens → nodes → DOM
+```
+
+![解析](https://user-gold-cdn.xitu.io/2018/8/30/16589bedac1b0c18?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+1. Conversion 转换：浏览器将获得的HTML内容（Bytes）基于他的编码转换为单个字符
+
+2. Tokenizing 分词：浏览器按照HTML规范标准将这些字符转换为不同的标记 token。每个token都有自己独特的含义以及规则集
+
+3. Lexing 词法分析：分词的结果是得到一堆的 token，此时把他们转换为对象，这些对象分别定义他们的属性和规则
+
+4. DOM 构建：因为 HTML 标记定义的就是不同标签之间的关系，这个关系就像是一个树形结构一样
+
+例如：body对象的父节点就是HTML对象，然后段略p对象的父节点就是body对象
+
+#### CSS 解析
+
+CSS规则树的生成也是类似。简述为：
+
+```mark
+Bytes → characters → tokens → nodes → CSSOM
+```
+
+要了解 CSS 处理所需的时间，您可以在 DevTools 中记录时间线并寻找“Recalculate Style”事件：与 DOM 解析不同，该时间线不显示单独的“Parse CSS”条目，而是在这一个事件下一同捕获解析和 CSSOM 树构建，以及计算的样式的递归计算。
+
+![devtool](https://developers.google.com/web/fundamentals/performance/critical-rendering-path/images/cssom-timeline.png?hl=zh-cn)
+
+##### 什么是 CSSOM
+
++ CSSOM是 CSS Object Model 的缩写
++ 大体上来说，CSSOM是一个建立在web页面上的 CSS 样式的映射
++ 它和DOM类似，但是只针对CSS而不是HTML
++ 浏览器将DOM和CSSOM结合来渲染web页面
+
+##### 如何优化
+
+你不必为了优化你的 Web 页面而去了解 CSSOM 是怎样工作的，这里有几个关于 CSSOM 的关键点你需要知道，利用这些关键点可以优化页面的加载速度。
+
+1. CSSOM 阻止任何东西渲染
+
+    所有的CSS都是阻塞渲染的（意味着在CSS没处理好之前所有东西都不会展示）。
+
+    由于CSSOM被用作创建render tree，那么如果不能高效的利用CSS会有一些严重的后果。即页面在加载时白屏。
+
+2. CSSOM 在加载一个新页面时必须重新构建
+
+    这意味着即使你的CSS文件被缓存了，也并不意味着这个已经构建好了的CSSOM可以应用到每一个页面。
+
+    也就是说，如果你的CSS文件写得很蹩脚，或者体积很大，这也会对你页面加载产生负面的影响。
+
+3. 页面中CSS的加载和页面中 javascript 的加载是有关系的
+
+    如果你的javascript阻塞了CSSOM的构建，你的用户就会面对更长时间的白屏。
+
+优化方式：
+
++ No more than one external CSS stylesheet of an reasonable size (less than 75k or so)
++ Inline small CSS into HTML using style tags for above the fold content
++ No @import calls for CSS
++ No CSS in HTML things like your divs or your h1s (in element CSS)
+
+[Critical rendering path](https://varvy.com/pagespeed/critical-render-path.html)
+
+[CSS and javascript order](https://varvy.com/pagespeed/style-script-order.html)
+
+[Optimize CSS delivery](https://varvy.com/pagespeed/optimize-css-delivery.html)
+
+[【译】CSSOM 介绍](https://juejin.im/entry/58a6957d128fe10064768930)
+
+#### 布局
+
+布局流程的输出是一个“盒模型”，它会精确地捕获每个元素在视口内的确切位置和尺寸：所有相对测量值都转换为屏幕上的绝对像素。
+
+![盒模型](http://taligarsiel.com/Projects/image046.jpg)
+
+[Web Fundamentals](https://developers.google.com/web/fundamentals/performance/critical-rendering-path/constructing-the-object-model?hl=zh-cn)
+
+## 浏览器介绍
+
+### 浏览器进程
+
+### 浏览器渲染进程
+
+GUI 渲染线程
+
+JS 引擎线程
+
+事件触发线程
+
+异步 HTTP 请求线程
+
+定时器触发线程
+
+当 JS 引擎线程执行任务的时候，会挂起其他一切线程。JS 引擎线程为单线程。执行机制就是 JavaScript 事件循环。
+
+[浏览器的加载过程](http://wuduoyi.com/note/what-happen-when-browser-loading-the-page/)
+
+## JSONP
+
+## 后端路由
+
+带 `.asp` 或 `.html` 的路径，这就是所谓的 SSR(Server Side Render)，通过服务端渲染，直接返回页面。
+
+## 前端路由
+
+### Hash
+
+看看这个路由 [https://react-1251415695.cos-website.ap-chengdu.myqcloud.com/docs/react-api.html#reactmemo](https://react-1251415695.cos-website.ap-chengdu.myqcloud.com/docs/react-api.html#reactmemo)。大家肯定会发现：这串 url 的最后有以 # 号开始的一串标识。
+
+在支持 HTML5 的浏览器中，当 URL 的 hash 值变化时会触发 hashchange 事件，我们可以通过监听这个事件来说一些处理：
+
+```js
+// 在 window 下监听 hashchange 事件
+window.onhashchange = function() {
+  // 当事件触发时输出当前的 hash 值
+  console.log(window.location.hash)
+}
+```
+
+#### hash 定位文档片段
+
+在 [MDN](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/a) 官方文档中 `<a>` 标签的 herf 属性可以是 url 或 url 片段。这里的 url 片段就是哈希标记（#），哈希标记指定当前文档中的内部目标位置（HTML 元素 ID）。
+
+[前端路由是什么东西？](https://www.zhihu.com/question/53064386)
