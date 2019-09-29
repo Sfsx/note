@@ -834,13 +834,13 @@ var splitBySpace = s => s.split(' ');
 var getLength = w => w.length;
 
 // 词的数组转换成长度的数组
-var getLengthArr = arr => R.map(getLength, arr); 
+var getLengthArr = arr => R.map(getLength, arr);
 
 // 返回较大的数字
 var getBiggerNumber = (a, b) => a > b ? a : b;
 
 // 返回最大的一个数字
-var findBiggestNumber = 
+var findBiggestNumber =
   arr => R.reduce(getBiggerNumber, 0, arr);
 
 var getLongestWordLength = R.pipe(
@@ -1214,7 +1214,7 @@ Lax 相对于 Strict 模式来说，放宽了一些。简单来说就是，用**
 
 [SameSite Cookie attribute?](https://medium.com/compass-security/samesite-cookie-attribute-33b3bfeaeb95)
 
-## corb
+## CORB
 
 Cross-Origin Read Blocking (CORB)
 
@@ -1583,6 +1583,24 @@ function shuffle(arr){
 ## 浏览器加载页面的详细过程
 
 开坑待填。。。
+
+## 类数组对象
+
+方法一
+
+```js
+Array.prototype.slice.call(NodeList)
+```
+
+方法二
+
+```js
+NodeList.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
+
+// 或者
+
+NodeList.prototype[Symbol.iterator] = [][Symbol.iterator];
+```
 
 ## DOM 删除孩子节点
 
