@@ -47,15 +47,31 @@
 1. win
 
     启动
+
     ```shell
     start nginx
     ```
+
     关闭
+
     ```shell
     nginx -s stop
     ```
+
     重启
+
     ```shell
     nginx -s reload
     ```
+
 2. unix
+
+## win 查看文件 hash
+
+```shell
+certutil -hashfile yourfilename MD5
+
+certutil -hashfile yourfilename SHA1
+
+certutil -hashfile yourfilename SHA256
+```

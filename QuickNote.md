@@ -258,6 +258,10 @@ JS 引擎线程
 
 ## JSONP
 
+目前 jsonp 返回是 json 数据，刚好符合 chrome 的 CSRB 拦截。无法使用
+
+测试在 edge 下可以正常使用
+
 ## 后端路由
 
 带 `.asp` 或 `.html` 的路径，这就是所谓的 SSR(Server Side Render)，通过服务端渲染，直接返回页面。
@@ -283,3 +287,14 @@ window.onhashchange = function() {
 在 [MDN](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/a) 官方文档中 `<a>` 标签的 herf 属性可以是 url 或 url 片段。这里的 url 片段就是哈希标记（#），哈希标记指定当前文档中的内部目标位置（HTML 元素 ID）。
 
 [前端路由是什么东西？](https://www.zhihu.com/question/53064386)
+
+## WebAssembly
+
+WebAssembly 是一种运行在现代网络浏览器中的新型代码，并且提供新的性能特性和效果。它设计的目的不是为了手写代码而是为诸如 C、C++ 和 Rust 等低级源语言提供一个高效的编译目标。
+
+对于网络平台而言，这具有巨大的意义——这为客户端 app 提供了一种在网络平台以接近本地速度的方式运行多种语言编写的代码的方式；在这之前，客户端 app 是不可能做到的。
+
+而且，你在不知道如何编写 WebAssembly 代码的情况下就可以使用它。 WebAssembly 的模块可以被导入的到一个网络 app（或Node.js）中，并且暴露出供 JavaScript 使用的 WebAssembly 函数。JavaScript 框架不但可以使用 WebAssembly 获得巨大性能优势和新特性，而且还能使得各种功能保持对网络开发者的易用性。
+
+[WebAssembly概念
+](https://developer.mozilla.org/zh-CN/docs/WebAssembly/Concepts)

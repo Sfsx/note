@@ -367,7 +367,7 @@ url 劫持：一个不道德的人在他自己的网址 A 做一个 302 重定�
 
 #### HTTP/1.1 首部字段表
 
-RFC2616
+[RFC2616](https://tools.ietf.org/html/rfc2616)
 
 #### 非 HTTP/1.1 首部字段
 

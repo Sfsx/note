@@ -30,8 +30,9 @@
 
 ### position absolute
 
-    可以使用 top left 相对浏览器窗口进行定位
-    可以使用 margin-top margin-left 相对父节点进行定位
+  >可以使用 top left 相对浏览器窗口进行定位
+  
+  >可以使用 margin-top margin-left 相对父节点进行定位
 
 ### position fixed
 
@@ -94,3 +95,24 @@
 该方法适用于：图片与文字都处于 `display: block;`
 
 [实例](http://cocoscript.com/lab/detail/55afc4c5cec07270384d87fa)
+
+## css module vs bem
+
+我觉得还是 BEM 好，直接使用 BEM 配合条件判断直接使用
+
+```js
+render(){
+    return <div className={ this.state.isShow ? 'box-show' : 'box-hide' }>hello world</div>
+}
+```
+
+这里介绍一下 BEM。BEM 的意思就是块（block）、元素（element）、修饰符（modifier）。
+
+```shell
+.block 代表了更高级别的抽象或组件。
+.block__element 代表 .block 的后代，用于形成一个完整的.block的整体。
+.block–modifier 代表 .block 的不同状态或不同版本。
+.block__element–modifier 代表 .element 的不同状态或不同版本。
+```
+
+[鱼和熊掌的故事 - CSS Modules还是BEM鱼和熊掌的故事 - CSS Modules还是BEM](http://benweizhu.github.io/blog/2015/12/05/css-modules-or-bem/)
