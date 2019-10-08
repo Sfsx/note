@@ -266,9 +266,7 @@ JS 引擎线程
 
 带 `.asp` 或 `.html` 的路径，这就是所谓的 SSR(Server Side Render)，通过服务端渲染，直接返回页面。
 
-## 前端路由
-
-### Hash
+## Hash 路由
 
 看看这个路由 [https://react-1251415695.cos-website.ap-chengdu.myqcloud.com/docs/react-api.html#reactmemo](https://react-1251415695.cos-website.ap-chengdu.myqcloud.com/docs/react-api.html#reactmemo)。大家肯定会发现：这串 url 的最后有以 # 号开始的一串标识。
 
@@ -282,11 +280,68 @@ window.onhashchange = function() {
 }
 ```
 
-#### hash 定位文档片段
+### hash 定位文档片段
 
 在 [MDN](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/a) 官方文档中 `<a>` 标签的 herf 属性可以是 url 或 url 片段。这里的 url 片段就是哈希标记（#），哈希标记指定当前文档中的内部目标位置（HTML 元素 ID）。
 
 [前端路由是什么东西？](https://www.zhihu.com/question/53064386)
+
+## history
+
+在history中向后跳转：
+
+```js
+window.history.back();
+```
+
+向前跳转
+
+```js
+window.history.forward();
+```
+
+前进或后退多个页面
+
+```js
+window.history.go(-2);
+```
+
+您可以通过查看长度属性的值来确定的历史堆栈中页面的数量:
+
+```js
+let numberOfEntries = window.history.length;
+```
+
+HTML5引入的 `history.pushState()` 和 `history.replaceState()` 方法，他们分别可以添加和修改历史记录条目。这些方法通常与 `window.onpopstate` 配合使用。
+
+使用 `history.pushState()` 可以改变 referrer，它在用户发送 XMLHttpRequest 请求时在 HTTP 头部使用，改变 state 后创建的 XMLHttpRequest 对象的 referrer 都会别改变。因为 referrer 是标识创建 XMLHttpRequest 对象时 this 所代表的 window 对象中 document 的 URL
+
+### `history.pushState()`
+
+`history.pushState()` 方法有三个参数
+
++ 状态对象——状态对象 state 是一个 JavaScript 对象（我们规定了状态对象在序列化表示后有 640k 的大小限制。），通过 `pushState()` 创建新的历史记录条目。无论什么时候用户导航到新的状态，`popstate` 事件就会被触发，且该事件的 state 属性包含该历史记录条目状态对象的副本。
++ 标题
++ URL。调用 `pushState()` 后浏览器并不会立即加载这个 URL，但可能会在稍后某些情况下加载这个 URL，比如在用户重新打开浏览器时。新 URL 不必须为绝对路径。如果新 URL 是相对路径，那么它将被作为相对于当前 URL 处理。新 URL 必须与当前 URL 同源，否则 `pushState()` 会抛出一个异常。该参数是可选的，缺省为当前 URL。
+
+### `history.replaceState()`
+
+`history.replaceState()` 方法与 `history.pushState()` 区别在于 `replaceState()`  是修改了当前的历史记录项而不是新建一个。 注意这并不会阻止其在全局浏览器历史记录中创建一个新的历史记录项。
+
+### 获取当前状态
+
+你可以读取当前历史记录项的状态对象 state，而不必等待`popstate` 事件， 只需要这样使用 `history.state` 属性
+
+## hash 路由和 history 路由的区别
+
++ pushState 设置的 url 可以是同源下的任意 url ；而 hash 只能修改 # 后面的部分，因此只能设置当前 url 同文档的 url
++ pushState 设置的新的 url 可以与当前 url 一样，这样也会把记录添加到栈中；hash 设置的新值不能与原来的一样，一样的值不会触发动作将记录添加到栈中pushState 通过 stateObject 参数可以将任何数据类型添加到记录中；hash 只能添加短字符串
++ pushState 可以设置额外的 title 属性供后续使用
+
++ history 在刷新页面时，如果服务器中没有相应的响应或资源，就会出现404。因此，如果 URL 匹配不到任何静态资源，则应该返回同一个 index.html 页面，这个页面就是你 app 依赖的页面
++ hash 模式下，仅 # 之前的内容包含在 http 请求中，对后端来说，即使没有对路由做到全面覆盖，也不会报 404
+
+[history与hash路由的区别](https://juejin.im/post/5b31a4f76fb9a00e90018cee)
 
 ## WebAssembly
 
