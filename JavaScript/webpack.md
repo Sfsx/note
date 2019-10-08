@@ -335,3 +335,34 @@ main()
 这个例子中由于 util 赋值给了 util2 这个操作会导致 tree shaking 失效
 
 [webpack 之 tree shaking](https://github.com/huruji/blog/issues/66)
+
+### 如何使用
+
+webpack4 中只要将 mode 设置为 production 模式即可开启 tree shaking
+
+### 原理
+
+### 副作用 （side effects）
+
+`side effects` 是指那些当 `import` 的时候会执行一些动作，但是不一定会有任何 `export`。比如 `polyfill`，我们 `import 'polyfill'` 就会导致模块内的方法执行，虽然没有 `export` 任何方法，但是这个 `import` 动作会产生副作用，使原本当前环境不具备的方法得以运行。
+
+所以 tree shaking 对于有副作用的 `import` 不能够简单消除这些方法。而且 tree shaking 无法静态分析 `import` 是否有副作用所以，对于 `import` 无法自动优化
+
+目前可以在 package.json 文件中的 sideEffects 属性来配置。`false` 表示所有代码都不包含副作用。如果有一些代码有一些副作用，那么可以将这个属性改为提供一个数组
+
+```json
+{
+  "name": "tree-shaking",
+  "sideEffects": [
+    "./src/common/polyfill.js"
+  ]
+}
+```
+
+[Tree-Shaking性能优化实践 - 原理篇](https://juejin.im/post/5a4dc842518825698e7279a9)
+
+### 关于打包优化预想
+
+由于 babel-loader 会产生很多副作用方法，影响 tree-shaking 效果，所以我们可以去掉 babel-loader ，使用 webpack 的 plugin ，让 babel 这个环节依旧跑在 webpack 流程中，但是是作为 plugin 在打包环节的最后进行 babel 编译。但是目前并没有相关的 babel-plugin
+
+[你的Tree-Shaking并没什么卵用](https://juejin.im/post/5a5652d8f265da3e497ff3de#heading-3)
