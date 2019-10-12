@@ -246,8 +246,8 @@ webpack 侧重于模块打包，将开发中的所有资源（图片、js文件�
 
 ## Loader 和 Plugin 的不同
 
-+ loader：webpack 将一切文件视为模块，但是 webpack 原生是只能解析 js 文件，如果需要将其他文件也打包的话，就会用到 loader。loader 的作用就是让 webpack 拥有了加载和**解析非JavaScript文件**的能力
-+ plugin：在 webpack 运行的什么周期中会广播出许多事件，plugin 可以监听这些事件，通过 webpack 提供的 API 改变输出结果。可以打包优化，资源管理和注入环境变量和全局变量
++ loader：webpack 将一切文件视为模块，但是 webpack 原生是只能解析 js 文件，如果需要将其他文件也打包的话，就会用到 loader。loader 的作用就是让 webpack 拥有了**加载和解析非 JavaScript 文件的能力**
++ plugin：是用来扩展 Webpack 功能的，通过在构建流程里注入钩子实现，它给 Webpack 带来了很大的灵活性。 通过plugin（插件）webpack 可以实 loader 所不能完成的复杂功能，使用 plugin 丰富的自定义 API 以及生命周期事件，可以控制 webpack 打包流程的每个环节，实现对 webpack 的自定义功能扩展。
 
 ## webpack 的构建流程是什么？ 请详述从读取配置到输出文件这个过程
 
@@ -311,7 +311,7 @@ webpack 侧重于模块打包，将开发中的所有资源（图片、js文件�
 tree shaking 之所以能够实现的原因是得益于 ES module 的提出，因为 ES 的模块规范是只允许 import 时的模块名是字符串常量，且模块的引用是一种强绑定，一种动态只读引用，也就是说 ES 的模块规范不依赖于运行时的状态，这使得静态分析能够是可靠的。
 
 + tree shaking 对于函数有效
-+ tree shaking 对于类方法无效
++ tree shaking 对于类方法有效
 + tree shaking 能像传统的 DCE 一样清除不能达到的代码
 + import * as ( export default )可以被 tree shaking 优化
 
@@ -342,6 +342,8 @@ webpack4 中只要将 mode 设置为 production 模式即可开启 tree shaking
 
 ### 原理
 
+Tree-shaking 的本质是消除无用的js代码。无用代码消除在广泛存在于传统的编程语言编译器中，编译器可以判断出某些代码根本不影响输出，然后消除这些代码，这个称之为 DCE（dead code elimination）。
+
 ### 副作用 （side effects）
 
 `side effects` 是指那些当 `import` 的时候会执行一些动作，但是不一定会有任何 `export`。比如 `polyfill`，我们 `import 'polyfill'` 就会导致模块内的方法执行，虽然没有 `export` 任何方法，但是这个 `import` 动作会产生副作用，使原本当前环境不具备的方法得以运行。
@@ -361,8 +363,4 @@ webpack4 中只要将 mode 设置为 production 模式即可开启 tree shaking
 
 [Tree-Shaking性能优化实践 - 原理篇](https://juejin.im/post/5a4dc842518825698e7279a9)
 
-### 关于打包优化预想
-
-由于 babel-loader 会产生很多副作用方法，影响 tree-shaking 效果，所以我们可以去掉 babel-loader ，使用 webpack 的 plugin ，让 babel 这个环节依旧跑在 webpack 流程中，但是是作为 plugin 在打包环节的最后进行 babel 编译。但是目前并没有相关的 babel-plugin
-
-[你的Tree-Shaking并没什么卵用](https://juejin.im/post/5a5652d8f265da3e497ff3de#heading-3)
+[你的Tree-Shaking并没什么卵用](https://juejin.im/post/5a5652d8f265da3e497ff3de#heading-3) 这篇文章中提到的问题目前已被优化。
