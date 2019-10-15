@@ -271,6 +271,8 @@ JS 引擎线程
 
 看看这个路由 [https://react-1251415695.cos-website.ap-chengdu.myqcloud.com/docs/react-api.html#reactmemo](https://react-1251415695.cos-website.ap-chengdu.myqcloud.com/docs/react-api.html#reactmemo)。大家肯定会发现：这串 url 的最后有以 # 号开始的一串标识。
 
+修改 hash 值直接在 `window.location.hash` 对象上赋值字符串
+
 在支持 HTML5 的浏览器中，当 URL 的 hash 值变化时会触发 hashchange 事件，我们可以通过监听这个事件来说一些处理：
 
 ```js
@@ -525,3 +527,57 @@ Access-Control-Max-Age:
 非常有用，可以大幅优化请求次数
 
 [HTTP访问控制（CORS）](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Access_control_CORS)
+
+## virtual dom
+
+### 什么是 virtual dom
+
+virtual dom 的本质是 JavaScript 对象（该对象的属性描述了真实 dom 的部分属性）。它最少会包含 tag（标签）、props（属性） 和 children（子元素对象） 三个属性。
+
+### 为什么需要 virtual dom
+
+dom 操作是比较昂贵的。当创建一个 dom 除了需要网页重排重绘之外还需要注册相应的 Event listener，上大量的 dom 属性，这些都很耗时。加之如果你的 JavaScript 操作 DOM 的方式还非常不合理，那就更糟糕了。
+
+和 dom 操作比起来 js 计算是非常便宜的。将数据修改引起的改变，先修改 virtual dom 再使用 diff 算法进行比较前后差异，可以将原本需要多次修改操作合并成一个批量的操作，最后再根据差异去更新真实 dom。
+
+如果一次修改中单次修改只是更改一个 label 表情值，那么直接操作 dom 是更快的。
+
+但是在现实应用场景中，一个数据更改，往往会触发页面多处变动。这个时候如果是直接修改 dom 那么每一次操作都可能会触发浏览器的重排与重绘。这时如果运用 virtual dom 机制，在 virtual dom 中进行修改，通过 diff 算法将其中一些 dom 操作进行合并，最后通过框架去修改真实 dom。即减少了 dom 操作又保证了 JavaScript 操作 DOM 方式的合理性
+
+### 
+
+## script 标签的 defer 和 async
+
+### defer
+
+这个布尔属性被设定用来通知浏览器该脚本将在文档完成解析后，触发 `DOMContentLoaded` 事件前顺序执行，相当于告诉浏览器立即下载，但延迟执行。如果缺少 `src` 属性，该属性不生效。对动态嵌入的脚本使用 `async=false` 来达到类似效果
+
+### async
+
+这个属性与 `defer` 类似，都用于改变处理脚本的行为。同样与 `defer` 类似，`async` 只适用于外部脚本文件。但与 `defer` 不同的是，标记为 `async` 的当脚本下载完成后立即执行，并不保证按照它们的先后顺序执行，执行阶段也不确定，可能在 `DOMContentLoaded` 事件前后。
+
+## 总结
+
+但由于这两个属性目前还存在浏览器兼容性问题，最稳妥的方法还是将 `script` 标签放在 `body` 标签的底部
+
+用 js 创建的 `script` 标签默认是 async 模式
+
+[浅谈script标签的defer和async](https://juejin.im/entry/5a7ad55ef265da4e81238da9)
+
+## document load 和 document DOMContentLoaded
+
+### load
+
+load是当页面所有资源全部加载完成后（包括DOM文档树，css文件，js文件，图片资源等），执行一个函数
+
+### DOMContentLoaded
+
+当初始的 HTML 文档被完全加载和解析完成之后，`DOMContentLoaded` 事件被触发，而无需等待样式表、图像和子框架的完成加载。
+
+正常来说在 css 放在头部，将 js 文件放在尾部的 html 文件里，js 加载会阻塞文档解析，而脚本需要等位于脚本前面的css加载完才能执行。过程就是 css 加载 -> html 解析 -> js 加载 -> html 解析 -> DOMContentLoaded
+
+### 为什么 css 放在 head 标签，将 js 放在 body 标签尾部
+
+我们再来看一下 chrome 在页面渲染过程中的，绿色标志线是First Paint 的时间。纳尼，为什么会出现 firstpaint，页面的 paint 不是在渲染树生成之后吗？其实现代浏览器为了更好的用户体验,渲染引擎将尝试尽快在屏幕上显示的内容。它不会等到所有 HTML 解析之前开始构建和布局渲染树。部分的内容将被解析并显示。也就是说浏览器能够渲染不完整的 dom 树和 cssom，尽快的减少白屏的时间。假如我们将 js 放在 header，js 将阻塞解析 dom，dom 的内容会影响到 First Paint，导致 First Paint 延后。所以说我们会将 js 放在后面，以减少 First Paint 的时间，但是不会减少 DOMContentLoaded 被触发的时间
+
+![load & DOMContentLoaded](https://images2015.cnblogs.com/blog/746387/201704/746387-20170407181151019-499554025.png)

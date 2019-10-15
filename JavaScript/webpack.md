@@ -364,3 +364,7 @@ Tree-shaking 的本质是消除无用的js代码。无用代码消除在广泛�
 [Tree-Shaking性能优化实践 - 原理篇](https://juejin.im/post/5a4dc842518825698e7279a9)
 
 [你的Tree-Shaking并没什么卵用](https://juejin.im/post/5a5652d8f265da3e497ff3de#heading-3) 这篇文章中提到的问题目前已被优化。
+
+## webpack 原理之提取公共文件
+
+[webpack学习(七) -- 提取公共js代码](https://juejin.im/post/5caff6556fb9a068b03756c6)
