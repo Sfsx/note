@@ -528,6 +528,15 @@ Access-Control-Max-Age:
 
 [HTTP访问控制（CORS）](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Access_control_CORS)
 
+### img 标签与跨域
+
+js 创建的 img 标签跨域请求图片时。若图片数据需要用 canvas 读取，则按以下配置
+
+1. 需要服务器设置 `Access-Control-Allow-Origin: *` 响应头
+2. img 标签的 crossOrigin 属性。该属性有两个值 
+   + `anonymous` 表示：元素的跨域资源请求不需要凭证标志设置。
+   + `use-credentials` 表示：元素的跨域资源请求需要凭证标志设置，意味着该请求需要提供凭证，即请求会提供 cookie，服务器得配置 `Access-Control-Allow-Credentials`
+
 ## virtual dom
 
 ### 什么是 virtual dom
