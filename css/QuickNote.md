@@ -153,3 +153,23 @@ Normalize.css 只是一个很小的 CSS 文件，但它在默认的 HTML 元素�
 + 解释代码：用注释和详细的文档来
 
 Normalize.css 是模块化的，你也可以只引入你需要的。
+
+## CSS 盒模型
+
+### W3C 标准盒模型
+
+属性 `width`、`height` 只包含内容 `content`、不包含 `border` 和 `padding`
+
+```css
+box-sizing: content-box;
+```
+
+### IE 盒模型
+
+属性 `width`、`height` 包含 `border` 和 `padding`，指的是 `content` + `padding` + `border`
+
+```css
+box-sizing: border-box;
+```
+
+![盒模型](https://user-gold-cdn.xitu.io/2017/10/25/9cb491d4bd5d326aeb16632280411283?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
