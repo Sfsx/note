@@ -1,6 +1,8 @@
 # http
 
-[Hypertext Transfer Protocol -- HTTP/1.1](https://www.w3.org/Protocols/rfc2616/rfc2616.html)
+互联网工程任务组（IETF）发布的由委员会创建的草案中的协议规范，叫作 RFC（Request for Comments，请求注解）。委员会对所有人开放，前提是你有时间和意愿参与。HTTP/1.1 最早在 RFC 2068 中定义，之后被 RFC 2616 取代，最终在 RFC 7230 到 RFC 7235 中增补和修订。
+
+别去研究 [RFC 2616](https://www.w3.org/Protocols/rfc2616/rfc2616.html)，更别去研究 [RFC 2068](https://tools.ietf.org/html/rfc2068)，真正有用的是 [RFC 7231](https://tools.ietf.org/html/rfc7231)。
 
 ## header
 
@@ -45,7 +47,7 @@
 
 #### 202 Accepted
 
-表示服务器端已经收到请求消息，但是尚未处理。这个状态码被设计用来将请求交由另外一个进程或者服务器来进行处理，或者是对请求进行批处理的情形。
+表示服务器端已经收到请求消息，但是尚未处理。这个状态码被设计用来将请求交由另外一个进程或者服务器来进行处理，（也许是每天仅运行一次的面向批处理的进程），而无需用户与服务器的连接一直持续到该进程完成为止。
 
 #### 203 Non-Authoritative Information
 
@@ -59,17 +61,55 @@
 
 使用习惯是，在 `PUT` 请求中进行资源更新，但是不需要改变当前展示给用户的页面，那么返回 204 No Content。如果创建了新的资源，那么返回 201 Created。如果页面需要更新以反映更新后的资源，那么需要返回 200。
 
-### 205 Reset Content
+#### 205 Reset Content
 
 用来通知客户端重置文档视图，比如清空表单内容、重置 canvas 状态或刷新用户界面。
 
-### 206 Partial Content
+#### 206 Partial Content
 
 表示请求已经成功，并且主体包含所请请求的数据区间，该数据区间是在请求 `Range` 首部指定的。
 
 如果只包含一个数据区间，那么整个响应的 `Content-Type` 首部值为所请求的文件类型，同时包含 `Content-Range` 首部。
 
 如果包含多个数据区间，那么整个响应的 `Content-Type` 首部的值为 `multipart/byteranges`，其中一个片段对于一个数据区间，并提供 `Content-Range` 和 `Content-Type` 描述信息
+
+除去上述所说，该返回首部必须包含以下字段 `Date`，`ETag / Content-Location`，`Cache-Control`
+
+### 3xx 重定向
+
+#### 300 Multiple Choices
+
+300 Multiple Choices 是一个用来表示重定向的响应状态码，表示该请求拥有多种可能的响应。用户代理或者用户自身应该从中选择一个。由于没有如何进行选择的标准方法，这个状态码极少使用。
+
+#### 301 Moved Permanently
+
+HTTP 301 永久重定向 说明请求的资源已经被移动到了由 Location 头部指定的 url 上，是固定的不会在改变。搜索引擎会根据该响应修正。
+
+尽管标准要求浏览器在收到响应并进行重定向时不应该修改 method 和 body，但是有的一些浏览器会有问题。所以最好是在 GET 或 HEAD 请求的时候用 301 其他情况用 308 来代替 301
+
+#### 302 Found
+
+HTTP 302 Found 重定向状态码表示请求的资源被**暂时**移动到了由 `Location` 头部指定的 `URL` 上。浏览器会重定向到这个 `URL`，但是搜索引擎不会将资源的链接进行更新
+
+尽管标准要求浏览器在收到响应并进行重定向时不应该修改 method 和 body，但是有的一些浏览器会有问题。所以最好是在 GET 或 HEAD 请求的时候用 302 其他情况用 307 来代替 302
+
+#### 303 See Other
+
+通常作为 PUT 或 POST 操作的返回结果，重定向页面的方法要总是使用 `GET`
+
+#### 304 Not Modifined
+
+说明无需再次传输请求的内容，也就是说可以使用缓存的内容。这通常是在一些安全的方法，例如 `GET` 或 `HEAD` 在请求头部附带头部信息 `If-None-Match` 或 `If-Modified-Since`
+
+如果是 `200 Ok` 响应会带有头部 `Cache-Control`、`Content-Location`、`Date`、`ETag`、`Expires` 和 `Vary`
+
+#### 307 Temporary Redirect
+
+临时重定向状态码。307 与 302 很像，他们之间的唯一区别就是，当发送重定向请求时，307 状态码可以确保请求方法和消息主体不会发生改变。当响应状态码为 302 的时候，一些旧有的用户代理会错误地将请求方法转换为 `GET`：使用非 `GET` 请求方法而返回 302 状态码，Web 应用的运行状况是不可预测的；而返回 307 状态码时则是可预测的。
+
+#### 308 Permanent Redirect
+
+永久重定向状态码。308 与 301 很像，区别在于返回 308 状态码时，请求方法和消息主体不会发生改变，然而在返回 301 状态码时，请求方法会被客户端错误的修改为 `GET` 方法
 
 ## HTTP 请求相关问题
 
