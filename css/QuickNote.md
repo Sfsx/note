@@ -30,8 +30,7 @@
 
 ### position absolute
 
-  >可以使用 top left 相对浏览器窗口进行定位
-  
+  >可以使用 top left 相对浏览器窗口进行定位  
   >可以使用 margin-top margin-left 相对父节点进行定位
 
 ### position fixed
@@ -80,6 +79,18 @@
 5. 计算 BFC 的高度时，考虑 BFC 所包含的所有元素，连浮动元素也参与计算；
 6. 浮动盒区域不叠加到 BFC 上；
 
+### 常用添加产生 BFC
+
+overflow: hidden
+
+display: flow-root
+
+### BFC 的作用
+
+1. 不和浮动元素重叠
+2. 清除元素内部浮动
+3. 防止垂直 margin 重叠
+
 ## 图片文字居中
 
 方案一
@@ -116,3 +127,49 @@ render(){
 ```
 
 [鱼和熊掌的故事 - CSS Modules还是BEM鱼和熊掌的故事 - CSS Modules还是BEM](http://benweizhu.github.io/blog/2015/12/05/css-modules-or-bem/)
+
+## reseting 和 normalizing 浏览器默认样式重置
+
+### css reset
+
+```html
+* { outline: 0; padding: 0; margin: 0; border: 0; }
+```
+
+由于 `*` 会匹配所有的元素，所以当浏览器解析到 `*` 时，会将页面内的所有标签都进行如上的样式重置， 这样会影响网页渲染的时间，所以使用 `*` 时一定要慎重，尽量不要在样式重置时应用 `*` 。
+
++ 喜欢众生平等，磨平所有元素的棱角
+
+解决方式找到其中有用的自行添加，而不是整个引入。
+
+### Normalize.css
+
+Normalize.css 只是一个很小的 CSS 文件，但它在默认的 HTML 元素样式上 提供了跨浏览器的高度一致性。相比于传统的CSS reset，Normalize.css 是一种现代的、为 HTML5 准备的优质替代方案。Normalize.css 现在已经被 用于 Twitter Bootstrap、HTML5 Boilerplate、GOV.UK、Rdio、CSS Tricks 以及许许多多其他框架、工具和网站上。
+
++ 保护有用的浏览器默认样式而不是完全去掉它们
++ 一般化的样式：为大部分HTML元素提供
++ 修复浏览器自身的bug并保证各浏览器的一致性
++ 优化CSS可用性：用一些小技巧
++ 解释代码：用注释和详细的文档来
+
+Normalize.css 是模块化的，你也可以只引入你需要的。
+
+## CSS 盒模型
+
+### W3C 标准盒模型
+
+属性 `width`、`height` 只包含内容 `content`、不包含 `border` 和 `padding`
+
+```css
+box-sizing: content-box;
+```
+
+### IE 盒模型
+
+属性 `width`、`height` 包含 `border` 和 `padding`，指的是 `content` + `padding` + `border`
+
+```css
+box-sizing: border-box;
+```
+
+![盒模型](https://user-gold-cdn.xitu.io/2017/10/25/9cb491d4bd5d326aeb16632280411283?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)

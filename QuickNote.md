@@ -105,11 +105,12 @@ ncat 或者说 nc 是一款功能类似 cat 的工具，但是是用于网络的
 
 ## 浏览器加载页面过程
 
-1. DNS 查询
-2. TCP 连接
-3. HTTP 请求即响应
-4. 服务器响应
-5. 客户端渲染
+1. URL 解析
+2. DNS 查询
+3. TCP 连接
+4. 流浪器发起 HTTP 请求
+5. 服务器响应 HTTP 请求
+6. 浏览器解析渲染页面
 
 ### 客户端渲染
 
@@ -271,6 +272,8 @@ JS 引擎线程
 
 看看这个路由 [https://react-1251415695.cos-website.ap-chengdu.myqcloud.com/docs/react-api.html#reactmemo](https://react-1251415695.cos-website.ap-chengdu.myqcloud.com/docs/react-api.html#reactmemo)。大家肯定会发现：这串 url 的最后有以 # 号开始的一串标识。
 
+修改 hash 值直接在 `window.location.hash` 对象上赋值字符串
+
 在支持 HTML5 的浏览器中，当 URL 的 hash 值变化时会触发 hashchange 事件，我们可以通过监听这个事件来说一些处理：
 
 ```js
@@ -354,3 +357,239 @@ WebAssembly 是一种运行在现代网络浏览器中的新型代码，并且�
 
 [WebAssembly概念
 ](https://developer.mozilla.org/zh-CN/docs/WebAssembly/Concepts)
+
+## TCP为什么需要3次握手与4次挥手
+
+### 为什么需要3次握手
+
+为了防止已失效的连接请求报文段突然又传送到了服务端，因而产生错误
+
+client 发出的第一个连接请求报文段并没有丢失，而是在某个网络结点长时间的滞留了，以致延误到连接释放以后的某个时间才到达 server。本来这是一个早已失效的报文段。但 server 收到此失效的连接请求报文段后，就误认为是 client 再次发出的一个新的连接请求。于是就向 client 发出确认报文段，同意建立连接。假设不采用“三次握手”，那么只要 server 发出确认，新的连接就建立了。由于现在 client 并没有发出建立连接的请求，因此不会理睬 server 的确认，也不会向 server 发送数据。但 server 却以为新的运输连接已经建立，并一直等待 client 发来数据。这样，server 的很多资源就白白浪费掉了。采用“三次握手”的办法可以防止上述现象发生。
+
+### 为什么需要4次挥手
+
+tcp 是全双工模式。接收到 FIN 时意味将没有数据再发来，但是还是可以继续发送数据
+
+[TCP为什么需要3次握手与4次挥手](https://blog.csdn.net/xifeijian/article/details/12777187)
+
+## 浏览器同源策略
+
+### 同源的概念
+
++ 协议相同
++ 域名相同
++ 端口相同
+
+举例来说，`http://www.example.com/dir/page.html` 这个网址，协议是 `http://`，域名是 `www.example.com`，端口是 `80`
+
++ `http://www.example.com/dir2/other.html`：同源
++ `http://example.com/dir/other.html`：不同源（域名不同）
++ `http://v2.www.example.com/dir/other.html`：不同源（域名不同）
++ `http://www.example.com:81/dir/other.html`：不同源（端口不同）
+
+### 限制范围
+
+#### 1. cookie、localStorage、indexDB 无法获取
+
+csrf 跨站伪造请求
+
+#### 2. DOM 无法获得
+
+如果没有 DOM 同源策略，也就是说不同域的 iframe 之间可以相互访问，那么黑客可以这样进行攻击：
+
+1. 做一个假网站，里面用 iframe 嵌套一个银行网站 `http://mybank.com`。
+2. 把 iframe 宽高啥的调整到页面全部，这样用户进来除了域名，别的部分和银行的网站没有任何差别。
+3. 这时如果用户输入账号密码，我们的主网站可以跨域访问到 `http://mybank.com` 的 dom 节点，就可以拿到用户的账户密码了。
+
+#### 3. http 请求无法发送
+
+1. 做个假网站，通过跨域请求 GET，获取某个银行网站的 `http://mybank.com` html 文档。
+2. 将文档展示在自己的页面中
+3. 这时如果用户输入账号密码，就可以拿到用户的账户密码了。
+
+### cookie
+
+页面可以改变本身的源，但是会有一些限制。脚本可以将 `document.domain` 设置为当前域或者当前域的超级域，该较短的域会用于后续源检查。
+
+### DOM
+
+h5 的 `window.postMessage` api
+
+### http 请求
+
+HTTP访问控制（CORS）
+
+可以让服务器支持跨域访问或者使用后端代理访问
+
+### WebSocket
+
+协议不实行同源政策，只要服务器支持，就可以通过它进行跨源通信。
+
+### localStorage、indexDB
+
+目前无解
+
+[Same Origin Policy](https://github.com/acgotaku/WebSecurity/blob/master/docs/content/Browser_Security/Same-Origin-Policy.md)
+
+[为什么浏览器要限制跨域访问?](https://www.zhihu.com/question/26379635)
+
+[浏览器同源策略及跨域的解决方法](https://juejin.im/post/5ba1d4fe6fb9a05ce873d4ad)
+
+## CORS
+
+Cross-Origin Sharing Standard (CORS)
+
+浏览器将 CORS 请求分成两类：简单请求（simple request）和非简单请求（not-so-simple request）。
+
+请求方法是以下三种方法之一：
+
++ HEAD
++ GET
++ POST
+
+HTTP的头信息不超出以下几种字段：
+
++ Accept
++ Accept-Language
++ Content-Language
++ DPR
++ Downlink
++ Save-Data
++ Viewport-Width
++ Width
++ Content-Type：
+  + application/x-www-form-urlencoded
+  + multipart/form-data
+  + text/plain
+
+凡是不同时满足上面两个条件，就属于非简单请求。
+
+浏览器对这两种请求的处理，是不一样的。
+
+>注意：这些跨域请求与浏览器发出的其他跨域请求并无二致。如果服务器未返回正确的响应首部，则请求方不会收到任何数据。因此，那些不允许跨域请求的网站无需为这一新的 HTTP 访问控制特性担心。
+
+### 简单请求
+
+头部
+
+```html
+Origin: http://www.laixiangran.cn
+```
+
+服务器返回
+
+```html
+Access-Control-Allow-Origin：http://www.laixiangran.cn
+Access-Control-Allow-Credentials: true
+Access-Control-Expose-Headers：Content-Language, Content-Type
+```
+
+Access-Control-Allow-Origin
+
+该字段是必须的。它的值要么是请求时 Origin 字段的值，要么是一个 *，表示接受任意域名的请求。
+
+Access-Control-Allow-Credentials
+
+该字段可选。它的值是一个布尔值，表示是否允许发送 Cookie。默认情况下，Cookie 不包括在 CORS 请求之中。设为true，即表示服务器明确许可，Cookie 可以包含在请求中，一起发给服务器。这个值也只能设为 true，如果服务器不要浏览器发送 Cookie，删除该字段即可。
+
+Access-Control-Expose-Headers
+
+该字段可选。表示服务器允许请求携带的首部字段
+
+### 非简单请求
+
+浏览器在发送真正的请求之前，会先发送一个 Preflight 请求给服务器，这种请求使用 OPTIONS 方法，发送下列头部
+
+```html
+Origin: http://www.laixiangran.cn
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: NCZ
+```
+
+服务器返回
+
+```html
+Access-Control-Allow-Origin: http://www.laixiangran.cn
+Access-Control-Allow-Methods: GET, POST
+Access-Control-Allow-Headers: NCZ
+Access-Control-Max-Age: 1728000
+```
+
+#### OPTIONS 预检的优化
+
+```html
+Access-Control-Max-Age:
+```
+
+这个头部加上后，可以缓存此次请求的秒数。
+
+在这个时间范围内，所有同类型的请求都将不再发送预检请求而是直接使用此次返回的头作为判断依据。
+
+非常有用，可以大幅优化请求次数
+
+[HTTP访问控制（CORS）](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Access_control_CORS)
+
+### img 标签与跨域
+
+js 创建的 img 标签跨域请求图片时。若图片数据需要用 canvas 读取，则按以下配置
+
+1. 需要服务器设置 `Access-Control-Allow-Origin: *` 响应头
+2. img 标签的 crossOrigin 属性。该属性有两个值 
+   + `anonymous` 表示：元素的跨域资源请求不需要凭证标志设置。
+   + `use-credentials` 表示：元素的跨域资源请求需要凭证标志设置，意味着该请求需要提供凭证，即请求会提供 cookie，服务器得配置 `Access-Control-Allow-Credentials`
+
+## virtual dom
+
+### 什么是 virtual dom
+
+virtual dom 的本质是 JavaScript 对象（该对象的属性描述了真实 dom 的部分属性）。它最少会包含 tag（标签）、props（属性） 和 children（子元素对象） 三个属性。它的作用就是在 js 和 dom 之间做了一个缓存
+
+### 为什么需要 virtual dom
+
+dom 操作是比较昂贵的。当创建一个 dom 除了需要网页重排重绘之外还需要注册相应的 Event listener，加上大量的 dom 属性，这些都很耗时。加之如果你的 JavaScript 操作 DOM 的方式还非常不合理，那就更糟糕了。（以下是 dom 属性图）
+
+![dom prototype](https://upload-images.jianshu.io/upload_images/1959053-409c2c86d78baa71.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
+
+和 dom 操作比起来 js 计算是非常便宜的。将数据修改引起的改变，先修改 virtual dom 再使用 diff 算法进行比较前后差异，这样我们就可以对 DOM 进行最小化修改，跳过中间一些无用的改动。
+
++ 如果一次修改中单次修改只是更改一个 label 表情值，那么直接操作 dom 是更快的。
+
++ 但是在现实应用场景中，一个数据更改，往往会触发页面多处变动。这个时候如果是直接修改 dom 那么每一次操作都可能会触发浏览器的重排与重绘。这时如果运用 virtual dom 机制，在 virtual dom 中进行修改，通过 diff 算法将其中一些 dom 操作进行合并，最后通过框架去修改真实 dom。即减少了 dom 操作又保证了 JavaScript 操作 DOM 方式的合理性
+
+### diff 算法
+
+## script 标签的 defer 和 async
+
+### defer
+
+这个布尔属性被设定用来通知浏览器该脚本将在文档完成解析后，触发 `DOMContentLoaded` 事件前顺序执行，相当于告诉浏览器立即下载，但延迟执行。如果缺少 `src` 属性，该属性不生效。对动态嵌入的脚本使用 `async=false` 来达到类似效果
+
+### async
+
+这个属性与 `defer` 类似，都用于改变处理脚本的行为。同样与 `defer` 类似，`async` 只适用于外部脚本文件。但与 `defer` 不同的是，标记为 `async` 的当脚本下载完成后立即执行，并不保证按照它们的先后顺序执行，执行阶段也不确定，可能在 `DOMContentLoaded` 事件前后。
+
+## 总结
+
+但由于这两个属性目前还存在浏览器兼容性问题，最稳妥的方法还是将 `script` 标签放在 `body` 标签的底部
+
+用 js 创建的 `script` 标签默认是 async 模式
+
+[浅谈script标签的defer和async](https://juejin.im/entry/5a7ad55ef265da4e81238da9)
+
+## document load 和 document DOMContentLoaded
+
+### load
+
+load是当页面所有资源全部加载完成后（包括DOM文档树，css文件，js文件，图片资源等），执行一个函数
+
+### DOMContentLoaded
+
+当初始的 HTML 文档被完全加载和解析完成之后，`DOMContentLoaded` 事件被触发，而无需等待样式表、图像和子框架的完成加载。
+
+正常来说在 css 放在头部，将 js 文件放在尾部的 html 文件里，js 加载会阻塞文档解析，而脚本需要等位于脚本前面的css加载完才能执行。过程就是 css 加载 -> html 解析 -> js 加载 -> html 解析 -> DOMContentLoaded
+
+### 为什么 css 放在 head 标签，将 js 放在 body 标签尾部
+
+我们再来看一下 chrome 在页面渲染过程中的，绿色标志线是First Paint 的时间。纳尼，为什么会出现 firstpaint，页面的 paint 不是在渲染树生成之后吗？其实现代浏览器为了更好的用户体验,渲染引擎将尝试尽快在屏幕上显示的内容。它不会等到所有 HTML 解析之前开始构建和布局渲染树。部分的内容将被解析并显示。也就是说浏览器能够渲染不完整的 dom 树和 cssom，尽快的减少白屏的时间。假如我们将 js 放在 header，js 将阻塞解析 dom，dom 的内容会影响到 First Paint，导致 First Paint 延后。所以说我们会将 js 放在后面，以减少 First Paint 的时间，但是不会减少 DOMContentLoaded 被触发的时间
+
+![load & DOMContentLoaded](https://images2015.cnblogs.com/blog/746387/201704/746387-20170407181151019-499554025.png)
