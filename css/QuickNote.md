@@ -28,6 +28,21 @@
 
 ### float
 
+#### 清除浮动的三种方法
+
+1. 在浮动元素的同级添加一个**块级元素**其 css 设置 `clear: both`
+2. 在浮动元素的父级设置 `overflow: hidden` 利用 BFC
+3. 在浮动元素的父级添加 after 伪类 设置其 css 为
+  
+    ```css
+    :after {
+      content: "";
+      height: 0;
+      display: block;
+      clear: both;
+    }
+    ```
+
 ### position absolute
 
   >可以使用 top left 相对浏览器窗口进行定位  
@@ -126,6 +141,8 @@ render(){
 .block__element–modifier 代表 .element 的不同状态或不同版本。
 ```
 
+推荐 react 中使用 BEM 命名规范 + Classnames 库
+
 [鱼和熊掌的故事 - CSS Modules还是BEM鱼和熊掌的故事 - CSS Modules还是BEM](http://benweizhu.github.io/blog/2015/12/05/css-modules-or-bem/)
 
 ## reseting 和 normalizing 浏览器默认样式重置
@@ -173,3 +190,21 @@ box-sizing: border-box;
 ```
 
 ![盒模型](https://user-gold-cdn.xitu.io/2017/10/25/9cb491d4bd5d326aeb16632280411283?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+## 打印 CSS 优化
+
+通过流媒体将打印样式写在一个 css 文件中
+
+```css
+@media print {}{
+   h1 {
+     color: black;
+   }
+   h2 {}{
+     color: gray;
+   }
+ }
+```
+
+## 高效 CSS
+

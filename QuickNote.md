@@ -9,30 +9,46 @@
 
 + What is the difference between using `<Link to="/page">` and `<a href="page">`On the surface, you seem to be comparing apples and oranges here. The path in your anchor tag is a relative path while that one in the Link is absolute (rightly so, I don't think react-router supports relative paths yet). The problem this creates is say you are on `/blah`, while clicking on your Link will go to `/page`, clicking on the `<a href='page' />` will take you to `/blah/page`. This may not be an issue though since you confirmed the correctness of the url, but thought to note.A bit deeper difference, which is just an addon to @Dennis answer (and the docs he pointed to), is when you are already in a route that matches what the Link points to. Say we are currently on `/page` and the Link points to `/page` or even `/page/:id`, this won't trigger a full page refresh while an `<a />` tag naturally will. See issue on Github.
 
-+ flutter框架
-+ polyfills
-+ PWA
-+ webpacke
-+ redis
-  + key - value 数据库 value 可以是: `string hash list set sortedSet`
-  + `user:fsx:email` 相当于key的前缀，方便进行业务切割
-  + redis服务是一个cs模式的tcp server，使用和http类似的请求响应协议
-  + 优化。应用程序优化部分主要是客户端和Redis交互的一些建议。主要思想是尽可能减少操作Redis往返的通信次数。
-    + 精简键名
-    + 当业务场景不需要数据持久化时，关闭所有的持久化方式可以获得最佳的性能
-    + 限制 `redis` 的内存大小如果不限制内存，当物理内存使用完之后，会使用 `swap` 分区，这样性能较低，如果限制了内存，当到达指定内存之后就不能添加数据了，否则会报 `OOM` 错误。
-    + 尽可能使用时间复杂度为O(1)的操作，避免使用复杂度为O(N)的操作。避免使用这些O(N)命令主要有几个办法：(1)不要把List当做列表使用，仅当做队列来使用;(2)通过机制严格控制Hash、Set、Sorted Set的大小;(3)可能的话，将排序、并集、交集等操作放在客户端执行;(4)绝对禁止使用KEYS命令;(5)避免一次性遍历集合类型的所有成员，而应使用SCAN类的命令进行分批的，游标式的遍历
-    + 使用mset、lpush、zadd等批量操作数据。它的原理同非事务性流行线操作。
-    + 使用流水线操作。Redis支持流水线(pipeline)操作，其中包括了事务流水线和非事务流水线。Redis提供了WATCH命令与事务搭配使用，实现CAS乐观锁的机制。WATCH的机制是：在事务EXEC命令执行时，Redis会检查被WATCH的key，只有被WATCH的key从WATCH起始时至今没有发生过变更，EXEC才会被执行。如果WATCH的key在WATCH命令到EXEC命令之间发生过变化，则EXEC命令会返回失败。使用事务的一个好处是被MULTI和EXEC包裹的命令在执行时不会被其它客户端打断。但是事务会消耗资源，随着负载不断增加，由WATCH、MULTI、EXEC组成的事务(CAS)可能会进行大量重试，严重影响程序性能。
-    如果用户需要向Redis发送多个命令，且一个命令的执行结果不会影响另一个命令的输入，那么我们可以使用非事务流水线来代替事务性流水线。非事务流水线主要作用是将待执行的命令一次性全部发送给Redis，减少来回通信的次数，以此来提升性能。
-    + 不要让你的Redis所在机器物理内存使用超过实际内存总量的60%。
-+ `WebSocket`
-  + TCP 是第四层传输层协议
-  + WebSocket Http 是第七层应用层协议
-  + 对于 `WebSocket` 来说，它必须依赖 `HTTP` 协议进行一次握手 ，握手成功后，数据就直接从 `TCP` 通道传输，与 `HTTP` 无关了
-+ 一个 WebIDE 工具
-  + CodeSandbox 容器。支持在线编写前端demo，可以将编写好的demo链接嵌入博文。
-  + [首页](https://codesandbox.io/)
+## 规范
+
+[W3C](https://www.w3.org/TR/)
+
+[ECMAScript](https://tc39.es/ecma262/)
+
+[HTML Living Standard](https://html.spec.whatwg.org/)
+
+## 知识网站
+
+[The Modern JavaScript Tutorial](https://javascript.info/)
+
+## redis
+
++ key - value 数据库 value 可以是: `string hash list set sortedSet`
++ `user:fsx:email` 相当于key的前缀，方便进行业务切割
++ redis服务是一个cs模式的tcp server，使用和http类似的请求响应协议
+
+### 优化
+
+应用程序优化部分主要是客户端和Redis交互的一些建议。主要思想是尽可能减少操作Redis往返的通信次数。
+
++ 精简键名
++ 当业务场景不需要数据持久化时，关闭所有的持久化方式可以获得最佳的性能
++ 限制 `redis` 的内存大小如果不限制内存，当物理内存使用完之后，会使用 `swap` 分区，这样性能较低，如果限制了内存，当到达指定内存之后就不能添加数据了，否则会报 `OOM` 错误。
++ 尽可能使用时间复杂度为O(1)的操作，避免使用复杂度为O(N)的操作。避免使用这些O(N)命令主要有几个办法：(1)不要把List当做列表使用，仅当做队列来使用;(2)通过机制严格控制Hash、Set、Sorted Set的大小;(3)可能的话，将排序、并集、交集等操作放在客户端执行;(4)绝对禁止使用KEYS命令;(5)避免一次性遍历集合类型的所有成员，而应使用SCAN类的命令进行分批的，游标式的遍历
++ 使用mset、lpush、zadd等批量操作数据。它的原理同非事务性流行线操作。
++ 使用流水线操作。Redis支持流水线(pipeline)操作，其中包括了事务流水线和非事务流水线。Redis提供了WATCH命令与事务搭配使用，实现CAS乐观锁的机制。WATCH的机制是：在事务EXEC命令执行时，Redis会检查被WATCH的key，只有被WATCH的key从WATCH起始时至今没有发生过变更，EXEC才会被执行。如果WATCH的key在WATCH命令到EXEC命令之间发生过变化，则EXEC命令会返回失败。使用事务的一个好处是被MULTI和EXEC包裹的命令在执行时不会被其它客户端打断。但是事务会消耗资源，随着负载不断增加，由WATCH、MULTI、EXEC组成的事务(CAS)可能会进行大量重试，严重影响程序性能。
+如果用户需要向Redis发送多个命令，且一个命令的执行结果不会影响另一个命令的输入，那么我们可以使用非事务流水线来代替事务性流水线。非事务流水线主要作用是将待执行的命令一次性全部发送给Redis，减少来回通信的次数，以此来提升性能。
++ 不要让你的Redis所在机器物理内存使用超过实际内存总量的60%。
+
+## `WebSocket`
+
++ WebSocket Http 是第七层应用层协议
++ 对于 `WebSocket` 来说，它必须依赖 `HTTP` 协议进行一次握手 ，握手成功后，数据就直接从 `TCP` 通道传输，与 `HTTP` 无关了
+
+## CodeSandbox
+
++ CodeSandbox 容器。支持在线编写前端demo，可以将编写好的demo链接嵌入博文。
++ [首页](https://codesandbox.io/)
 
 ## SVG 在线制作工具
 
@@ -114,11 +130,11 @@ ncat 或者说 nc 是一款功能类似 cat 的工具，但是是用于网络的
 
 ### 客户端渲染
 
-1. 处理 HTML 标记并构建 DOM tree
-2. 处理 CSS 标记并构建 CSSOM tree
-3. 将 DOM 与 CSSOM 合并成一个 render tree
-4. 布局（layout），根据 render tree 计算每个节点的位置大小等信息
-5. 绘制 render tree
+1. 解析 HTML 代码并构建 DOM tree
+2. 解析 CSS 代码并构建 CSSOM tree
+3. 将 DOM 与 CSSOM 合并成一个渲染树（render tree）
+4. 布局（layout），根据渲染树计算每个节点的位置大小等信息
+5. 将布局绘制（paint）在屏幕上
 
 ![webkit main flow](https://images0.cnblogs.com/blog/118511/201303/30174613-aea0f7a683574d87a7fa049dc52f5ae3.png)
 
@@ -126,11 +142,11 @@ ncat 或者说 nc 是一款功能类似 cat 的工具，但是是用于网络的
 
 其中 1、2、3 非常快，但是 4 和 5 比较耗时，有三个术语：
 
-“重排”和“回流” 值的是重新执行步骤 4
+>4 和 5 统称为“渲染”（render）  
+>“重排”指的是重新执行步骤 4  
+>“重绘”指重新执行步骤 5
 
-“重绘”至重新执行步骤 5
-
-重排意味着重新计算节点的位置大小等信息，重新再草稿本上画了草图，所以一定会重绘。但重绘不一定会重排，比如背景颜色变化。
+“重排”意味着重新计算节点的位置大小等信息，重新再草稿本上画了草图，所以一定会“重绘”。但“重绘”不一定会“重排”，比如背景颜色变化。
 
 #### reflow 重排
 
@@ -138,7 +154,7 @@ ncat 或者说 nc 是一款功能类似 cat 的工具，但是是用于网络的
 2. DOM 树变化（如：增删节点，改变元素内容）
 3. Render 树变化（如：padding 改变、元素位置改变、元素字体大小改变）
 4. 浏览器窗口 resize
-5. 获取元素的某些属性：浏览器为了获得正确的值也会提前触发回流，这样就使得浏览器的优化失效了，这些属性包括offsetLeft、offsetTop、offsetWidth、offsetHeight、 scrollTop/Left/Width/Height、clientTop/Left/Width/Height、调用了getComputedStyle()或者IE的currentStyle
+5. 获取元素的某些属性：浏览器为了获得正确的值也会提前触发重排，这样就使得浏览器的优化失效了，这些属性包括offsetLeft、offsetTop、offsetWidth、offsetHeight、 scrollTop/Left/Width/Height、clientTop/Left/Width/Height、调用了getComputedStyle()或者IE的currentStyle
 
 #### repaint 重绘
 
@@ -147,11 +163,14 @@ ncat 或者说 nc 是一款功能类似 cat 的工具，但是是用于网络的
 
 #### 优化reflow、repaint触发次数
 
-1. 避免逐个修改节点样式，尽量一次性修改
-2. 使用DocumentFragment将需要多次修改的DOM元素缓存，最后一次性append到真实DOM中渲染
-3. 可以将需要多次修改的DOM元素设置display: none，操作完再显示。（因为隐藏元素不在render树内，因此修改隐藏元素不会触发回流重绘）
-4. 避免多次读取某些属性（见上）
+1. 使用 DocumentFragment 将需要多次修改的 DOM 元素缓存，最后一次性 append 到真实 DOM 中渲染。或者使用 `cloneNode()` 方法，在克隆的节点上进行操作，然后再用克隆的节点替换原始节点。
+2. 可以将需要多次修改的DOM元素设置 `display: none`，操作完再显示。（因为隐藏元素不在render树内，因此修改隐藏元素不会触重排重绘）
+3. 避免多次读取某些属性（见上）
+4. 避免多个 DOM 读写操作交叉在一起，某些读操作会要求浏览器强制重排
 5. 将复杂的节点元素脱离文档流，降低回流成本
+6. 不要逐条修改样式，通过改变 class 一次性的改变样式
+
+#### 使用 `window.requestAnimationFrame()`、`window.requestIdleCallback()` 这两个方法调节重新渲染
 
 [How browsers work](http://taligarsiel.com/Projects/howbrowserswork1.htm)
 
@@ -533,10 +552,12 @@ Access-Control-Max-Age:
 
 js 创建的 img 标签跨域请求图片时。若图片数据需要用 canvas 读取，则按以下配置
 
-1. 需要服务器设置 `Access-Control-Allow-Origin: *` 响应头
-2. img 标签的 crossOrigin 属性。该属性有两个值 
-   + `anonymous` 表示：元素的跨域资源请求不需要凭证标志设置。
-   + `use-credentials` 表示：元素的跨域资源请求需要凭证标志设置，意味着该请求需要提供凭证，即请求会提供 cookie，服务器得配置 `Access-Control-Allow-Credentials`
+需要服务器设置 `Access-Control-Allow-Origin: *` 响应头
+
+img 标签的 crossOrigin 属性。该属性有两个值
+
++ `anonymous` 表示：元素的跨域资源请求不需要凭证标志设置。
++ `use-credentials` 表示：元素的跨域资源请求需要凭证标志设置，意味着该请求需要提供凭证，即请求会提供 cookie，服务器得配置 `Access-Control-Allow-Credentials`
 
 ## virtual dom
 
@@ -593,3 +614,35 @@ load是当页面所有资源全部加载完成后（包括DOM文档树，css文�
 我们再来看一下 chrome 在页面渲染过程中的，绿色标志线是First Paint 的时间。纳尼，为什么会出现 firstpaint，页面的 paint 不是在渲染树生成之后吗？其实现代浏览器为了更好的用户体验,渲染引擎将尝试尽快在屏幕上显示的内容。它不会等到所有 HTML 解析之前开始构建和布局渲染树。部分的内容将被解析并显示。也就是说浏览器能够渲染不完整的 dom 树和 cssom，尽快的减少白屏的时间。假如我们将 js 放在 header，js 将阻塞解析 dom，dom 的内容会影响到 First Paint，导致 First Paint 延后。所以说我们会将 js 放在后面，以减少 First Paint 的时间，但是不会减少 DOMContentLoaded 被触发的时间
 
 ![load & DOMContentLoaded](https://images2015.cnblogs.com/blog/746387/201704/746387-20170407181151019-499554025.png)
+
+## iframe
+
+## localStorage
+
+`localStorage` 类似 `sessionStorage`，但其区别在于：存储在 `localStorage` 的数据可以长期保留；而当页面会话结束——也就是说，当页面被关闭时，存储在 `sessionStorage` 的数据会被清除
+
+### 限制
+
+处于浏览器的同源策略，相同的协议、相同的主机名、相同的端口下才能访问相同的 `localStorage` 中的数据，这点跟 `cookie` 的差别还是蛮大的
+
+### 容量限制
+
+目前业界基本上统一为5M，已经比 `cookie` 的4K要大很多了。
+
+### 数据结构
+
+`key - value` 键值对（键值对总是以字符串的形式存储意味着数值类型会自动转化为字符串类型）
+
+## 浏览器缓存
+
+### 浏览器常见字段和指令
+
++ expires: 告知客户端资源缓存失效的绝对时间
++ last-modified: 资源最后一次修改的时间
++ Etag: 文件的特殊标识
++ cache-control:告诉客户端或是服务器如何处理缓存。
++ private: cache-control里的响应指令.表示客户端可以缓存
++ public: cache-control里的响应指令.表示客户端和代理服务器都可缓存.如果没有明确指定private，则默认为public。
++ no-cache: cache-control里的指令.表示需要可以缓存，但每次用应该去向服务器验证缓存是否可用
++ no-store: cache-control字段里的指令.表示所有内容都不会缓存，强制缓存，对比缓存都不会触发.
++ max-age=xxx: cache-control字段里的指令.表示缓存的内容将在 xxx 秒后失效
