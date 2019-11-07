@@ -9,6 +9,18 @@
 
 + What is the difference between using `<Link to="/page">` and `<a href="page">`On the surface, you seem to be comparing apples and oranges here. The path in your anchor tag is a relative path while that one in the Link is absolute (rightly so, I don't think react-router supports relative paths yet). The problem this creates is say you are on `/blah`, while clicking on your Link will go to `/page`, clicking on the `<a href='page' />` will take you to `/blah/page`. This may not be an issue though since you confirmed the correctness of the url, but thought to note.A bit deeper difference, which is just an addon to @Dennis answer (and the docs he pointed to), is when you are already in a route that matches what the Link points to. Say we are currently on `/page` and the Link points to `/page` or even `/page/:id`, this won't trigger a full page refresh while an `<a />` tag naturally will. See issue on Github.
 
+## 规范
+
+[W3C](https://www.w3.org/TR/)
+
+[ECMAScript](https://tc39.es/ecma262/)
+
+[HTML Living Standard](https://html.spec.whatwg.org/)
+
+## 知识网站
+
+[The Modern JavaScript Tutorial](https://javascript.info/)
+
 ## redis
 
 + key - value 数据库 value 可以是: `string hash list set sortedSet`
@@ -619,3 +631,17 @@ load是当页面所有资源全部加载完成后（包括DOM文档树，css文�
 ### 数据结构
 
 `key - value` 键值对（键值对总是以字符串的形式存储意味着数值类型会自动转化为字符串类型）
+
+## 浏览器缓存
+
+### 浏览器常见字段和指令
+
++ expires: 告知客户端资源缓存失效的绝对时间
++ last-modified: 资源最后一次修改的时间
++ Etag: 文件的特殊标识
++ cache-control:告诉客户端或是服务器如何处理缓存。
++ private: cache-control里的响应指令.表示客户端可以缓存
++ public: cache-control里的响应指令.表示客户端和代理服务器都可缓存.如果没有明确指定private，则默认为public。
++ no-cache: cache-control里的指令.表示需要可以缓存，但每次用应该去向服务器验证缓存是否可用
++ no-store: cache-control字段里的指令.表示所有内容都不会缓存，强制缓存，对比缓存都不会触发.
++ max-age=xxx: cache-control字段里的指令.表示缓存的内容将在 xxx 秒后失效
