@@ -15,6 +15,8 @@
 
 [ECMAScript](https://tc39.es/ecma262/)
 
+[TC39历年提案](https://prop-tc39.now.sh/)
+
 [HTML Living Standard](https://html.spec.whatwg.org/)
 
 ## 知识网站
@@ -641,7 +643,7 @@ load是当页面所有资源全部加载完成后（包括DOM文档树，css文�
 
 ## 浏览器缓存
 
-### 浏览器常见字段和指令
+### http 常见 header 字段
 
 + expires: 告知客户端资源缓存失效的绝对时间
 + last-modified: 资源最后一次修改的时间

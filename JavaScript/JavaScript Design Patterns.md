@@ -335,17 +335,48 @@ observer.prototype.delete(fn) {
   oberverList.delete(fn)
 }
 
-function observable(value) {
+function update(value) {
   observerList.forEach(observe => observe(value))
 }
 
-const print = function(value) {
+const print = function(value) { // 作为回调函数
   console.log(`hello, ${value}`);
 }
 
 observe(print)
 
-observable('Sfsx') // 输出 hello, Sfsx
+update('Sfsx') // 输出 hello, Sfsx
+```
+
+阮一峰 观察者模式
+
+```js
+/* 实现 */
+const observerList = new Set()
+
+const observe = fn => queuedObservers.add(fn);
+const observable = object => new Proxy(object, {set})
+
+const set = (target, key, value, receiver) => {
+  const result = Reflect.set(target, key, value, receiver);
+  queuedObservers.forEach(observer => observer());
+  return result;
+}
+
+/* 使用 */
+const person = observable({
+  name: '张三',
+  age: 20
+});
+
+function print() {
+  console.log(`${person.name}, ${person.age}`)
+}
+
+observe(print);
+person.name = '李四';
+// 输出
+// 李四, 20
 ```
 
 ## Publish/Subscribe
@@ -354,11 +385,11 @@ observable('Sfsx') // 输出 hello, Sfsx
 
 Observer 模式和 Publish/Subscribe 模式最大的区别就是 Observer 模式中，observer 直接订阅 subject 内容改变的事件。而 Publish/Subscribe 模式中 Subscriber 订阅的是 事件通道（事件通道可以同时存在很多条），Subscriber 获得的是一个事件通知，而不是直接调用其他对象的方法。
 
-优点
+### 优点
 
 可以用于将应用分解为更小、更松散耦合的块，以改进代码管理和潜在复用
 
-缺点
+### 缺点
 
 + 由于是松散耦合，当订阅者执行任务失败，发布者将无法察觉
 + 订阅者五十彼此的存在，并对变化发布者产生的成本视而不见。由于订阅者和发布者之间的动态关系，很难跟踪依赖更新。

@@ -368,3 +368,11 @@ Tree-shaking 的本质是消除无用的js代码。无用代码消除在广泛�
 ## webpack 原理之提取公共文件
 
 [webpack学习(七) -- 提取公共js代码](https://juejin.im/post/5caff6556fb9a068b03756c6)
+
+## hard-source-webpack-plugin
+
+HardSourceWebpackPlugin是webpack的插件，可为模块提供中间缓存步骤。 为了查看结果，您需要使用此插件运行两次webpack：第一次构建将花费正常时间。 第二个版本将明显更快
+
+[HardSourceWebpackPlugin](https://github.com/mzgoddard/hard-source-webpack-plugin)
+
+## 
