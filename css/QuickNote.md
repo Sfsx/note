@@ -141,6 +141,26 @@ render(){
 .block__element–modifier 代表 .element 的不同状态或不同版本。
 ```
 
+实际例子
+
+```html
+<ul class="xxx">
+  <li class="xxx__item">第一项
+    <div class="xxx__product-name">我是名称</div>
+    <span class="xxx__ming-zi-ke-yi-hen-chang">看类名</span>
+    <a href="#" class="xxx__link">我是link</a>
+  <li>
+  <li class="xxx__item xxx__item_current">第二项 且 当前选择项
+    <div class="xxx__product-name">我是名称</div>
+    <a href="#" class="xxx__item-link">我是link</a>
+  <li>
+  <li class="xxx__item xxx__item_hightlight">第三项 且 特殊高亮
+    <div class="xxx__product-name">我是名称</div>
+    <a href="#" class="xxx__item-link">我是link</a>
+  <li>
+</ul>
+```
+
 推荐 react 中使用 BEM 命名规范 + Classnames 库
 
 [鱼和熊掌的故事 - CSS Modules还是BEM鱼和熊掌的故事 - CSS Modules还是BEM](http://benweizhu.github.io/blog/2015/12/05/css-modules-or-bem/)
@@ -208,3 +228,41 @@ box-sizing: border-box;
 
 ## 高效 CSS
 
+## the shapes of css
+
+```css
+  #rss {
+    width: 20em;
+    height: 20em;
+    border-radius: 3em;
+    background-color: #ff0000;
+    font-size: 14px;
+  }
+  #rss:before {
+    content: '';
+    z-index: 1;
+    display: block;
+    height: 5em;
+    width: 5em;
+    background: #fff;
+    border-radius: 50%;
+    position: relative;
+    top: 11.5em;
+    left: 3.5em;
+  }
+  #rss:after {
+    content: '';
+    display: block;
+    background: #ff0000;
+    width: 13em;
+    height: 13em;
+    top: -2em;
+    left: 3.8em;
+    border-radius: 2.5em;
+    position: relative;
+    box-shadow:
+      -2em 2em 0 0 #fff inset, 
+      -4em 4em 0 0 #ff0000 inset,
+      -6em 6em 0 0 #fff inset
+  }
+```  
