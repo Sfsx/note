@@ -908,86 +908,6 @@ HTMLCollection 对象只会包含文档中的 `Element` 节点。
 
 [原文链接](https://www.zhihu.com/question/24702250)
 
-## csrf
-
-### 1、什么是CSRF攻击
-
-CSRF 攻击是黑客借助受害者的 cookie 骗取服务器的信任，但是黑客并不能拿到 cookie，也看不到 cookie 的内容。另外，对于服务器返回的结果，由于**浏览器同源策略**的限制，黑客也无法进行解析。因此，黑客无法从返回的结果中得到任何东西，他所能做的就是给服务器发送请求，以执行请求中所描述的命令，在服务器端直接改变数据的值，而非窃取服务器中的数据。
-
-2011年的解决方案：
-
-[CSRF 攻击的应对之道](https://www.ibm.com/developerworks/cn/web/1102_niugang_csrf/)
-
-### 2、有哪些防御方案
-
-1. 用户操作限制，比如验证码；
-2. 请求来源限制，比如限制HTTP Referer才能完成操作；
-3. token验证机制，比如请求数据字段中添加一个token，响应请求时校验其有效性；
-
-**token验证的CSRF防御机制是公认最合适的方案**，也是本文讨论的重点。
-
-### 3、前后端分离下有何不同
-
-这个基本过时，现在 nodejs 配合 redis 拥有完美的 session 解决方案。
-
-### 实现思路
-
-#### 1、可行性方案
-
-token防御的整体思路是：
-
-+ 第一步：后端随机产生一个 token，把这个 token 保存在 SESSION 状态中；同时，后端把这个 token 交给前端页面；
-+ 第二步：下次前端需要发起请求（比如发帖）的时候把这个 token 加入到请求数据或者头信息中，一起传给后端；
-+ 第三步：后端校验前端请求带过来的 token 和 SESSION 里的 token 是否一致；
-+ 第四步：定时更新 token 防止 token 被解析，每5分钟更新一次
-
-这里依旧有个细节值得提一下：**Nodejs 的上层一般是 nginx，而 nginx 默认会过滤头信息中不合法的字段（比如头信息字段名包含“_”的），这里在写头信息的时候需要注意。**
-
-### "One more thing..."
-
-上文也提到，通过cookie及http头信息传递加密token会有很多弊端；有没有更优雅的实现方案呢？
-
-#### 1、cookie中samesite属性
-
-回溯下 CSRF 产生的根本原因：cookie 会被第三方发起的跨站请求携带，这本质上是 HTTP 协议设计的漏洞。
-
-那么，我们能不能通过 cookie 的某个属性禁止 cookie 的这个特性呢？
-
-好消息是，在最新的 RFC规范中已经加入了 `samesite` 属性。细节这里不再赘述，可以参考：
-
-1. [SameSite Cookie，防止 CSRF 攻击](http://www.cnblogs.com/ziyunfei/p/5637945.html)
-2. [Same-site Cookies](https://tools.ietf.org/html/draft-west-first-party-cookies-07#page-8)
-
-### 实践
-
-#### axios csrf
-
-`headers: { 'X-CSRF-TOKEN': 获取上面csrf返回的数据 }`
-
-开坑待填。。。
-
-#### fetch csrf
-
-开坑代填。。。
-
-[前后端分离架构下CSRF防护机制](https://github.com/xiongwilee/blog/issues/7)
-
-#### SameSite
-
-已验证
-
-##### Strict
-
-Strict 为严格模式，另一个域发起的任何请求都不会携带该类型的 cookie，能够完美的阻止 CSRF 攻击。通过一个导航网站的超链接打开另一个域的网页也不能携带该类型的 cookie
-
-##### Lax
-
-Lax 相对于 Strict 模式来说，放宽了一些。简单来说就是，用**安全的 HTTP 方法（GET、HEAD、OPTIONS 和 TRACE）改变了当前页面或者打开了新页面时**，可以携带该类型的 cookie。
-
-[跨站请求伪造与 Same-Site Cookie](https://www.jianshu.com/p/66f77b8f1759)
-
-[SameSite Cookie attribute?](https://medium.com/compass-security/samesite-cookie-attribute-33b3bfeaeb95)
-
 ## CORB
 
 Cross-Origin Read Blocking (CORB)
@@ -1182,6 +1102,14 @@ alert(e2 === 4) //false === 操作符不进行隐式转换
 [浅析toString与valueOf](https://segmentfault.com/a/1190000009132264)
 
 ## 洗牌算法
+
+其算法思想就是 从原始数组中随机抽取一个新的元素到新数组中
+
+1. 从还没处理的数组（假如还剩n个）中，产生一个[0, n]之间的随机数 random
+2. 从剩下的 n 个元素中把第 random 个元素取出到新数组中
+3. 删除原数组第random个元素
+4. 重复第 2 3 步直到所有元素取完
+5. 最终返回一个新的打乱的数组
 
 ### Knuth-Durstenfeld Shuffle
 
