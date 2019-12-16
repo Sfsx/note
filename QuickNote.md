@@ -23,6 +23,12 @@
 
 [The Modern JavaScript Tutorial](https://javascript.info/)
 
+## 优秀文章
+
+### chrome 性能分析介绍
+
+[全新Chrome Devtool Performance使用指南](https://zhuanlan.zhihu.com/p/29879682)
+
 ## redis
 
 + key - value 数据库 value 可以是: `string hash list set sortedSet`
