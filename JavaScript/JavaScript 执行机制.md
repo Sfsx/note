@@ -1,5 +1,78 @@
 # JavaScript 执行机制
 
+## 进程、线程和协程
+
+### 线程
+
+线程（thread）是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位
+
++ 任务1 是计算A=1+2；
++ 任务2 是计算B=20/5；
++ 任务3 是计算C=7*8；
++ 任务4 是显示最后计算的结果。
+
+正常情况下程序可以使用单线程来处理，也就是分四步按照顺序分别执行这四个任务。
+
+如果采用多线程，会怎么样呢？我们只需分“两步走”：第一步，使用三个线程同时执行前三个任务，第二步，在执行第四个任务
+
+多线程可以并行处理任务，但是线程是不能单独存在的，它是由进程来启动和管理的。那什么又是进程呢？
+
+### 进程
+
+进程（Process）是计算机中的程序关于某数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，是操作系统结构的基础。在早期面向进程设计的计算机结构中，进程是程序的基本执行实体；在当代面向线程设计的计算机结构中，进程是线程的容器。
+
+线程是依附于进程的，而进程中使用多线程并行处理能提升运算效率
+
+进程与线程之间的关系
+
+1. 进程中的任意一线程执行出错，都会导致整个进程的崩溃。
+2. 线程直接共享进程中的数据。
+3. 当一个进程关闭后，操作系统会回收进程所占用的内存。
+4. 进程之间的内容相互隔离
+
+### 协程
+
+协程（Coroutine），又称微线程，纤程。协程的调度完全由用户控制。协程拥有自己的调用栈。协程调度切换时，将调用栈保存到其他地方，在切回来的时候，恢复先前保存的寄存器调用栈，直接操作栈则基本没有内核切换的开销，可以不加锁的访问全局变量，所以调用栈的切换非常快。
+
+其实在 JavaScript 中，生成器（Generator）就是协程的一种实现方式
+
+```js
+function* gen(x){
+  var y = yield x + 2;
+  return y;
+}
+
+var g = gen(1);
+g.next() // { value: 3, done: false }
+g.next(2) // { value: 2, done: true }
+```
+
+上面代码中，调用 Generator 函数，会放会一个内部指针（即遍历器）g。这是 Generator 函数不同于普通函数的另一个地方，即执行它不会返回结果，返回制作对象。调用指针 g 的 next 方法，会移动内部指针，指向第一个遇到的 yield 语句。
+
+1. `var g = gen(1);` 创建了 `g` 协程
+2. 然后在父协程中通过执行 `g.next` 把主线程的控制权交给 `g` 协程。上例是执行到 `x + 2` 为止，y 的赋值操作还未开始。此时返回值为 x + 2（即3）。
+3. 当函数遇到 `yield` 时交出主线程控制权，回到父协程
+4. 父协程恢复后执行 `g.next(2)` 把主线程的控制权交给 `g` 协程。并传递参数 2，这个参数会将上一次中断的 yield 表达式的值设为 2，因此 y 等于 2
+5. 子协程执行遇到 `return` 结束生成器函数，返回 `return` 的值，并把 `done` 标志为 `true`。主线程控制权重新回到父协程
+6. 父协程执行完所有代码，程序结束。
+
+```js
+
+function* gen(){
+  var result = yield new Promise((resolve) => {
+    resolve('prmoise')
+  });
+  console.log(result);
+}
+
+var g = gen();
+var result = g.next(); // 线程执行权交给子协程
+
+result.value.then(function(data) {
+  g.next(data); // 线程执行权交给子协程
+})
+```
+
 ## 并发模型与事件循环
 
 ### 栈
@@ -33,9 +106,9 @@
 
 #### macrotask queue and microtask queue
 
-`macro-tasks: script(整体代码),setTimeout, setInterval, setImmediate, I/O, UI rendering, requestAnimationFrame`
+`macro-tasks: script(整体代码), setTimeout, setInterval, 网络请求(I/O), UI rendering, dom事件回调`
 
-`micro-tasks:Promises, MutationObserver`
+`micro-tasks: Promises, MutationObserver`
 
 #### `MutationObserver` 介绍
 
@@ -82,6 +155,21 @@ textNode.data = String(counter)
 </script>
 ```
 
+#### setTimeout
+
+使用注意事项
+
+1. 如果当前任务执行时间过久，会影响定时器到期回调函数的执行
+2. 如果 setTimeout存在嵌套调用，那么浏览器会设置最短间隔为 4 ms
+3. 未激活的页面，setTimeout 执行的最小间隔是 1000ms
+4. 延迟执行时间有最大值 2147483647ms
+5. 使用 setTimeout 设置的回调函数中的 this 默认指向全局环境
+
+#### requestAnimationFrame 比 setTimeout 更适合动画
+
++ 浏览器在下次重绘之前调用指定的回调函数更新动画
++ 每一个都会接受到一个相同的时间戳
+
 #### 浏览器执行过程
 
 1. 从 macrotask queue 中出列第一个任务，并执行
@@ -91,6 +179,9 @@ textNode.data = String(counter)
 3. 如果有需要渲染的更改，则渲染。
 4. 如果 macrotask queue 为空，则等待 macrotask 出现
 5. 回到步骤1
+
++ 在执行微任务过程中产生的新的微任务并不会推迟到下个事件循环再执行，而是在当前事件循环继续执行
++ 如果微任务执行时产生过多的微任务，则会导致事件循环卡在清口微任这一步，导致宏任务无法得到及时的执行
 
 [Event loop: microtasks and macrotasks](https://javascript.info/event-loop)
 
@@ -161,16 +252,45 @@ poll 阶段有两个主要的功能：
 
 [理解nodejs的事件循环](http://coolcao.com/2016/12/22/node-js-event-loop/)
 
-[* 深入理解js事件循环机制（Node.js篇）](http://lynnelv.github.io/js-event-loop-nodejs)
+**[深入理解js事件循环机制（Node.js篇）](http://lynnelv.github.io/js-event-loop-nodejs)**
+
+**[一次弄懂Event Loop（彻底解决此类面试问题）](https://juejin.im/post/5c3d8956e51d4511dc72c200#heading-8)**
 
 ## async/await 经典题目
 
-**实际上 `await` 是一个让出线程的标志。** `await` 后面的函数会先执行一遍，然后就会跳出整个 `async` 函数来执行后面js栈的代码
+~~**实际上 `await` 是一个让出线程的标志。** `await` 后面的函数会先执行一遍，然后就会跳出整个 `async` 函数来执行后面 js 栈的代码~~
 
-node 遇到 await 先执行后面的函数，将 resolve 压进回调队列再让出线程  
-chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 压进回调队列
+~~node 遇到 await 先执行后面的函数，将 resolve 压进回调队列再让出线程~~
+
+~~chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 压进回调队列~~
 
 上面这段说法有误，当年年轻不懂事，不打算删了，**引以为戒**
+
+### 起因
+
+异步编程
+
+1. 回调函数
+   >嵌套地狱
+2. `promise`
+   >代码冗余，代码里包含一堆的 `then`，语义不够清晰
+3. `Generator`
+   >需要人为处理执行权交替，需要执行器，例如 `co`
+4. `async/await`
+   >更好的语义，`async` 和 `await`，比起星号和 `yield`，语义更清楚了。`async` 表示函数里有异步操作，`await` 表示紧跟在后面的表达式需要等待结果。
+   >更广的适用性 `yield` 后面必须是 `Promise` 对象 `await` 关键字后面，可以是 `Promise` 对象、thenable 对象（具有 `then` 方法的对象）和原始类型的值（数值、字符串和布尔值，但这时会自动转成立即 `resolved` 的 `Promise` 对象）。
+
+### async
+
+带 `async` 关键字的函数，它使得你的函数的返回值必定是 `promise` 对象
+
+如果 `async` 关键字函数返回的不是 `promise` ，会自动用 `Promise.resolve()` 包装
+
+如果 `async` 关键字函数显式地返回 `promise` ，那就以你返回的 `promise` 为准
+
+### await
+
+`await` 关键字后面，可以是 `Promise` 对象和原始类型的值（数值、字符串和布尔值，但这时会自动转成立即 `resolved` 的 `Promise` 对象）。`await` 关键字就是内部 `then` 命令的语法糖。我的理解是协程交换执行权的那部分代码的语法糖
 
 ```js
 /**
@@ -201,21 +321,14 @@ chrome 遇到 await 先执行后面的函数，先让出线程，再将 resolve 
 })();
 ```
 
-遇到 `await` 先执行后面的函数，先中断 `async` 运行外部代码，再执行 `await Promiese.resolve(undefined)`。这段代码类似于 `Promise.resolve(undefined).then((undefined) => { })`。故将 `then` 的第一个回调参数 `(undefined) => {}` 推入微任务队列。
-
-第一次宏任务到此执行完毕。开始执行微任务。
-
 补充 **node v10.0.0 与浏览器运行结果一致。**
 
 [详细答案](https://zhuanlan.zhihu.com/p/52000508)
 
-### async 做一件什么事情
+### 关于73以下版本和73版本的区别
 
-带 `async` 关键字的函数，它使得你的函数的返回值必定是 `promise` 对象
-
-如果 `async` 关键字函数返回的不是 `promise` ，会自动用 `Promise.resolve()` 包装
-
-如果 `async` 关键字函数显式地返回 `promise` ，那就以你返回的 `promise` 为准
++ 在老版本版本以下，先执行 promise2，再执行 async1 end
++ 在73版本，先执行 async1 end 再执行 promise2
 
 ## 作用域链以及词法作用域
 
