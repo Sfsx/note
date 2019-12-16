@@ -131,3 +131,26 @@ ASSET_TYPES.forEach(function (type) {
 ```
 
 通过 `Object.create` 将 `Vue.options.components` 作为构造函数原型创建其实例，这个实例作为 `vm.$options.component` 的值
+
+## 组建 patch 时判断新旧组建的 vnode 是否一致
+
+```js
+function sameVnode (a, b) {
+  return (
+    a.key === b.key && (
+      (
+        a.tag === b.tag &&
+        a.isComment === b.isComment &&
+        isDef(a.data) === isDef(b.data) &&
+        sameInputType(a, b)
+      ) || (
+        isTrue(a.isAsyncPlaceholder) &&
+        a.asyncFactory === b.asyncFactory &&
+        isUndef(b.asyncFactory.error)
+      )
+    )
+  )
+}
+```
+
+`sameVnode` 的逻辑非常简单，如果两个 `vnode` 的 `key` 不相等，则是不同的；否则继续判断对于同步组件，则判断 `isComment`、`data`、`input` 类型等是否相同，对于异步组件，则判断 `asyncFactory` 是否相同。
