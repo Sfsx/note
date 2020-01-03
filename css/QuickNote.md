@@ -266,3 +266,11 @@ box-sizing: border-box;
       -6em 6em 0 0 #fff inset
   }
 ```  
+
+## 发现新属性
+
+### `object-fit`
+
+### `justify-content: space-evenly;`
+
+### `clip-path`

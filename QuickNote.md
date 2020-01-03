@@ -146,3 +146,13 @@ dom 操作是比较昂贵的。当创建一个 dom 除了需要网页重排重�
 + 但是在现实应用场景中，一个数据更改，往往会触发页面多处变动。这个时候如果是直接修改 dom 那么每一次操作都可能会触发浏览器的重排与重绘。这时如果运用 virtual dom 机制，在 virtual dom 中进行修改，通过 diff 算法将其中一些 dom 操作进行合并，最后通过框架去修改真实 dom。即减少了 dom 操作又保证了 JavaScript 操作 DOM 方式的合理性
 
 ### diff 算法
+
+## node stream 手动销毁
+
+根据官方的 [Backpressuring in Streams](https://nodejs.org/en/docs/guides/backpressuring-in-streams/) 推荐，我们应该使用 pump 模块来配合 Stream 模式编程，由 pump 来完成这些 Stream 的清理工作。
+
+[基于 Node.js 实现压缩和解压缩](https://zhuanlan.zhihu.com/p/33783583)
+
+## node 相关文档
+
+[guides](https://nodejs.org/en/docs/guides/)
