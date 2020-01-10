@@ -156,3 +156,45 @@ dom 操作是比较昂贵的。当创建一个 dom 除了需要网页重排重�
 ## node 相关文档
 
 [guides](https://nodejs.org/en/docs/guides/)
+
+## webpack 打包内存分配失败
+
+node 存在内存限制，32 位系统 0.7 gb，64 位系统 1.5 gb，当引用所需内存超出时就会导致内存分配失败，错误日志如下
+
+```log
+<--- Last few GCs --->
+
+[16772:00000000003C8F40] 13003561 ms: Mark-sweep 1366.3 (1417.9) -> 1362.5 (1416.8) MB, 764.6 / 0.1 ms  (average mu = 0.092, current mu = 0.016) allocation failure scavenge might not succeed
+[16772:00000000003C8F40] 13003623 ms: Scavenge 1363.6 (1416.8) -> 1363.4 (1417.3) MB, 57.8 / 0.0 ms  (average mu = 0.092, current mu =
+0.016) allocation failure
+
+
+<--- JS stacktrace --->
+
+==== JS stack trace =========================================
+
+    0: ExitFrame [pc: 000001B78F25C5C1]
+Security context: 0x01dc93e9e6e9 <JSObject>
+    1: substr [000001DC93E8E361](this=0x033c8272d591 <String[321]: ,CAA0B,SAACC,GAAD,CAAMC,EAAN,CAAa,CACrCA,IAAMA,GAAGC,QAAT,EAAqBD,GAAGC,QAAH,CAAYC,KAAZ,CAAkBH,KAAOA,IAAII,OAAX,EAAsBJ,GAAxC,CAArB,CACD,CAFD,CAIA,2BAEA,GAAMK,OAAQ,GAAItD,IAAJ,CAAQ,CACpB2C,GAAI,MADgB,CAEpBnB,aAFoB,CAGpB+B,WAAY,CAAEhD,OAAF,CAHQ,CAIpBiD,OAAQ,yBAAKC,GAAE,KAAF,CAAL,EAJY,CAAR,CAAd...
+
+FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
+ 1: 000000013FB4C6AA v8::internal::GCIdleTimeHandler::GCIdleTimeHandler+4506
+ 2: 000000013FB27416 node::MakeCallback+4534
+ 3: 000000013FB27D90 node_module_register+2032
+ 4: 000000013FE4189E v8::internal::FatalProcessOutOfMemory+846
+ 5: 000000013FE417CF v8::internal::FatalProcessOutOfMemory+639
+ 6: 0000000140027F94 v8::internal::Heap::MaxHeapGrowingFactor+9620
+ 7: 000000014001EF76 v8::internal::ScavengeJob::operator=+24550
+ 8: 000000014001D5CC v8::internal::ScavengeJob::operator=+17980
+ 9: 0000000140026317 v8::internal::Heap::MaxHeapGrowingFactor+2327
+10: 0000000140026396 v8::internal::Heap::MaxHeapGrowingFactor+2454
+11: 0000000140150637 v8::internal::Factory::NewFillerObject+55
+12: 00000001401CD826 v8::internal::operator<<+73494
+13: 000001B78F25C5C1
+```
+
+解决办法给 node 分配更大的内存。启动参数添加 `--max_old_space_size=8192` 给 node 设置更大的老生代内存空间。
+
+参考链接
+
+[Angular 7/8 FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory](https://github.com/angular/angular-cli/issues/13734)
