@@ -110,7 +110,10 @@ result.value.then(function(data) {
 
 `micro-tasks: Promises, MutationObserver`
 
-**注意**：当 script 脚本内部触发 dom 事件时，这个条件下的 dom 回调是**同步执行**，详情参考：
+**注意**：
+
+1. 当 script 脚本内部触发 dom 事件时，这个条件下的 dom 回调是**同步执行**。
+2. MutationObserver 对同一个事件回调，在微任务队列中只能存在一个。在微任务队列未清空的条件下，只能存在一个 MutationObserver 微任务回调，该微任务回调为最早添加至微任务队列的那一个
 
 [Tasks, microtasks, queues and schedules](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/)
 
