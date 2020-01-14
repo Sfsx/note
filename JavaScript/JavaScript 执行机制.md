@@ -110,6 +110,10 @@ result.value.then(function(data) {
 
 `micro-tasks: Promises, MutationObserver`
 
+**注意**：当 script 脚本内部触发 dom 事件时，这个条件下的 dom 回调是**同步执行**，详情参考：
+
+[Tasks, microtasks, queues and schedules](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/)
+
 #### `MutationObserver` 介绍
 
 ```js
@@ -329,6 +333,65 @@ poll 阶段有两个主要的功能：
 
 + 在老版本版本以下，先执行 promise2，再执行 async1 end
 + 在73版本，先执行 async1 end 再执行 promise2
+
+## 结合 dom 事件变态加强版
+
+### 例子一
+
+html：
+
+```html
+<div class="outer">
+  <div class="inner"></div>
+</div>
+```
+
+script：
+
+```js
+// Let's get hold of those elements
+var outer = document.querySelector('.outer');
+var inner = document.querySelector('.inner');
+
+// Let's listen for attribute changes on the
+// outer element
+new MutationObserver(function() {
+  console.log('mutate');
+}).observe(outer, {
+  attributes: true
+});
+
+// Here's a click listener…
+function onClick() {
+  console.log('click');
+
+  setTimeout(function() {
+    console.log('timeout');
+  }, 0);
+
+  Promise.resolve().then(function() {
+    console.log('promise');
+  });
+
+  outer.setAttribute('data-random', Math.random());
+}
+
+// …which we'll attach to both elements
+inner.addEventListener('click', onClick);
+outer.addEventListener('click', onClick);
+```
+
+点击 inner 方块来触发点击事件
+
+### 上述例子稍加改造
+
+上述例子 script 中添加下面的代码
+
+```js
+inner.click();
+```
+
+[Tasks, microtasks, queues and schedules](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/)
 
 ## 作用域链以及词法作用域
 
