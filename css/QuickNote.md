@@ -261,7 +261,7 @@ box-sizing: border-box;
     border-radius: 2.5em;
     position: relative;
     box-shadow:
-      -2em 2em 0 0 #fff inset, 
+      -2em 2em 0 0 #fff inset,
       -4em 4em 0 0 #ff0000 inset,
       -6em 6em 0 0 #fff inset
   }
