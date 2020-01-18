@@ -146,3 +146,18 @@ dom 操作是比较昂贵的。当创建一个 dom 除了需要网页重排重�
 + 但是在现实应用场景中，一个数据更改，往往会触发页面多处变动。这个时候如果是直接修改 dom 那么每一次操作都可能会触发浏览器的重排与重绘。这时如果运用 virtual dom 机制，在 virtual dom 中进行修改，通过 diff 算法将其中一些 dom 操作进行合并，最后通过框架去修改真实 dom。即减少了 dom 操作又保证了 JavaScript 操作 DOM 方式的合理性
 
 ### diff 算法
+
+## git 命令
+
++ type: commit 的类型
++ feat: 新特性
++ fix: 修改问题
++ refactor: 代码重构
++ docs: 文档修改
++ style: 代码格式修改, 注意不是 css 修改
++ test: 测试用例修改
++ chore: 其他修改, 比如构建流程, 依赖管理.
++ scope: commit 影响的范围, 比如: route, component, utils, + + build...
++ subject: commit 的概述, 建议符合  50/72 formatting
++ body: commit 具体修改内容, 可以分为多行, 建议符合 50/72 formatting
++ footer: 一些备注, 通常是 BREAKING CHANGE 或修复的 bug 的链接.

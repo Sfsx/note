@@ -478,7 +478,22 @@ CSRF 攻击是黑客借助受害者的 cookie 骗取服务器的信任，但是�
 
 token防御的整体思路是：
 
-+ 第一步：后端随机产生一个 token，把这个 token 保存在 SESSION 状态中；同时，后端把这个 token 交给前端页面；
++ 第一步：后端随机产生一个 token，把这个 token 保存在 SESSION 状态中；然后将该 token 植入到返回的页面中。你可以参考下面示例代码：
+
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+        <form action="https://time.geekbang.org/sendcoin" method="POST">
+          <input type="hidden" name="csrf-token" value="nc98P987bcpncYhoadjoiydc9ajDlcn">
+          <input type="text" name="user">
+          <input type="text" name="number">
+          <input type="submit">
+        </form>
+    </body>
+    </html>
+    ```
+
 + 第二步：下次前端需要发起请求（比如发帖）的时候把这个 token 加入到请求数据或者头信息中，一起传给后端；
 + 第三步：后端校验前端请求带过来的 token 和 SESSION 里的 token 是否一致；
 + 第四步：定时更新 token 防止 token 被解析，每5分钟更新一次
@@ -653,3 +668,82 @@ fetch(url, {
     console.log('Fetch Error: ', error);
   });
 ```
+
+## XSS
+
+### 攻击
+
+XSS 全称是 Cross Site Scripting，为了与 `CSS` 区分开来，故简称 XSS，翻译过来就是“跨站脚本”。
+
+#### 1. 储存型 XSS
+
++ 首先黑客利用站点漏洞将一段恶意JavaScript代码提交到网站的数据库中；
++ 然后用户向网站请求包含了恶意JavaScript脚本的页面；
++ 当用户浏览该页面的时候，恶意脚本就会将用户的Cookie信息等数据上传到服务器。
+
+例子：[喜马拉雅存储性 XSS](https://shuimugan.com/bug/view?bug_no=138479)
+
+#### 2. 反射型 XSS
+
+基本无用
+
+#### 3. 基于 DOM 的XSS
+
+黑客通过各种手段将恶意脚本注入用户的页面中，比如通过网络劫持在页面传输过程中修改HTML页面的内容，这种劫持类型很多，有通过WiFi路由器劫持的，有通过本地恶意软件来劫持的，它们的共同点是在Web资源传输过程或者在用户使用页面的过程中修改Web页面的数据。
+
+### 防御
+
+#### 输入过滤
+
+#### 静态脚本拦截
+
+我们假定现在页面上被注入了一个 `<script src="http://attack.com/xss.js">` 脚本，我们的目标就是拦截这个脚本的执行。
+
+```js
+// MutationObserver 的不同兼容性写法
+var MutationObserver = window.MutationObserver || window.WebKitMutationObserver ||
+window.MozMutationObserver;
+// 该构造函数用来实例化一个新的 Mutation 观察者对象
+// Mutation 观察者对象能监听在某个范围内的 DOM 树变化
+var observer = new MutationObserver(function(mutations) {
+  mutations.forEach(function(mutation) {
+    // 返回被添加的节点,或者为null.
+    var nodes = mutation.addedNodes;
+
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+      if (/xss/i.test(node.src))) {
+        try {
+          node.parentNode.removeChild(node);
+          console.log('拦截可疑静态脚本:', node.src);
+        } catch (e) {}
+      }
+    }
+  });
+});
+
+// 传入目标节点和观察选项
+// 如果 target 为 document 或者 document.documentElement
+// 则当前文档中所有的节点添加与删除操作都会被观察到
+observer.observe(document, {
+  attributes: false,
+  subtree: true,
+  childList: true
+});
+```
+
+该方法可以监听拦截到动态脚本的生成，但是无法在脚本执行之前，使用 removeChild 将其移除，所以我们还需要想想其他办法
+
+#### CSP
+
+```html
+<meta http-equiv="Content-Security-Policy" content="default-src https://cdn.example.net; child-src 'none'; object-src 'none'">
+```
+
+详细属性请参考 [内容安全策略( CSP ) - HTTP | MDN](https://developer.mozilla.org/zh-CN/docs/Web/Security/CSP/CSP_policy_directives)
+
+参考资料
+
+[【前端安全】JavaScript防http劫持与XSS](https://www.cnblogs.com/coco1s/p/5777260.html)
+
+[内容安全政策](https://developers.google.com/web/fundamentals/security/csp?hl=zh-CN)
