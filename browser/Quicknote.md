@@ -153,6 +153,12 @@ Bytes → characters → tokens → nodes → CSSOM
 
 ## 浏览器介绍
 
+1. 浏览器主进程
+2. 渲染进程
+3. GPU进程
+4. 网络进程
+5. 插件进程
+
 ### 浏览器进程
 
 ### 浏览器渲染进程
@@ -734,16 +740,66 @@ observer.observe(document, {
 
 该方法可以监听拦截到动态脚本的生成，但是无法在脚本执行之前，使用 removeChild 将其移除，所以我们还需要想想其他办法
 
-#### CSP
-
-```html
-<meta http-equiv="Content-Security-Policy" content="default-src https://cdn.example.net; child-src 'none'; object-src 'none'">
-```
-
-详细属性请参考 [内容安全策略( CSP ) - HTTP | MDN](https://developer.mozilla.org/zh-CN/docs/Web/Security/CSP/CSP_policy_directives)
-
 参考资料
 
 [【前端安全】JavaScript防http劫持与XSS](https://www.cnblogs.com/coco1s/p/5777260.html)
 
-[内容安全政策](https://developers.google.com/web/fundamentals/security/csp?hl=zh-CN)
+## 内容安全策略 CSP
+
+CSP 的主要目标是减少和报告 XSS 攻击 ，XSS 攻击利用了浏览器对于从服务器所获取的内容的信任。恶意脚本在受害者的浏览器中得以运行。
+
+CSP 的实质就是白名单制度，开发者明确告诉客户端，哪些外部资源可以加载和执行，等同于提供白名单。它的实现和执行全部由浏览器完成，开发者只需提供配置。
+
+### 使用 CSP
+
+两种制定 CSP 策略的方法：
+
+使用 `Content-Security-Policy` HTTP 头部来制定你的策略
+
+```http
+Content-Security-Policy: policy
+```
+
+使用 `<meta>` 元素也可以用来配置该策略
+
+```html
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src https://*; child-src 'none';">
+```
+
+### 策略指令
+
++ child-src
+  
+  child-src 指定定义了 web workers 以及嵌套的浏览上下文（如 `<frame>` 和 `<iframe>` ）的源。推荐使用该指令，而不是被废弃的 frame-src 指令。对于 web workers，不符合要求的请求会被当做致命网络错误。
+
++ connect-src
+
+  connect-src 指令定义了请求、XMLHttpRequest、WebSocket 和 EventSource 的连接来源。
+
++ font-src
++ img-src
++ media-src
++ object-src
+
+  object-src 指定了 `<object>`, `<embed>`, 和 `<applet>` 标签的源地址。
+
++ script-src
++ style-src
+
+### 报告模式
+
+CSP 可以使用报告模式，在此模式下，CSP 策略不是强制性的，但是任何违规行为将会报告给一个指定的 URI 地址。此外，一个报告模式的头部可以用来测试一个新修订的策略
+
+```http
+Content-Security-Policy-Report-Only: policy
+```
+
+### 启用违例报告
+
+默认情况下，违规报告不会发送，为启用发送违规报告，你需要指定 `repoet-uri` 策略指令，并提供至少一个 URI 地址用于提交报告
+
+```http
+Content-Security-Policy: default-src 'self'; report-uri http://reportcollector.example.com/collector.cgi
+```
+
+[内容安全策略( CSP )](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CSP)

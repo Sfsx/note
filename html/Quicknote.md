@@ -127,12 +127,59 @@ XML 用来描述数据，而 HTML 则用来显示数据。
     `<input checked>`
 5. 在 xhtml 中，name 属性是不赞成使用的，在以后的版本中将被删除。
 
-### 再说说为什么网页编码要从html>>xhtml>>xml这么发展
+## 发展历程
 
-话说早起的网页使用html语言编写的，但是它拥有三个严重的缺点：
+1. HTML1.0 IETE(internet engineering tesk force，因特网工程任务组)
+2. HTML2.0 IETE官方规范
+3. HTML3.2 W3C官方规范
+4. HTML4.01 1997-1999 从3.2发展到4.0， 进而到4.01。（从此进入了漫长的发展期）
+5. 2000年，W3C 发布 HTML 4.01 的 XML 版命名为 XHTML1.0
+6. 2004年，浏览器厂商联合成立组织 WHATWG 来推动 HTML5 标准
+7. 2006年，W3C 与 WHATWG 达成协议
+8. 2008年，发布了 HTML5 的工作草案
+9. 2009年，W3C 停止对 XHTML2.0 的更新
+10. 2014年，HTML5 标准完成
 
-1. 编码不规范，结构混乱臃肿，需要智能的终端才能很好的显示
-2. 表现和结构混乱，不利于开发和维护
-3. 不能使用更多的网络设备，比如手机、PDA等因此HTML需要发展才能解决这个问题，于是W3C又制定了XHTML，XHTML是HTML向XML 过度的一个桥梁。而xml是web发展的趋势。
+[HTML5发展简史](https://zhuanlan.zhihu.com/p/44164232)
 
-[原文链接](https://webkit.org/blog/68/understanding-html-xml-and-xhtml/)
+## <!DOCTYPE>
+
+`<!DOCTYPE>` 声明必须是 HTML 文档的第一行，位于 `<html>` 标签之前。
+
+`<!DOCTYPE>` 声明不是 HTML 标签；它是指示 web 浏览器关于也没使用哪个 HTML 版本进行编写的指令。
+
+### HTML 4.01
+
+在 HTML 4.01 中，`<!DOCTYPE>` 声明引用 DTD，因为 HTML 4.01 基于 SGML。DTD 规定了标记语言的规则，这样浏览器才能正确地呈现内容。
+
+HTML 4.01 的三种 `<IDOCTYPE>` 声明如下：
+
+#### HTML 4.01 Strict
+
+该 DTD 包含所有 HTML 元素和属性，但不包括展示性的和弃用的元素（比如 font）。不允许框架集（Framesets）。
+
+```html
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+```
+
+#### HTML 4.01 Transitional
+
+该 DTD 包含所有 HTML 元素和属性，包括展示性的和弃用的元素（比如 font）。不允许框架集（Framesets）。
+
+```html
+<!DOCTYPE HTML PUBLIC "-//W#C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+```
+
+#### HTML 4.01 Frameset
+
+该 DTD 等同于 HTML 4.01 Transitional，但允许框架集内容。
+
+```html
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+```
+
+### HTML 5
+
+```html
+<!DOCTYPE html>
+```
