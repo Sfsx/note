@@ -1,26 +1,43 @@
 # html 快速笔记
 
-## html 语义化
+## HTML5
 
-### `<header>` 元素
+HTML5 是定义 HTML 标准的最新版本。该术语通过两个不同的概念来表现：
+
++ 它是一个新版本的 HTML 语言
+
++ 语义：能够让你更恰当地描述你的内容是什么。
++ 连通性：能够让你和服务器之间通过创新的新技术方法进行通信。
++ 离线 & 存储：能够让网页在客户端本地存储数据以及更高效地离线运行。
++ 多媒体：使 video 和 audio 成为了在所有 Web 中的一等公民。
++ 2D/3D 绘图 & 效果：提供了一个更加分化范围的呈现选择。
++ 性能 & 集成：提供了非常显著的性能优化和更有效的计算机硬件使用。
++ 设备访问 Device Access：能够处理各种输入和输出设备。
++ 样式设计: 让作者们来创作更加复杂的主题吧！
+
+## HTML5 语义
+
+### HTML5 中的区块和段落元素
+
+#### `<header>` 元素
 
 `<header>` 元素里，应该包含**介绍性的内容**。介绍性的内容可能包括：Logo、公司名、导航栏、作者信息等等。
 
 一般出现在 `<section>`、`<article>`、`<body>` 的开头
 
-### `<nav>` 元素
+#### `<nav>` 元素
 
 `<nav>` 元素定义导航链接的部分
 
-### `<footer>` 元素
+#### `<footer>` 元素
 
 `<footer>` 元素描述了稳定的底部区域。有的网页中也会吧 `<nav>` 放到 `<footer>` 里。
 
-### `<article>` 元素
+#### `<article>` 元素
 
-`<article>` 元素定义网页中**独立**内容。`<article>` 元素就像一个个**独立**的页面通常有自己的 `<header>` 和 `<footer>`。这里所说的独立是指：即使删除某个`<article>` 元素不会对网页整体布局造成影响，也不会影响到其他 `<article>` 元素
+`<article>` 元素定义网页中**独立**内容。`<article>` 元素就像一个个**独立**的页面通常有自己的 `<header>` 和 `<footer>`。这里所说的独立是指：即使删除某个 `<article>` 元素不会对网页整体布局造成影响，也不会影响到其他 `<article>` 元素
 
-### `section` 元素
+#### `<section>` 元素
 
 `<section>` 元素定义文档中的独立部分。section 的例子包括书的章节回目、多 tab 对话框的每个 tab 页、论文以数字编号的小节。网站的主页可能分成介绍、最新内容、联系信息等section。
 
@@ -30,40 +47,184 @@
 
 注意：`<section>` 不是通用容器元素。如果仅仅是用于设置样式或脚本处理，应用 `<div>` 元素。一条简单的准则是，只有元素内容会被列在文档大纲中时，才适合用 `<section>` 元素
 
-### `aside` 元素
+#### `<aside>` 元素
 
 `<aside>` 标签定义页面主区域内容无关的部分，被认为是独立于该内容的一部分并且可以被单独的拆分出来而不会使整体受影响（比如侧边栏）。
 
-### `<figure>` 元素
+### 新的语义元素
+
+#### `<figure>` 元素
 
 包含图像、图表、照片、表格和代码
 
-### `<figcaption>` 元素
+#### `<figcaption>` 元素
 
 `<figure>` 的说明标题
 
-### `<details>` 元素
+#### `<details>` 元素
 
 额外信息。可创建一个挂件，仅在被切换成展开状态时，它才会显示内含的信息。`<summary>` 元素可为该部件提供概要或者标签
 
-### `<summary>` 元素
+#### `<summary>` 元素
 
 为 `<details>` 元素定义一个可见的标题
 
-### `<time>` 元素
+#### `<time>` 元素
 
-日期/时间
+HTML time 标签(`<time>`) 用来表示24小时制时间或者公历日期，若表示日期则也可包含时间和时区。
 
-### `<strong>` 元素
+#### `<data>` 元素
+
+HTML `<data>` 元素将一个指定内容和机器可读的翻译联系在一起。但是，如果内容是与时间或者日期相关的，则一定要使用 `<time>`。
+
+```html
+<p>新产品</p>
+<ul>
+ <li><data value="398">迷你番茄酱</data></li>
+ <li><data value="399">巨无霸番茄酱</data></li>
+ <li><data value="400">超级巨无霸番茄酱</data></li>
+</ul>
+```
+
+#### `<output>` 元素
+
+HTML `<output>` 标签表示计算或用户操作的结果。
+
+```html
+<form oninput="result.value=parseInt(a.value)+parseInt(b.value)">
+    <input type="range" name="b" value="50" /> +
+    <input type="number" name="a" value="10" /> =
+    <output name="result"></output>
+</form>
+```
+
+#### `<strong>` 元素
 
 重要文本 加粗
 
-### `<em>` 元素
+#### `<em>` 元素
 
 强调文本 斜体
 
+#### `<progress>` 元素
+
+```html
+<progress value="70" max="100">70 %</progress>
+```
+
+### 使用 HTML5 的音频和视频
+
+#### `<audio>`
+
+#### `<video>`
+
 + [HTML语义化 & 网页布局](https://zhuanlan.zhihu.com/p/32990471)
 + [你如何理解 HTML5 的 section？会在什么场景使用？为什么这些场景使用 section 而不是 div？](https://www.zhihu.com/question/20227599)
+
+## HTML 连通性
+
+### Web Socket
+
+### Server-sent events
+
+`EventSource` 接口用于接收服务器发送的事件。它通过 HTTP 连接到一个服务器，以 `text/event-stream` 格式接收事件, 不关闭连接。服务器收到连接后，不关闭连接，在该连接内，向客户端传递事件消息。
+
+```js
+var evtSource = new EventSource("api/v1/eventsource");
+```
+
+开始监听消息
+
+```js
+evtSource.onmessage = function(e) {
+  var newElement = document.createElement("li");
+  
+  newElement.innerHTML = "message: " + e.data;
+  eventList.appendChild(newElement);
+}
+```
+
+或者
+
+```js
+evtSource.addEventListener("ping", function(e) {
+  var newElement = document.createElement("li");
+  
+  var obj = JSON.parse(e.data);
+  newElement.innerHTML = "ping at " + obj.time;
+  eventList.appendChild(newElement);
+}, false);
+```
+
+服务器推送的事件流为 UTF-8 编码的文本，。每条消息后面都由一个空行作为分隔符。以冒号开头的行为注释行，会被忽略。
+
+每条消息是由多个字段组成的，每个字段由字段名，一个冒号，以及字段值组成。
+
+```string
+event: userconnect
+data: {"username": "bobby", "time": "02:33:48"}
+
+data: Here's a system message of some kind that will get used
+data: to accomplish some task.
+```
+
+[使用服务器发送事件](https://developer.mozilla.org/zh-CN/docs/Server-sent_events/Using_server-sent_events)
+
+[利用WebSocket和EventSource实现服务端推送](https://juejin.im/post/5c121c77f265da614a3a5e07)
+
+### WebRTC
+
+## 离线 & 存储
+
+### 在线和离线事件
+
+`navigator.onLine`
+
+### WHATWG 客户端会话和持久化存储（又名 DOM 存储）
+
+因此和 DOM 访问一样，受浏览器同源策略的限制。目前几乎所有浏览器都支持。
+
+#### sessionStorage
+
+sessionStorage 是个全局对象，它维护着在页面会话期间有效地存储空间。只要浏览器开着，页面会话周期会一直持续。当页面重新载入或者被恢复时，页面会话也是一直存在的。每在新标签或者新传开中打开一个新页面，都会初始化一个新的会话。
+
+#### localStorage
+
+当页面会话结束，存储在 localStorage 的数据可以长期保留。
+
+## 性能 & 集成
+
+### XMLHttpRequest Level 2
+
+开坑待填
+
+### 基于 Web 的协议处理程序
+
+web 中发起其他协议请求，可以用
+
+```js
+window.open('mailto:someone@yoursite.com') // mailto 协议为启动系统默认电子邮件软件发送电子邮件
+```
+
+或者
+
+```html
+<a href="mailto:someone@yoursite.com">Email Us</a>  
+```
+
+当然我们也可以通过网站接管该协议，使得某个 web 应用程序成为某种协议的处理者，而不是使用系统默认软件作为协议的处理者。
+
+设置一个 web 应用程序作为一个协议处理器不是一个很麻烦的过程。web 应用程序可以使用 `registerProtocolHandler()` 注册到浏览器上，从而对于一个给定的协议来讲，作为一个潜在的处理程序。例如:
+
+```js
+navigator.registerProtocolHandler("mailto",
+                                  "https://www.example.com/?uri=%s",
+                                  "Example Mail");
+```
+
++ 协议名称.
++ url模板。%s用来替换链接的href属性，之后通过这个url来发起一个GET请求.
++ 一个对用户友好的协议处理器的名字.
 
 ## XHTML HTML XML 联系以及区别
 
@@ -74,18 +235,6 @@ XML 被设计用来传输和存储数据。XML 不是对 HTML 的替代而是对
 ### HTML
 
 HTML 被设计用来显示数据。
-
-#### HTML5
-
-HTML5 是最新的 HTML 标准。
-
-HTML5 是专门为承载丰富的 web 内容而设计的，并且无需额外插件。
-
-HTML5 拥有新的语义、图形以及多媒体元素。
-
-HTML5 提供的新元素和新的 API 简化了 web 应用程序的搭建。
-
-HTML5 是跨平台的，被设计为在不同类型的硬件（PC、平板、手机、电视机等等）之上运行
 
 ### xhtml
 
@@ -134,7 +283,7 @@ XML 用来描述数据，而 HTML 则用来显示数据。
 3. HTML3.2 W3C官方规范
 4. HTML4.01 1997-1999 从3.2发展到4.0， 进而到4.01。（从此进入了漫长的发展期）
 5. 2000年，W3C 发布 HTML 4.01 的 XML 版命名为 XHTML1.0
-6. 2004年，浏览器厂商联合成立组织 WHATWG 来推动 HTML5 标准
+6. 2004年，由于 W3C 提出的 XHTML2.0 无法向后兼容，某用户更新了浏览器，打开了从前某个网址，打不开了。用户体验不好了，就直接等价于浏览器要流失用户了。开发者也不支持，更加严格的写法就意味着要遵循更加严格的规范，但凡有一点出入浏览器就解析不出来了。浏览器厂商联合成立组织 WHATWG 来推动 HTML5 标准。
 7. 2006年，W3C 与 WHATWG 达成协议
 8. 2008年，发布了 HTML5 的工作草案
 9. 2009年，W3C 停止对 XHTML2.0 的更新
