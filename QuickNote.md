@@ -213,3 +213,162 @@ FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaS
 参考链接
 
 [Angular 7/8 FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory](https://github.com/angular/angular-cli/issues/13734)
+
+## git commit 类型
+
+```doc
+feat：新功能
+fix：修补 bug
+improvement: 对当前功能进行改进
+docs：修改文档，比如 README, CHANGELOG, CONTRIBUTE 等等
+style： 不改变代码逻辑 (仅仅修改了空格、格式缩进、逗号等等)
+refactor：重构（既不修复错误也不添加功能）
+perf: 优化相关，比如提升性能、体验
+test：增加测试，包括单元测试、集成测试等
+build: 构建系统或外部依赖项的更改
+ci：自动化流程配置或脚本修改
+chore: 非 src 和 test 的修改
+revert: 恢复先前的提交
+```
+
+## 首屏症候群
+
+### css 加载
+
+#### css 资源较小时，直接插入到 HTML 文档中，这称为“内嵌”
+
+#### css 文件较大时，内嵌用于呈现首屏内容的css，暂缓加载其余样式，直到首屏内容显现出来为止
+
+目前需要使用 javascript 来支持，但在未来可以使用 `<link>` 标签的 `import` 属性，类似 `<script>` 标签的 `async` 属性。
+
+如果 HTML 文档如下所示:
+
+```html
+<html>
+  <head>
+    <link rel="stylesheet" href="small.css">
+  </head>
+  <body>
+    <div class="blue">
+      Hello, world!
+    </div>
+  </body>
+</html>
+```
+
+并且 `small.css` 资源如下所示：
+
+```css
+  .yellow {background-color: yellow;}
+  .blue {color: blue;}
+  .big { font-size: 8em; }
+  .bold { font-weight: bold; }
+```
+
+就可以按照如下方式内嵌关键的 CSS：
+
+```html
+<html>
+  <head>
+    <style>
+      .blue{color:blue;}
+    </style>
+    </head>
+  <body>
+    <div class="blue">
+      Hello, world!
+    </div>
+    <noscript id="deferred-styles">
+      <link rel="stylesheet" type="text/css" href="small.css"/>
+    </noscript>
+    <script>
+      var loadDeferredStyles = function() {
+        var addStylesNode = document.getElementById("deferred-styles");
+        var replacement = document.createElement("div");
+        replacement.innerHTML = addStylesNode.textContent;
+        document.body.appendChild(replacement)
+        addStylesNode.parentElement.removeChild(addStylesNode);
+      };
+      var raf = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+          window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+      if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+      else window.addEventListener('load', loadDeferredStyles);
+    </script>
+  </body>
+</html>
+```
+
+注意：
+
++ 请勿内嵌较大数据 URI
++ 请勿内嵌 CSS 属性（在 HTML 中使用 style 属性）
+
+#### 在 `<link>` 标签中使用 media 属性
+
+这种做法告诉浏览器只有在条件满足的情况下才加载这些资源（例如指定了print，则在打印环境下才会加载这些资源）。
+
+```html
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="print.css" media="print">
+```
+
+[优化 CSS 发送过程](https://developers.google.com/speed/docs/insights/OptimizeCSSDelivery)
+
+[渐进式加载](https://developer.mozilla.org/zh-CN/docs/Web/Progressive_web_apps/%E5%8A%A0%E8%BD%BD)
+
+## flex 布局在页面加载时引起的页面跳动
+
+```css
+.container {
+  display: flex;
+  flex-flow: row;
+}
+
+nav {
+  flex: 1;
+  min-width: 118px;
+  max-width: 160px;
+}
+
+main {
+  order: 1;
+  flex: 1;
+  min-width: 510px;
+}
+
+aside {
+  flex: 1;
+  order: 2;
+  min-width: 150px;
+  max-width: 210px;
+}
+```
+
+在页面加载过程中，container 容器开始接收第一个孩子节点 main 。在这个时间点，对于 container 来说只有一个孩子节点，并且带有 `flex: 1` 所以它会充满整个 container 节点。当 nav 节点到达时，main 节点就会重新调整大小，以便让出空间给 nav 节点，这个时候就会导致页面重新布局。
+
+总结：
+
+> 开发过程中慎重使用 `flex: 1` 这种自动撑开的特性
+
+## linux c100k
+
+不过我觉得可能没什么用，毕竟有些修改只用于维持 tcp 连接，是不是有些过了。不过这个配置应该是极致压榨服务器性能以维持 tcp 连接。
+
+```doc
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_fin_timeout = 15
+net.core.rmem_max = 16777216
+net.core.wmem_max = 16777216
+net.ipv4.tcp_rmem = 4096 87380 16777216
+net.ipv4.tcp_wmem = 4096 65536 16777216
+net.core.netdev_max_backlog = 4096
+net.core.somaxconn = 4096
+net.ipv4.tcp_max_syn_backlog = 20480
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_max_tw_buckets = 360000
+net.ipv4.tcp_no_metrics_save = 1
+net.ipv4.tcp_syn_retries = 2
+net.ipv4.tcp_synack_retries = 2
+```
+
+使用情况还有待考虑
