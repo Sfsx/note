@@ -156,9 +156,7 @@ evtSource.addEventListener("ping", function(e) {
 }, false);
 ```
 
-服务器推送的事件流为 UTF-8 编码的文本，。每条消息后面都由一个空行作为分隔符。以冒号开头的行为注释行，会被忽略。
-
-每条消息是由多个字段组成的，每个字段由字段名，一个冒号，以及字段值组成。
+服务器推送的事件流为 UTF-8 编码的文本，每条消息是由多个字段组成的，每个字段由字段名，一个冒号，以及字段值组成。
 
 ```string
 event: userconnect
@@ -259,8 +257,7 @@ XML 用来描述数据，而 HTML 则用来显示数据。
 
 1. html 即是超文本标记语言（Hyper Text Markup Language），是最早写网页的语言，但是由于时间早，规范不是很好，大小写混写且编码不规范；
 2. xhtml 是更严谨更纯净的 html 版本（Extensible Hyper Text Markup Language）。对html进行了规范，编码更加严谨纯洁，也是一种过渡语言，html 向 xml 过渡的语言；
-3. xml 即时可扩展标记语言（Extensible Markup Language），是一种跨平台语言，编码更自由，可以自由创建标签。
-4. 网页编码从 html >> xhtml >> xml 这个过程发展。
+3. xml 即时可扩展标记语言（Extensible Markup Language），是一种跨平台语言，编码更自由，可以自由创建标签。xml 设计用来传送及携带数据信息，不用来表现或展示数据
 
 ### html 与 xhtml 之间的区别
 
