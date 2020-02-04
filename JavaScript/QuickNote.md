@@ -1095,7 +1095,7 @@ alert(e2 == '4') // true this is valueOf
 alert(e2 === 4) //false === 操作符不进行隐式转换
 ```
 
-**在有运算操作符的情况下，`valueOf()` 的优先级高于`toString()`**
+**在有运算操作符的情况下，`valueOf()` 的优先级高于 `toString()`**
 
 **哪个修改先调用哪个**，哪个方法在实例中有自定义，则优先调用
 
@@ -1154,10 +1154,6 @@ function shuffle(arr){
 [洗牌算法(shuffle)的js实现](https://github.com/ccforward/cc/issues/44)
 
 ## 二叉树遍历
-
-开坑待填。。。
-
-## 浏览器加载页面的详细过程
 
 开坑待填。。。
 
