@@ -2,6 +2,8 @@
 
 ## 选择器类型优先级
 
+以下排列由低到高
+
 1. **类型选择器** ( `h1` ) 和 **伪元素** ( `::befor` )
 2. **类选择器** ( `.example` ) 和 **属性选择器** ( `[type="redio"]` ) 或者 **伪类** ( `:hover` )
 3. **ID选择器** ( `#example` )
@@ -274,3 +276,32 @@ box-sizing: border-box;
 ### `justify-content: space-evenly;`
 
 ### `clip-path`
+
+### `mix-blend-mode`
+
+1. 任何颜色和黑色执行滤色，还是呈现原来的颜色；
+2. 任何颜色和白色执行滤色得到的是白色；
+3. 任何颜色和其他颜色执行滤色模式混合后的颜色会更浅，有点类似漂白的效果。
+
+```css
+mix-blend-mode: normal;          //正常
+mix-blend-mode: multiply;        //正片叠底
+mix-blend-mode: screen;          //滤色
+mix-blend-mode: overlay;         //叠加
+mix-blend-mode: darken;          //变暗
+mix-blend-mode: lighten;         //变亮
+mix-blend-mode: color-dodge;     //颜色减淡
+mix-blend-mode: color-burn;      //颜色加深
+mix-blend-mode: hard-light;      //强光
+mix-blend-mode: soft-light;      //柔光
+mix-blend-mode: difference;      //差值
+mix-blend-mode: exclusion;       //排除
+mix-blend-mode: hue;             //色相
+mix-blend-mode: saturation;      //饱和度
+mix-blend-mode: color;           //颜色
+mix-blend-mode: luminosity;      //亮度
+
+mix-blend-mode: initial;         //初始
+mix-blend-mode: inherit;         //继承
+mix-blend-mode: unset;           //复原
+```
