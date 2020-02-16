@@ -609,17 +609,45 @@ load是当页面所有资源全部加载完成后（包括DOM文档树，css文�
 
 ## 浏览器缓存
 
-### http 常见 header 字段
+### 强制缓存
+
+强制缓存就是向浏览器缓存查找该请求的结果，并根据该结果的缓存规则来决定是否使用该缓存结果的过程，强制缓存的情况有三种：
+
++ 不存在该缓存结果、不存在该缓存标识、强制缓存失效则直接向服务器发起请求
++ 存在该缓存结果或存在该缓存标识，但该结果已失效，强制缓存失效，则使用协商缓存
++ 存在该缓存结果或存在该缓存标识，且该结果尚未失效，强制缓存生效
+
+当浏览器向服务器发起请求时，服务器会将缓存规则放入 HTTP 响应报文的 HTTP 头中和请求结果一起返回给浏览器，控制强制缓存的字段分别是 Expires（Expires 是 HTTP/1.0 控制网页缓存的字段） 和 Cache-Control（在 HTTP/1.1 中，Expire 已经被 Cache-Control 替代），其中 Cache-Control 优先级比 Expires 高。
 
 + expires: 告知客户端资源缓存失效的绝对时间
-+ last-modified: 资源最后一次修改的时间
-+ Etag: 文件的特殊标识
 + cache-control:告诉客户端或是服务器如何处理缓存。
-+ private: cache-control里的响应指令.表示客户端可以缓存
-+ public: cache-control里的响应指令.表示客户端和代理服务器都可缓存.如果没有明确指定private，则默认为public。
-+ no-cache: cache-control里的指令.表示需要可以缓存，但每次用应该去向服务器验证缓存是否可用
-+ no-store: cache-control字段里的指令.表示所有内容都不会缓存，强制缓存，对比缓存都不会触发.
-+ max-age=xxx: cache-control字段里的指令.表示缓存的内容将在 xxx 秒后失效
+  + private: cache-control 里的响应指令.表示客户端可以缓存
+  + public: cache-control 里的响应指令.表示客户端和代理服务器都可缓存.如果没有明确指定 private，则默认为 public。
+  + no-cache: cache-control 里的指令.表示需要可以缓存，但每次用应该去向服务器验证缓存是否可用
+  + no-store: cache-control 字段里的指令.表示所有内容都不会缓存，强制缓存，对比缓存都不会触发.
+  + max-age=xxx: cache-control 字段里的指令.表示缓存的内容将在 xxx 秒后失效
+
+### 协商缓存
+
+协商缓存就是强制缓存失效后，浏览器携带缓存标识向服务器发起请求，由服务器根据缓存标识决定是否使用缓存的过程，主要有以下两种情况
+
+#### Last-Modified / If-Modified-Since
+
+Last-Modified 是服务器响应请求时，返回该资源文件在服务器最后被修改的时间。
+
+If-Modified-Since 是客户端再次发起请求时，携带上次请求返回的 Last-Modified 值。
+
+若服务器的资源最后被修改时间大于 If-Modified-Since 值，则重新返回该资源，状态码为 200。若服务器的资源无更新，则返回 304。
+
+#### Etag / If-None-Match
+
+Etag 是服务器响应请求时，返回当前资源文件的唯一标识符（由服务器生成）
+
+If-None-Match 是客户端再次发起请求时，携带上次请求返回的唯一标识 Etag 值。
+
+若服务器资源的 Etag 值和 If-None-Match 的字段值一致则返回 304，若不一致则重新返回资源文件，状态码为 200。
+
+[彻底理解浏览器的缓存机制](https://juejin.im/entry/5ad86c16f265da505a77dca4)
 
 ## 浏览器渲染优化
 
