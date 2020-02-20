@@ -113,7 +113,7 @@ View 是视图，使用户看得见摸得着的地方，同事也是产生用户
     Action -> Dispatch -> Store -> View
     ```
 
-4. view层变得很薄，真正的组件化由于2、3两条原因，View 自身需要做的事情就变得很少了。业务逻辑被 Store 做了，状态变更被 controller-view 做了，View 自己需要做的只是根据交互触发不同的 Action，仅此而已。这样带来的好处就是，整个 View 层变得很薄很纯粹，完全的只关注 ui 层的交互，各个 View 组件之前完全是松耦合的，大大提高了 View 组件的复用性。
+4. view 层变得很薄，真正的组件化由于2、3两条原因，View 自身需要做的事情就变得很少了。业务逻辑被 Store 做了，状态变更被 controller-view 做了，View 自己需要做的只是根据交互触发不同的 Action，仅此而已。这样带来的好处就是，整个 View 层变得很薄很纯粹，完全的只关注 ui 层的交互，各个 View 组件之前完全是松耦合的，大大提高了 View 组件的复用性。
 
 5. 中心化管理数据，避免数据孤立，一旦数据被孤立，就需要通过其它程序做串联，导致复杂。这是避免各路行为乱改数据导致混乱的一个潜在条件，或者说这是一个结论
 
@@ -146,21 +146,6 @@ dom 操作是比较昂贵的。当创建一个 dom 除了需要网页重排重�
 + 但是在现实应用场景中，一个数据更改，往往会触发页面多处变动。这个时候如果是直接修改 dom 那么每一次操作都可能会触发浏览器的重排与重绘。这时如果运用 virtual dom 机制，在 virtual dom 中进行修改，通过 diff 算法将其中一些 dom 操作进行合并，最后通过框架去修改真实 dom。即减少了 dom 操作又保证了 JavaScript 操作 DOM 方式的合理性
 
 ### diff 算法
-
-## git 命令
-
-+ type: commit 的类型
-+ feat: 新特性
-+ fix: 修改问题
-+ refactor: 代码重构
-+ docs: 文档修改
-+ style: 代码格式修改, 注意不是 css 修改
-+ test: 测试用例修改
-+ chore: 其他修改, 比如构建流程, 依赖管理.
-+ scope: commit 影响的范围, 比如: route, component, utils, + + build...
-+ subject: commit 的概述, 建议符合  50/72 formatting
-+ body: commit 具体修改内容, 可以分为多行, 建议符合 50/72 formatting
-+ footer: 一些备注, 通常是 BREAKING CHANGE 或修复的 bug 的链接.
 
 ## node stream 手动销毁
 
@@ -233,6 +218,12 @@ revert: 恢复先前的提交
 
 ## 首屏症候群
 
+### FP FCP FMP
+
++ FP（First Paint）： 首次绘制，标记浏览器渲染任何在视觉上不同于导航前屏幕内容的时间点
++ FCP（First Contentful Paint）：首次内容绘制，标记渲染第一帧 DOM 的时间点
++ FMP（First Meaning Paint）：首次有效绘制，标记主角元素渲染完成的时间点。
+
 ### css 加载
 
 #### css 资源较小时，直接插入到 HTML 文档中，这称为“内嵌”
@@ -303,6 +294,67 @@ revert: 恢复先前的提交
 + 请勿内嵌较大数据 URI
 + 请勿内嵌 CSS 属性（在 HTML 中使用 style 属性）
 
+##### 还有一种技巧
+
+```html
+<link href="style.css" rel="stylesheet" media="print" onload="this.media='all'">
+```
+
+上面的代码先把媒体查询属性设置成 `print`，将这个资源设置成非阻塞的资源。然后等这个资源加载完毕后，在将媒体查询属性设置成 `all` 让它对当前页面立即生效。
+
+##### 通过 `rel="preload"` 进行内容预加载
+
+```html
+<head>
+  <meta charset="utf-8">
+  <title>JS and CSS preload example</title>
+
+  <link rel="preload" href="style.css" as="style" onload="this.rel='stylesheet'">
+  <link rel="preload" href="main.js" as="script">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h1>bouncing balls</h1>
+  <canvas></canvas>
+
+  <!-- <script src="main.js"></script> -->
+</body>
+```
+
+目前该方法兼容性较低（firefox、ie 均不支持）
+
+##### 通过 `rel="prefetch"` 进行内容预加载
+
+```html
+<head>
+  <meta charset="utf-8">
+  <title>JS and CSS prefetch example</title>
+
+  <link rel="prefetch" href="style.css" as="style" onload="this.rel='stylesheet'">
+  <link rel="prefetch" href="main.js" as="script">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h1>bouncing balls</h1>
+  <canvas></canvas>
+
+  <!-- <script src="main.js"></script> -->
+</body>
+```
+
+目前该方法兼容性不高
+
+prefetch 和 preload 的区别
+
++ preload chunk 会在父 chunk 加载时，以并行的方式开始加载。prefetch chunk 会在父 chunk 加载结束后开始加载。
++ preload chunk 具有中等优先级，并立即下载。prefetch chunk 在浏览器闲置时下载。
++ preload chunk 会在父 chunk 中立即请求，用于当下时刻。prefetch chunk 会用于未来某个时刻。
++ 浏览器支持程度不同
+
 #### 在 `<link>` 标签中使用 media 属性
 
 这种做法告诉浏览器只有在条件满足的情况下才加载这些资源（例如指定了print，则在打印环境下才会加载这些资源）。
@@ -372,3 +424,43 @@ net.ipv4.tcp_synack_retries = 2
 ```
 
 使用情况还有待考虑
+
+## AMP
+
+AMP is a simple and robust format to ensure your website is fast, user-first, and makes money. AMP provides long-term success for your web strategy with distribution across popular platforms and reduced operating and development costs.
+
+一个 react ui 组件框架
+
+[amp](https://amp.dev/)
+
+## webp
+
+WebP 的优势体现在它具有更优的图像数据压缩算法，能带来更小的图片体积，而且拥有肉眼识别无差异的图像质量；同时具备了无损和有损的压缩模式、Alpha 透明以及动画的特性，在 JPEG 和 PNG 上的转化效果都相当优秀、稳定和统一。
+
+## svg
+
+在 svg 使用 `xlink:href` 属性时会报错: `SVG Namespace prefix xlink for href on textpath is not defined`
+
+需要在根 svg 元素上添加 `xmlns:xlink="http://www.w3.org/1999/xlink` 属性，如下图所示
+
+```html
+<svg version="1.1"
+    baseProfile="full"
+    width="20" height="600"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+```
+
+## setInterval, setTimeout, requestAnimationFrame
+
+为了提高性能和电池寿命，因此在大多数浏览器里，当requestAnimationFrame() 运行在后台标签页或者隐藏的 `<iframe>` 里时，requestAnimationFrame() 会被暂停调用以提升性能和电池寿命
+
+FireFox / Chrome 浏览器对 `setInterval`, `setTimeout` 做了优化，页面处于闲置状态的时候，如果定时间隔小于1秒钟(1000ms)，则停止了定时器。与 `requestAnimationFrame` 有类似行为
+
+|         | setInterval | requestAnimationFrame |
+| ------- | ----------- | --------------------- |
+| IE      | 无影响      | 暂停                  |
+| Safari  | 无影响      | 暂停                  |
+| Firefox | >=1s        | 1s - 3s               |
+| Chrome  | >=1s        | 暂停                  |
+| Opera   | 无影响      | 暂停                  |
