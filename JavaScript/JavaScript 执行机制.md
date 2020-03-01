@@ -207,7 +207,7 @@ nodejs 的 event loop分为6个阶段，`MicroTask Queue` 在6个阶段结束的
 #### event loop 的6个阶段
 
 + `timers`：执行 `setTimeout()` 和 `setInterval()` 中到期的 `callback`
-+ `I/O callback`：上一轮循环中有少数的 `I/O callback` 会被延迟到这一轮的这一阶段执行。
++ `pending callback`：上一轮循环中有少数的 `pending callback` 会被延迟到这一轮的这一阶段执行。
 + `idle, prepare`： 仅内部使用
 + `poll`：最为重要的几段， 执行除了以下之外的所有 `callback`
   + close 事件的 `callbacks`
@@ -242,6 +242,43 @@ poll 阶段有两个主要的功能：
 2. 如果 event loop 进入了 poll 阶段，且代码设定了 timer：
 
    + 如果 poll queue 进入空状态时（即poll 阶段为空闲状态），event loop 将检查 timers，如果有1个或多个 timers 时间时间已经到达，event loop 将按循环顺序进入 timers 阶段，并执行 timer queue。
+
+#### nodejs 事件循环趋势
+
+```js
+setTimeout(() => {
+  console.log('timer1');
+  Promise.resolve().then(function() {
+    console.log('promise1');
+  });
+}, 0);
+setTimeout(() => {
+  console.log('timer2');
+  Promise.resolve().then(function() {
+    console.log('promise2');
+  });
+}, 0);
+```
+
+node 10 结果
+
+```html
+timer1
+timer2
+promise1
+promise2
+```
+
+node 11 结果
+
+```html
+timer1
+promise1
+timer2
+promise2
+```
+
+为什么会有不同，是为了和浏览器更加趋同，通过版本跌代靠近浏览器事件循环。在生产环境建议还是不要特意的去利用 node 和浏览器不同的一些特性。即使是 node 和浏览器相同的特性，但规范没确定的一些特性，也建议小心使用。否则一次小小的 node 升级可能就会造成一次线上事故，而不只是啪啪打脸这么简单了。
 
 #### 参考资料
 
