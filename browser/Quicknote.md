@@ -553,6 +553,56 @@ Lax 相对于 Strict 模式来说，放宽了一些。简单来说就是，用**
 
 [「每日一题」CSRF 是什么？](https://zhuanlan.zhihu.com/p/22521378)
 
+## websocket 劫持
+
+websocket 升级请求协议
+
+```http
+GET ws://echo.websocket.org/?encoding=text HTTP/1.1
+Host: echo.websocket.org
+Connection: Upgrade
+Pragma: no-cache
+Cache-Control: no-cache
+Upgrade: websocket
+Origin: http://www.websocket.org
+Sec-WebSocket-Version: 13
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) Chrome/49.0.2623.110
+Accept-Encoding: gzip, deflate, sdch
+Accept-Language: en-US,en;q=0.8,zh-CN;q=0.6
+Cookie: _gat=1; _ga=GA1.2.2904372.1459647651; JSESSIONID=1A9431CF043F851E0356F5837845B2EC
+Sec-WebSocket-Key: 7ARps0AjsHN8bx5dCI1KKQ==
+Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
+```
+
+websocket 协议升级响应
+
+```http
+HTTP/1.1 101 Web Socket Protocol Handshake
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Headers: content-type
+Access-Control-Allow-Headers: authorization
+Access-Control-Allow-Headers: x-websocket-extensions
+Access-Control-Allow-Headers: x-websocket-version
+Access-Control-Allow-Headers: x-websocket-protocol
+Access-Control-Allow-Origin: http://www.websocket.org
+Connection: Upgrade
+Date: Sun, 03 Apr 2016 03:09:21 GMT
+Sec-WebSocket-Accept: wW9Bl95VtfJDbpHdfivy7csOaDo=
+Server: Kaazing Gateway
+Upgrade: websocket
+```
+
+一旦服务器端返回 101 响应，即可完成 WebSocket 协议切换。服务器端即可基于相同端口，将通信协议从 `http://` 或 `https://` 切换到 `ws://` 或 `wss://`，协议切换完成后，浏览器和服务器端就可以使用 WebSocket Api 互相发送文本和二进制消息。
+
+WebSocket 协议不受浏览器同源策略限制，跨域 WebSocket 可以直接连接。而且 WebSocket 协议没有规定服务器在握手阶段如何认证客户端身份，这个需要使用过程中自行设置。
+
+1. http 协议头 origin 字段监测，是否在白名单列表
+2. token 客户端将 token 作为 WebSocket 连接参数，或者放在连接请求头 auth 字段里，发送到服务器端
+
+[小心 ！跨站点websocket劫持！](https://juejin.im/entry/5c497d8b51882525c55fcd4c)
+
+[深入理解跨站点 WebSocket 劫持漏洞的原理及防范](https://www.ibm.com/developerworks/cn/java/j-lo-websocket-cross-site/index.html)
+
 ## script 标签的 defer 和 async
 
 ### defer
@@ -593,13 +643,18 @@ load是当页面所有资源全部加载完成后（包括DOM文档树，css文�
 
 但实际测试发现
 
-如果这两个资源都存在，在网络条件好的情况下，并不会影响首屏时间。如果网络环境比较差，其中一个资源下载时间过长，则会导致浏览器先渲染解析一半的 dom 作为首屏。
+如果这两个资源都存在，在网络条件好的s情况下，并不会影响首屏时间。如果网络环境比较差，其中一个资源下载时间过长，则会导致浏览器先渲染解析一半的 dom 作为首屏。
+
+#### css
+
+1. css 放在 head 标签中，先下载 html 文件 -> 构建 dom，同时下载 css -> 构建 cssom -> 合并成为渲染树 -> 布局 -> paint 绘制
+2. css 放在 body 标签中，先下载 html 文件 -> 构建 dom，绘制页面（首次绘制），下载css -> 构建 cssom -> 合并成为渲染树 -> 布局 -> paint 绘制（第二次绘制）
+
+css 放在 body 会导致浏览器解析 html 的时候，遇到 css 资源，会立即绘制一次页面。
 
 ![load & DOMContentLoaded](https://images2015.cnblogs.com/blog/746387/201704/746387-20170407181151019-499554025.png)
 
 [JS 一定要放在 Body 的最底部么？聊聊浏览器的渲染机制](https://segmentfault.com/a/1190000004292479)
-
-## iframe
 
 ## localStorage
 

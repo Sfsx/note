@@ -375,4 +375,12 @@ HardSourceWebpackPlugin是webpack的插件，可为模块提供中间缓存步�
 
 [HardSourceWebpackPlugin](https://github.com/mzgoddard/hard-source-webpack-plugin)
 
-## 
+## SplitChunks
+
+### splitChunks.chunks
+
+chunks: 表示哪些代码需要优化，有三个可选值：`initial`(初始块)、`async` (按需加载块)、`all` (全部块)，默认为 `async`
+
+里面有提到 `initial` 模式下会分开优化打包异步和非异步模块。而all会把异步和非异步同时进行优化打包。也就是说 moduleA 在indexA 中异步引入，indexB 中同步引入，`initial` 下 moduleA 会出现在两个打包块中，而 `all` 只会出现一个。
+
+[webpack SplitChunksPlugin实用指南](https://juejin.im/post/5b99b9cd6fb9a05cff32007a)

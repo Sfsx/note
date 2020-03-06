@@ -464,3 +464,16 @@ FireFox / Chrome 浏览器对 `setInterval`, `setTimeout` 做了优化，页面�
 | Firefox | >=1s        | 1s - 3s               |
 | Chrome  | >=1s        | 暂停                  |
 | Opera   | 无影响      | 暂停                  |
+
+## 移动端页面注意点
+
+### 单位
+
++ 设备像素/物理像素
++ css 像素
+
+### viewport
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+```

@@ -4,11 +4,28 @@
 
 ## 模块机制
 
+模块分为两类，一类为原生核心模块。一类为文件模块。
+
+文件模块又细分为三类
+
++ .js
++ .nide
++ .json
+
+### 模块查找策略
+
+1. 查找文件模块缓存
+2. 查找原生模块缓存
+3. 查找原生模块
+4. 查找文件模块
+   + node_modules 目录
+   + NODE_PATH 环境变量
+
 ## 异步 I/O
 
-    process.nextTick()
+`process.nextTick()`
 
-```javascript
+```js
 var http = require('http');
 var wait = function (mils) {
     var now = new Date;
@@ -28,6 +45,9 @@ http.createServer(function (req, res) {
 }).listen(5000, '127.0.0.1');
 ```
 
-    其中compute是一个密集计算的函数，我们把它变为可递归的，每一步需要1秒（使用wait来代替密集运行）。执行完一次后，通过process.nextTick把下一次的执行放在队列的尾部，转而去处理已经处于等待中的客户端请求。这样就可以同时兼顾两种任务，让它们都有机会执行。
+其中compute是一个密集计算的函数，我们把它变为可递归的，每一步需要1秒（使用wait来代替密集运行）。执行完一次后，通过process.nextTick把下一次的执行放在队列的尾部，转而去处理已经处于等待中的客户端请求。这样就可以同时兼顾两种任务，让它们都有机会执行。
 
 ## 异步编程
+
+## node 调试
+
