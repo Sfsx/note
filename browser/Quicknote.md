@@ -553,6 +553,52 @@ Lax 相对于 Strict 模式来说，放宽了一些。简单来说就是，用**
 
 [「每日一题」CSRF 是什么？](https://zhuanlan.zhihu.com/p/22521378)
 
+## websocket 劫持
+
+websocket 升级请求协议
+
+```http
+GET ws://echo.websocket.org/?encoding=text HTTP/1.1
+Host: echo.websocket.org
+Connection: Upgrade
+Pragma: no-cache
+Cache-Control: no-cache
+Upgrade: websocket
+Origin: http://www.websocket.org
+Sec-WebSocket-Version: 13
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) Chrome/49.0.2623.110
+Accept-Encoding: gzip, deflate, sdch
+Accept-Language: en-US,en;q=0.8,zh-CN;q=0.6
+Cookie: _gat=1; _ga=GA1.2.2904372.1459647651; JSESSIONID=1A9431CF043F851E0356F5837845B2EC
+Sec-WebSocket-Key: 7ARps0AjsHN8bx5dCI1KKQ==
+Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
+```
+
+websocket 协议升级响应
+
+```http
+HTTP/1.1 101 Web Socket Protocol Handshake
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Headers: content-type
+Access-Control-Allow-Headers: authorization
+Access-Control-Allow-Headers: x-websocket-extensions
+Access-Control-Allow-Headers: x-websocket-version
+Access-Control-Allow-Headers: x-websocket-protocol
+Access-Control-Allow-Origin: http://www.websocket.org
+Connection: Upgrade
+Date: Sun, 03 Apr 2016 03:09:21 GMT
+Sec-WebSocket-Accept: wW9Bl95VtfJDbpHdfivy7csOaDo=
+Server: Kaazing Gateway
+Upgrade: websocket
+```
+
+一旦服务器端返回 101 响应，即可完成 WebSocket 协议切换。服务器端即可基于相同端口，将通信协议从 `http://` 或 `https://` 切换到 `ws://` 或 `wss://`，协议切换完成后，浏览器和服务器端就可以使用 WebSocket Api 互相发送文本和二进制消息。
+
+WebSocket 协议不受浏览器同源策略限制，跨域 WebSocket 可以直接连接。而且 WebSocket 协议没有规定服务器在握手阶段如何认证客户端身份，这个需要使用过程中自行设置。
+
+1. http 协议头 origin 字段监测，是否在白名单列表
+2. token 客户端将 token 作为 WebSocket 连接参数，或者放在连接请求头 auth 字段里，发送到服务器端
+
 ## script 标签的 defer 和 async
 
 ### defer
