@@ -599,6 +599,10 @@ WebSocket 协议不受浏览器同源策略限制，跨域 WebSocket 可以直�
 1. http 协议头 origin 字段监测，是否在白名单列表
 2. token 客户端将 token 作为 WebSocket 连接参数，或者放在连接请求头 auth 字段里，发送到服务器端
 
+[小心 ！跨站点websocket劫持！](https://juejin.im/entry/5c497d8b51882525c55fcd4c)
+
+[深入理解跨站点 WebSocket 劫持漏洞的原理及防范](https://www.ibm.com/developerworks/cn/java/j-lo-websocket-cross-site/index.html)
+
 ## script 标签的 defer 和 async
 
 ### defer

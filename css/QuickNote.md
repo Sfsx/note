@@ -114,7 +114,7 @@ display: flow-root
 
 `vertical-align: middle;`
 
-该方法适用于：当图片处于 `display: inline-block;` 文字处于 `display: inline;`
+该方法适用于：当图片处于 `display: inline-block;` 文字处于 `display: inline;`，如果图片 `height` 大于文字高度，则只需要文字设置`vertical-align: middle;`，否则两者都设置 `vertical-align: middle;`
 
 方案二
 
