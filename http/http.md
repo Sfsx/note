@@ -259,3 +259,83 @@ sequence\r\n
 浏览器就会在一个 HOST 上建立多个 TCP 连接，连接数量的最大限制取决于浏览器设置，这些连接会在空闲的时候被浏览器用来发送新的请求，如果所有的连接都正在发送请求呢？那其他的请求就只能等等了。
 
 [你猜一个 TCP 连接上面能发多少个 HTTP 请求](https://zhuanlan.zhihu.com/p/61423830)
+
+## https 握手过程
+
++ SSL（Secure Sockets Layer，安全套接层）
++ TLS（Transport Layer Security Protocol，传输层安全协议）
++ TLS 则是标准化之后的 SSL
+
+### rsa 密钥协商
+
+#### Client Hello（客户端）
+
+客户端向服务端发送 client hello 消息，这个消息包含一个客户端随机数（client random），客户端支持的加密方法（Cipher Suites）和 SSL 版本号。
+
+#### Server Hello（服务端）
+
+服务端向客户端发送 server hello 消息，这个消息包含一个服务端随机数（server random），服务器选取的加密套件，以及服务器选择的 SSL 版本号。
+
+#### Certificate（服务端）
+
+服务器将CA证书发送给客户端。
+
+#### Server Hello Done（服务端）
+
+通知客户端 Server Hello 过程结束。（Server hello、Certificat、Server Hello Done）
+
+#### Certificate Verify（客户端）
+
+客户端通过浏览器的根证书验证服务端证书的合法性，然后从 CA证书中取出公钥，再生成一个随机数，使用公钥对其进行加密生成 PreMaster Key
+
+#### Client Key Exchange（客户端）
+
+服务端和客户端用三个随机数以及约定好的方法生成对话密钥（session key），用来加密整个对话过程
+
+#### Change Cipher Spec（客户端）
+
+这一步是客户端通知服务端后面再发送的消息都会使用前面协商出来的秘钥加密了，是一条事件消息
+
+#### Change Cipher Spec（服务端）
+
+这一步是服务端通知客户端后面再发送的消息都会使用前面协商出来的秘钥加密了，是一条事件消息
+
+#### Finished（Encrypted Handshake Message）
+
+​Encrypted Handshake Message 这是由客户端服务器之间协商的算法和密钥保护的第一个消息。
+
+![tls handshake](https://i0.hdslb.com/bfs/article/bffa2a2eca17c96a4816d60b53179674a4d44d8a.png@1320w_2306h.webp)
+
+### DH 密钥协商
+
+1. 客户端向服务器发送Client Hello,告诉服务器，我支持的协议版本，加密套件等信息。
+
+2. 服务端收到响应，选择双方都支持的协议，套件，向客户端发送Server Hello。同时服务器也将自己的证书发送到客户端(Certificate)。
+
+3. 服务器利用私钥将服务器DH参数签名，生成服务器签名。
+
+4. 服务端向客户端发送服务器DH参数以及服务器签名(Server Key Exchange)。
+
+5. 客户端向服务端发送客户端DH参数(Client Key Exchange)。
+
+### HSTS
+
+HSTS（HTTP Strict Transport Security） 是一个安全功能，它告诉浏览器只能通过 HTTPS 访问当前资源，而不是 HTTP
+
+```http
+Strict-Transport-Security: max-age=<expire-time>
+Strict-Transport-Security: max-age=<expire-time>; includeSubDomains
+Strict-Transport-Security: max-age=<expire-time>; preload
+```
+
+注意：`Strict-Transport-Security` 在通过 http 访问时会被忽略，因为攻击者也可以通过中间人的方式在连接中修改、注入或删除他。只有在你的网站通过 HTTPS 访问并且没有证书错误的时候，浏览器才会认为你的站点支持 HTTPS 然后使用 `Strict-Transport-Security`
+
+### TLS 1.3
+
++ 存在兼容性问题
++ 只需要一个 RTT 即可完成握手。TLS 1.3 的握手不再支持静态的 RSA 密钥交换，这意味着必须使用带有前向安全的 Diffie-Hellman 进行全面握手
++ 相比过去的的版本，引入了新的密钥协商机制 — PSK
++ 废弃了 3DES、RC4、AES-CBC 等加密组件，废弃了 SHA1、MD5 等哈希算法
++ Server Hello 之后的所有握手消息采取了加密操作，可见明文大大减少
++ 不再允许对加密报文进行压缩、不再允许双方发起重协商
++ DSA 证书不再允许在 TLS 1.3 中使用
