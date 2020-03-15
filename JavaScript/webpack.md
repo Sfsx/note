@@ -384,3 +384,11 @@ chunks: 表示哪些代码需要优化，有三个可选值：`initial`(初始�
 里面有提到 `initial` 模式下会分开优化打包异步和非异步模块。而all会把异步和非异步同时进行优化打包。也就是说 moduleA 在indexA 中异步引入，indexB 中同步引入，`initial` 下 moduleA 会出现在两个打包块中，而 `all` 只会出现一个。
 
 [webpack SplitChunksPlugin实用指南](https://juejin.im/post/5b99b9cd6fb9a05cff32007a)
+
+## Runtime
+
+在浏览器运行过程中，webpack 用来连接模块化应用程序所需的所有代码。
+
+## Manifest
+
+当编译器（compiler）开始执行、解析和映射应用程序时，它会保留所有模块的详细要点，这个数据集合称之为 Manifest
