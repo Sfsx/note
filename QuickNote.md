@@ -236,6 +236,46 @@ revert: 恢复先前的提交
 + FCP（First Contentful Paint）：首次内容绘制，标记渲染第一帧 DOM 的时间点
 + FMP（First Meaning Paint）：首次有效绘制，标记主角元素渲染完成的时间点。
 
+### css 解析优化
+
+避免使用一些昂贵的属性（也只能是尽量，ui设计好了该用还是得用）：
+
+border-radius
+box-shadow
+opacity
+transform
+filter
+position:fixed
+
+避免复杂 css 选择器：
+
+```css
+body > main.container > section.intro h2:nth-of-type(odd) + p::first-line a[href$=".pdf"] {
+    /* …… */
+}
+```
+
+或者（使用 sass、less 时避免以下情况）
+
+```css
+.list {
+    .item {
+        .product {
+            .intro {
+                .pic {
+                    height: 200px;
+                }
+            }
+        }
+    }
+}
+
+/* 上述代码等价于 */
+.list .item .product .intro .pic {
+  height: 200px;
+}
+```
+
 ### css 加载
 
 #### css 资源较小时，直接插入到 HTML 文档中，这称为“内嵌”
