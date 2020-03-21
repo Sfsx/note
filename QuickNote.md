@@ -477,15 +477,72 @@ FireFox / Chrome 浏览器对 `setInterval`, `setTimeout` 做了优化，页面�
 | Chrome  | >=1s        | 暂停                  |
 | Opera   | 无影响      | 暂停                  |
 
-## 移动端页面注意点
+## 字符画
 
-### 单位
+[链接](http://patorjk.com/software/taag/#p=display&f=Graffiti&t=Type%20Something%20)
 
-+ 设备像素/物理像素
-+ css 像素
+```console
+  ______   ________   ______   ____  ____  
+.' ____ \ |_   __  |.' ____ \ |_  _||_  _|
+| (___ \_|  | |_ \_|| (___ \_|  \ \  / /
+ _.____`.   |  _|    _.____`.    > `' <
+| \____) | _| |_    | \____) | _/ /'`\ \_  
+ \______.'|_____|    \______.'|____||____|
+
+```
+
+## 移动端适配问题
+
+### 概念
+
++ 物理像素（设备物理分辨率，physical pixel）：手机屏幕上显示的最小单员
+
++ 逻辑分辨率（设备独立像素，device-independent pixel）：css 中设置的像素指的就是该像素。
+
++ 设备像素比（device pixel ratio）：设备像素比 = 物理像素 / css像素。可以通过JS来获取：`window.devicePixelRatio`
+
+以 iphone6 为例
+
++ 物理像素为：750 x 1334
++ 逻辑分辨率为：375 x 667
++ 设备像素比为：2
+
+### 视口的基本概念
+
++ 布局视口（layout viewport）：在浏览器窗口css的布局区域。移动设备上的浏览器都会把自己默认的 viewport 的 width 设为 980px 或其他值
+
++ 视觉视口（visual viewport）：用户通过屏幕看到的页面区域，用户手动缩放后的显示内容区域，在移动端缩放不会改变布局视口的宽度，仅仅只是放大和缩小。
+
++ 理想视口：这个视口不是真实存在的，理想视口即最理想布局视口尺寸，就是将布局视口的宽度设置为设备独立像素的宽度
 
 ### viewport
 
+设置理想视口
+
 ```html
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
 ```
+
+注意：我们在进行媒体查询的时候，查询的宽度值其实也是布局视口的宽度值。
+
+| 属性          | 取值                                                | 含义                         |
+| ------------- | --------------------------------------------------- | ---------------------------- |
+| width         | 定义视口的宽度，单位为像素                          | 正整数或设备宽度device-width |
+| height        | 定义视口的高度，单位为像素                          | 正整数或device-height        |
+| initial-scale | 定义初始缩放值                                      | 整数或小数                   |
+| minimum-scale | 定义缩小最小比例，它必须小于或等于maximum-scale设置 | 整数或小数                   |
+| maximum-scale | 定义放大最大比例，它必须大于或等于minimum-scale设置 | 整数或小数                   |
+| user-scalable | 定义是否允许用户手动缩放页面，默认值yes             | yes/no                       |
+
+### 适配方案
+
+1. rem
+2. vm、vh 布局
+3. flex
+
+用户使用更大的屏幕，是想看到更多的内容，而不是更大的字。
+
+最佳方案：
+
+1. 字体是不需要去根据分辨率改变大小直接固定 px.
+2. 使用 flex 弹性布局
