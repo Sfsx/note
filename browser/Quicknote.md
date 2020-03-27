@@ -776,19 +776,65 @@ XSS 全称是 Cross Site Scripting，为了与 `CSS` 区分开来，故简称 XS
 
 #### 1. 储存型 XSS
 
-+ 首先黑客利用站点漏洞将一段恶意JavaScript代码提交到网站的数据库中；
-+ 然后用户向网站请求包含了恶意JavaScript脚本的页面；
-+ 当用户浏览该页面的时候，恶意脚本就会将用户的Cookie信息等数据上传到服务器。
++ 首先黑客利用站点漏洞将一段恶意 JavaScript 代码提交到网站的数据库中；
++ 然后用户向网站请求包含了恶意 JavaScript 脚本的页面；
++ 当用户浏览该页面的时候，恶意脚本就会执行。
 
 例子：[喜马拉雅存储性 XSS](https://shuimugan.com/bug/view?bug_no=138479)
 
 #### 2. 反射型 XSS
 
-基本无用
+恶意脚本本身作为请求参数发送到站点页面存在的地方（通常是搜索框），然后脚本反射（出现）在新渲染（或者部分刷新）的页面并执行。
 
-#### 3. 基于 DOM 的XSS
+例子：
 
-黑客通过各种手段将恶意脚本注入用户的页面中，比如通过网络劫持在页面传输过程中修改HTML页面的内容，这种劫持类型很多，有通过WiFi路由器劫持的，有通过本地恶意软件来劫持的，它们的共同点是在Web资源传输过程或者在用户使用页面的过程中修改Web页面的数据。
+某个网站有个错误页面
+
+```url
+https://www.Sfsx.com/error?message=Sorry,%20an%20error%20occurred.
+```
+
+跳转后页面内容为
+
+```html
+<p>Sorry, an error occurred.</p>
+```
+
+这个时候如果请求地址改为
+
+```url
+https://www.Sfsx.com/error?message=%3Cscript%3Ealert(%22xss%22);%3C/script%3E
+```
+
+那么页面就会是
+
+```html
+<p><script>alert("xss");</script></p>
+```
+
+js 代码就会被执行
+
+#### 3. 基于 DOM 的 XSS
+
+黑客通过各种手段将恶意脚本注入用户的页面中，比如通过网络劫持在页面传输过程中修改 HTML 页面的内容，这种劫持类型很多，有通过 WiFi 路由器劫持的，有通过本地恶意软件来劫持的，它们的共同点是在Web资源传输过程或者在用户使用页面的过程中修改 Web 页面的数据。
+
+当页面中的 js 会根据页面 url 生成 dom。这时如果没有对 url 进行检测，那么 url 中如果有 js 代码，就会生成 `<script></script>` 节点，从而执行恶意脚本。基于 DOM 的 XSS 可以说是反射型 XSS 的一种。
+
+例子：
+
+```html
+<script>
+  document.write("<b>Currnet URL</b>" + document.baseURI);
+</script>
+```
+
+这段代码会在网页里生成 DOM 节点，如果按下述地址请求
+
+```url
+http://网页url地址#<script>alert(1)</script>
+```
+
+那么网页就会注入恶意脚本并执行。
 
 ### 防御
 
