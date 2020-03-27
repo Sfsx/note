@@ -312,11 +312,9 @@ sequence\r\n
 
 2. 服务端收到响应，选择双方都支持的协议，套件，向客户端发送Server Hello。同时服务器也将自己的证书发送到客户端(Certificate)。
 
-3. 服务器利用私钥将服务器DH参数签名，生成服务器签名。
+3. 服务端向客户端发送服务器DH参数（模数 p，基数 g 和服务端公钥 S）以及用服务器私钥对DH参数生成的签名(Server Key Exchange)。
 
-4. 服务端向客户端发送服务器DH参数以及服务器签名(Server Key Exchange)。
-
-5. 客户端向服务端发送客户端DH参数(Client Key Exchange)。
+4. 客户端向服务端发送客户端DH参数（客户端生成一个随机数 c 作为自己的私钥，然后根据算法参数计算出公钥 C）(Client Key Exchange)。
 
 ### HSTS
 
@@ -339,3 +337,9 @@ Strict-Transport-Security: max-age=<expire-time>; preload
 + Server Hello 之后的所有握手消息采取了加密操作，可见明文大大减少
 + 不再允许对加密报文进行压缩、不再允许双方发起重协商
 + DSA 证书不再允许在 TLS 1.3 中使用
+
+[图解SSL/TLS协议](https://www.ruanyifeng.com/blog/2014/09/illustration-ssl.html)
+
+[SSL/TLS 握手过程详解](https://www.bilibili.com/read/cv1003133/)
+
+[TLS 1.3 VS TLS 1.2，让你明白 TLS 1.3 的强大](https://www.jianshu.com/p/efe44d4a7501)

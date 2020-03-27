@@ -16,10 +16,6 @@ for (let item of data) {
 }
 ```
 
-## 内存
-
-  JavaScript
-
 ## koa源码
 
 ```js
@@ -1281,6 +1277,36 @@ function newOperator(ctor) {
 [面试官问：能否模拟实现JS的new操作符](https://juejin.im/post/5bde7c926fb9a049f66b8b52)
 
 [JavaScript Object.create vs new Function() 的区别](http://fe2x.cc/2017/10/14/Object-create-and-new-JavaScript/)
+
+## async 原理
+
+```js
+function spawn(genF) {
+  return new Promise((resolve, reject) => {
+    const gen = genF();
+    function step(nextF) {
+      let next;
+      try() {
+        next = nextF();
+      } catch(e) {
+        return reject(e);
+      }
+      if(next.done) {
+        return resolve(next.value);
+      }
+      Promise.resolve(next.value).then(
+        function(value) {
+          step(function() { return gen.next(value); });
+        },
+        function(e) {
+          step(function() { return gen.throw(e); });
+        }
+      )
+    }
+    step(function() { return gen.next(undefined); });
+  })
+}
+```
 
 ## 原型与原型链的理解
 
