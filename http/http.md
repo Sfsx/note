@@ -316,6 +316,18 @@ sequence\r\n
 
 4. 客户端向服务端发送客户端DH参数（客户端生成一个随机数 c 作为自己的私钥，然后根据算法参数计算出公钥 C）(Client Key Exchange)。
 
+### 浏览器证书校验
+
+1. 证书是否过期
+
+    CRL（Certificate Revocation List）即**证书撤销名单**，保存在浏览器中定期更新
+
+    OCSP （Online Certificate Status Protocol）即**证书在线状态协议**，用于实时查询证书是否有效
+
+2. 证书是否被篡改
+
+    通过上级证书的公钥，对当前服务器发来的证书进行签名，比对计算签名与服务器证书中签名是否一致。
+
 ### HSTS
 
 HSTS（HTTP Strict Transport Security） 是一个安全功能，它告诉浏览器只能通过 HTTPS 访问当前资源，而不是 HTTP
