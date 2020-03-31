@@ -51,3 +51,26 @@ http.createServer(function (req, res) {
 
 ## node 调试
 
+## 内存泄漏
+
+```js
+var theThing = null;
+var replaceThing = function () {
+    var originalThing = theThing;
+    var unused = function () {
+    if (originalThing)
+        console.log("hi");
+    };
+    theThing = {
+        longStr: new Array(1000000).join('*'),
+        someMethod: function () {
+            console.log(someMessage);
+        }
+    };
+};
+setInterval(replaceThing, 1000);
+```
+
+同一个函数内部的闭包作用域只有一个，所有闭包共享。在执行函数的时候，如果遇到闭包，会创建闭包作用域内存空间，将该闭包所用到的局部变量添加进去，然后再遇到闭包，会在之前创建好的作用域空间添加此闭包会用到而前闭包没用到的变量。函数结束，清除没有被闭包作用域引用的变量。
+
+上述代码中 `replaceThing` 函数内部创建了两个闭包（`unused`、`someMethod`），`unused` 这个闭包引用了父作用域的 `originalThing` 变量，如果没有后面的 `theThing` 变量，则在函数 `replaceThing` 执行后清除。而 `theThing` 是全局变量，它引用了闭包作用域（包含了 `unused` 所引用的 `originLeakObject`）不会释放，所以会造成内存泄漏。

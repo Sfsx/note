@@ -462,23 +462,46 @@ img 标签的 crossOrigin 属性。该属性有两个值
 
 ## csrf
 
-### 1、什么是CSRF攻击
+### 什么是 CSRF 攻击
 
 CSRF 攻击是黑客借助受害者的 cookie 骗取服务器的信任，但是黑客并不能拿到 cookie，也看不到 cookie 的内容。另外，对于服务器返回的结果，由于**浏览器同源策略**的限制，黑客也无法进行解析。因此，黑客无法从返回的结果中得到任何东西，他所能做的就是给服务器发送请求，以执行请求中所描述的命令，在服务器端直接改变数据的值，而非窃取服务器中的数据。
 
-2011年的解决方案：
+### 常见 CSRF 攻击类型
 
-[CSRF 攻击的应对之道](https://www.ibm.com/developerworks/cn/web/1102_niugang_csrf/)
++ GET 类型的 CSRF
 
-### 2、有哪些防御方案
+```html
+ <img src="http://bank.example/withdraw?amount=10000&for=hacker" >
+```
 
-1. 用户操作限制，比如验证码；
-2. 请求来源限制，比如限制HTTP Referer才能完成操作；
-3. token验证机制，比如请求数据字段中添加一个token，响应请求时校验其有效性；
++ POST 类型的 CSRF
+
+```html
+<form action="http://bank.example/withdraw" method=POST>
+    <input type="hidden" name="account" value="xiaoming" />
+    <input type="hidden" name="amount" value="10000" />
+    <input type="hidden" name="for" value="hacker" />
+</form>
+<script> document.forms[0].submit(); </script>
+```
+
++ 链接类型的 CSRF
+
+```html
+<a href="http://test.com/csrf/withdraw.php?amount=1000&for=hacker" taget="_blank">
+  重磅消息！！
+</a>
+```
+
+### 有哪些防御方案
+
+1. 同源检测
+2. token验证机制，比如请求数据字段中添加一个token，响应请求时校验其有效性
+3. somesite
 
 **token验证的CSRF防御机制是公认最合适的方案**，也是本文讨论的重点。
 
-### 实现思路
+### token
 
 #### 1、可行性方案
 
@@ -505,6 +528,10 @@ token防御的整体思路是：
 + 第四步：定时更新 token 防止 token 被解析，每5分钟更新一次
 
 这里依旧有个细节值得提一下：**Nodejs 的上层一般是 nginx，而 nginx 默认会过滤头信息中不合法的字段（比如头信息字段名包含“_”的），这里在写头信息的时候需要注意。**
+
+#### token 防御更新
+
+正确的做法应该是在登入的时候服务端返回 token ，之后客户端登入每携带 token。如果直接将 token 放在 dom 中，攻击者可以通过 xss 攻击获取 token，或者通过攻击者的服务器模拟浏览器获取被攻击的页面，进而得到 dom 中的 token
 
 ### "One more thing..."
 
@@ -547,11 +574,25 @@ Strict 为严格模式，另一个域发起的任何请求都不会携带该类�
 
 Lax 相对于 Strict 模式来说，放宽了一些。简单来说就是，用**安全的 HTTP 方法（GET、HEAD、OPTIONS 和 TRACE）改变了当前页面或者打开了新页面时**，可以携带该类型的 cookie。
 
+### 同源检测
+
+#### Origin Header
+
++ IE 11 不会在跨站 cors 上添加请求头 origin
++ 302 重定向不会携带 origin
+
+#### Referer Header
+
++ refere policy
++ refere 可被修改
+
+同时验证 origin 与 refere，如果 refere 和 origin 都不存在直接拒绝
+
 [跨站请求伪造与 Same-Site Cookie](https://www.jianshu.com/p/66f77b8f1759)
 
 [SameSite Cookie attribute?](https://medium.com/compass-security/samesite-cookie-attribute-33b3bfeaeb95)
 
-[「每日一题」CSRF 是什么？](https://zhuanlan.zhihu.com/p/22521378)
+[前端安全系列之二：如何防止CSRF攻击？](https://juejin.im/post/5bc009996fb9a05d0a055192)
 
 ## websocket 劫持
 
@@ -836,9 +877,19 @@ http://网页url地址#<script>alert(1)</script>
 
 那么网页就会注入恶意脚本并执行。
 
-### 防御
++ `document.referer` 属性
++ `window.name` 属性
++ `location` 属性
++ `innerHTML` 属性
++ `documen.write` 属性
+
+### 常用防范方法
 
 #### 输入过滤
+
+#### 转义HTML
+
+#### httpOnly
 
 #### 静态脚本拦截
 
@@ -882,6 +933,23 @@ observer.observe(document, {
 参考资料
 
 [【前端安全】JavaScript防http劫持与XSS](https://www.cnblogs.com/coco1s/p/5777260.html)
+
+### 预防存储型和反射型 XSS 攻击
+
++ 改用前端渲染
++ 输入过滤
+
+### 预防基于 DOM 型 XSS 攻击
+
+DOM 中的内联事件监听器 `onclick`、`onerror`、`onload`
+
+`<a>` 标签的 `herf` 属性
+
+js 中直接插入 HTML 的方法 `innerHTML`，`location`，`document.write`
+
+js 中的 `eval()`，`setTimeout()`，`setInterval()` 等能把字符串作为代码运行的方法
+
+在使用以上方法要特别小心，不能直接将用户输入数据作为参数，需要对其进行转译。
 
 ## 内容安全策略 CSP
 
