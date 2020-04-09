@@ -169,48 +169,6 @@ dom 操作是比较昂贵的。当创建一个 dom 除了需要网页重排重�
 
 [guides](https://nodejs.org/en/docs/guides/)
 
-## webpack 打包内存分配失败
-
-node 存在内存限制，32 位系统 0.7 gb，64 位系统 1.5 gb，当引用所需内存超出时就会导致内存分配失败，错误日志如下
-
-```log
-<--- Last few GCs --->
-
-[16772:00000000003C8F40] 13003561 ms: Mark-sweep 1366.3 (1417.9) -> 1362.5 (1416.8) MB, 764.6 / 0.1 ms  (average mu = 0.092, current mu = 0.016) allocation failure scavenge might not succeed
-[16772:00000000003C8F40] 13003623 ms: Scavenge 1363.6 (1416.8) -> 1363.4 (1417.3) MB, 57.8 / 0.0 ms  (average mu = 0.092, current mu =
-0.016) allocation failure
-
-
-<--- JS stacktrace --->
-
-==== JS stack trace =========================================
-
-    0: ExitFrame [pc: 000001B78F25C5C1]
-Security context: 0x01dc93e9e6e9 <JSObject>
-    1: substr [000001DC93E8E361](this=0x033c8272d591 <String[321]: ,CAA0B,SAACC,GAAD,CAAMC,EAAN,CAAa,CACrCA,IAAMA,GAAGC,QAAT,EAAqBD,GAAGC,QAAH,CAAYC,KAAZ,CAAkBH,KAAOA,IAAII,OAAX,EAAsBJ,GAAxC,CAArB,CACD,CAFD,CAIA,2BAEA,GAAMK,OAAQ,GAAItD,IAAJ,CAAQ,CACpB2C,GAAI,MADgB,CAEpBnB,aAFoB,CAGpB+B,WAAY,CAAEhD,OAAF,CAHQ,CAIpBiD,OAAQ,yBAAKC,GAAE,KAAF,CAAL,EAJY,CAAR,CAAd...
-
-FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
- 1: 000000013FB4C6AA v8::internal::GCIdleTimeHandler::GCIdleTimeHandler+4506
- 2: 000000013FB27416 node::MakeCallback+4534
- 3: 000000013FB27D90 node_module_register+2032
- 4: 000000013FE4189E v8::internal::FatalProcessOutOfMemory+846
- 5: 000000013FE417CF v8::internal::FatalProcessOutOfMemory+639
- 6: 0000000140027F94 v8::internal::Heap::MaxHeapGrowingFactor+9620
- 7: 000000014001EF76 v8::internal::ScavengeJob::operator=+24550
- 8: 000000014001D5CC v8::internal::ScavengeJob::operator=+17980
- 9: 0000000140026317 v8::internal::Heap::MaxHeapGrowingFactor+2327
-10: 0000000140026396 v8::internal::Heap::MaxHeapGrowingFactor+2454
-11: 0000000140150637 v8::internal::Factory::NewFillerObject+55
-12: 00000001401CD826 v8::internal::operator<<+73494
-13: 000001B78F25C5C1
-```
-
-解决办法给 node 分配更大的内存。启动参数添加 `--max_old_space_size=8192` 给 node 设置更大的老生代内存空间。
-
-参考链接
-
-[Angular 7/8 FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory](https://github.com/angular/angular-cli/issues/13734)
-
 ## git commit 类型
 
 ```doc
@@ -227,198 +185,6 @@ ci：自动化流程配置或脚本修改
 chore: 非 src 和 test 的修改
 revert: 恢复先前的提交
 ```
-
-## 首屏症候群
-
-### FP FCP FMP
-
-+ FP（First Paint）： 首次绘制，标记浏览器渲染任何在视觉上不同于导航前屏幕内容的时间点
-+ FCP（First Contentful Paint）：首次内容绘制，标记渲染第一帧 DOM 的时间点
-+ FMP（First Meaning Paint）：首次有效绘制，标记主角元素渲染完成的时间点。
-
-### css 解析优化
-
-避免使用一些昂贵的属性（也只能是尽量，ui设计好了该用还是得用）：
-
-border-radius
-box-shadow
-opacity
-transform
-filter
-position:fixed
-
-避免复杂 css 选择器：
-
-```css
-body > main.container > section.intro h2:nth-of-type(odd) + p::first-line a[href$=".pdf"] {
-    /* …… */
-}
-```
-
-或者（使用 sass、less 时避免以下情况）
-
-```css
-.list {
-    .item {
-        .product {
-            .intro {
-                .pic {
-                    height: 200px;
-                }
-            }
-        }
-    }
-}
-
-/* 上述代码等价于 */
-.list .item .product .intro .pic {
-  height: 200px;
-}
-```
-
-### css 加载
-
-#### css 资源较小时，直接插入到 HTML 文档中，这称为“内嵌”
-
-#### css 文件较大时，内嵌用于呈现首屏内容的css，暂缓加载其余样式，直到首屏内容显现出来为止
-
-目前需要使用 javascript 来支持，但在未来可以使用 `<link>` 标签的 `import` 属性，类似 `<script>` 标签的 `async` 属性。
-
-如果 HTML 文档如下所示:
-
-```html
-<html>
-  <head>
-    <link rel="stylesheet" href="small.css">
-  </head>
-  <body>
-    <div class="blue">
-      Hello, world!
-    </div>
-  </body>
-</html>
-```
-
-并且 `small.css` 资源如下所示：
-
-```css
-  .yellow {background-color: yellow;}
-  .blue {color: blue;}
-  .big { font-size: 8em; }
-  .bold { font-weight: bold; }
-```
-
-就可以按照如下方式内嵌关键的 CSS：
-
-```html
-<html>
-  <head>
-    <style>
-      .blue{color:blue;}
-    </style>
-    </head>
-  <body>
-    <div class="blue">
-      Hello, world!
-    </div>
-    <noscript id="deferred-styles">
-      <link rel="stylesheet" type="text/css" href="small.css"/>
-    </noscript>
-    <script>
-      var loadDeferredStyles = function() {
-        var addStylesNode = document.getElementById("deferred-styles");
-        var replacement = document.createElement("div");
-        replacement.innerHTML = addStylesNode.textContent;
-        document.body.appendChild(replacement)
-        addStylesNode.parentElement.removeChild(addStylesNode);
-      };
-      var raf = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
-          window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-      if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
-      else window.addEventListener('load', loadDeferredStyles);
-    </script>
-  </body>
-</html>
-```
-
-注意：
-
-+ 请勿内嵌较大数据 URI
-+ 请勿内嵌 CSS 属性（在 HTML 中使用 style 属性）
-
-##### 还有一种技巧
-
-```html
-<link href="style.css" rel="stylesheet" media="print" onload="this.media='all'">
-```
-
-上面的代码先把媒体查询属性设置成 `print`，将这个资源设置成非阻塞的资源。然后等这个资源加载完毕后，在将媒体查询属性设置成 `all` 让它对当前页面立即生效。
-
-##### 通过 `rel="preload"` 进行内容预加载
-
-```html
-<head>
-  <meta charset="utf-8">
-  <title>JS and CSS preload example</title>
-
-  <link rel="preload" href="style.css" as="style" onload="this.rel='stylesheet'">
-  <link rel="preload" href="main.js" as="script">
-
-  <link rel="stylesheet" href="style.css">
-</head>
-
-<body>
-  <h1>bouncing balls</h1>
-  <canvas></canvas>
-
-  <!-- <script src="main.js"></script> -->
-</body>
-```
-
-目前该方法兼容性较低（firefox、ie 均不支持）
-
-##### 通过 `rel="prefetch"` 进行内容预加载
-
-```html
-<head>
-  <meta charset="utf-8">
-  <title>JS and CSS prefetch example</title>
-
-  <link rel="prefetch" href="style.css" as="style" onload="this.rel='stylesheet'">
-  <link rel="prefetch" href="main.js" as="script">
-
-  <link rel="stylesheet" href="style.css">
-</head>
-
-<body>
-  <h1>bouncing balls</h1>
-  <canvas></canvas>
-
-  <!-- <script src="main.js"></script> -->
-</body>
-```
-
-目前该方法兼容性不高
-
-prefetch 和 preload 的区别
-
-+ preload chunk 会在父 chunk 加载时，以并行的方式开始加载。prefetch chunk 会在父 chunk 加载结束后开始加载。
-+ preload chunk 具有中等优先级，并立即下载。prefetch chunk 在浏览器闲置时下载。
-+ preload chunk 会在父 chunk 中立即请求，用于当下时刻。prefetch chunk 会用于未来某个时刻。
-+ 浏览器支持程度不同
-
-#### 在 `<link>` 标签中使用 media 属性
-
-这种做法告诉浏览器只有在条件满足的情况下才加载这些资源（例如指定了print，则在打印环境下才会加载这些资源）。
-
-```html
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="print.css" media="print">
-```
-
-[优化 CSS 发送过程](https://developers.google.com/speed/docs/insights/OptimizeCSSDelivery)
-
-[渐进式加载](https://developer.mozilla.org/zh-CN/docs/Web/Progressive_web_apps/%E5%8A%A0%E8%BD%BD)
 
 ## flex 布局在页面加载时引起的页面跳动
 
@@ -484,10 +250,6 @@ AMP is a simple and robust format to ensure your website is fast, user-first, an
 一个 react ui 组件框架
 
 [amp](https://amp.dev/)
-
-## webp
-
-WebP 的优势体现在它具有更优的图像数据压缩算法，能带来更小的图片体积，而且拥有肉眼识别无差异的图像质量；同时具备了无损和有损的压缩模式、Alpha 透明以及动画的特性，在 JPEG 和 PNG 上的转化效果都相当优秀、稳定和统一。
 
 ## svg
 
@@ -563,6 +325,10 @@ FireFox / Chrome 浏览器对 `setInterval`, `setTimeout` 做了优化，页面�
 <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
 ```
 
++ `width=device-width` 将布局宽度与屏幕宽度（设备逻辑像素宽度）进行匹配
++ `initial-scale=1` 以便将 css 像素与设备逻辑像素的比例设置为 1:1。
++ `user-scalable=no` 禁止用户修改 css 像素与设备逻辑像素的比例。
+
 注意：我们在进行媒体查询的时候，查询的宽度值其实也是布局视口的宽度值。
 
 | 属性          | 取值                                                | 含义                         |
@@ -579,6 +345,12 @@ FireFox / Chrome 浏览器对 `setInterval`, `setTimeout` 做了优化，页面�
 1. rem
 2. vm、vh 布局
 3. flex
+4. 请勿使用较大的固定宽度的元素
+5. 使用流媒体查询
+
+    关于流媒体的断点：
+    + 从小屏幕开始不断扩展的方式选择主要断点
+    + 使每行文字最多为 70 或 80 个字符左右（大约 8 到 10 个英文单词），因此，每次文本块宽度超过 10 个单词时，就应考虑添加断点。
 
 用户使用更大的屏幕，是想看到更多的内容，而不是更大的字。
 
@@ -586,6 +358,7 @@ FireFox / Chrome 浏览器对 `setInterval`, `setTimeout` 做了优化，页面�
 
 1. 字体是不需要去根据分辨率改变大小直接固定 px.
 2. 使用 flex 弹性布局
+3. 使用流媒体查询
 
 ## 怎么保证redis挂掉之后再重启数据可以进行恢复
 
@@ -613,7 +386,12 @@ FireFox / Chrome 浏览器对 `setInterval`, `setTimeout` 做了优化，页面�
 
 ## 常见前端内存泄漏
 
-### 全局变量
+### 意外的全局变量
+
++ 意外的全局变量
+    函数内部使用 `use strict`。
++ 必须的全局变量
+    全局变量使用之后置位 `null`。
 
 ### 闭包
 
@@ -621,59 +399,13 @@ FireFox / Chrome 浏览器对 `setInterval`, `setTimeout` 做了优化，页面�
 
 ### dom 删除时 子元素存在引用
 
-## performace
+### 被遗忘的计时器或回调函数
 
-+ `navigationStart`: 表示从上一个文档卸载结束时的 unix 时间戳，如果没有上一个文档，这个值将和 fetchStart 相等。
-+ `unloadEventStart`: 表示前一个网页（与当前页面同域）unload 的时间戳，如果无前一个网页 unload 或者前一个网页与当前页面不同域，则值为 0。
-+ `unloadEventEnd`: 返回前一个页面 unload 时间绑定的回掉函数执行完毕的时间戳。
-+ `redirectStart`: 第一个 HTTP 重定向发生时的时间。有跳转且是同域名内的重定向才算，否则值为 0。
-+ `redirectEnd`: 最后一个 HTTP 重定向完成时的时间。有跳转且是同域名内部的重定向才算，否则值为 0。
-+ fetchStart: 浏览器准备好使用 HTTP 请求抓取文档的时间，这发生在检查本地缓存之前。
-+ `domainLookupStart/domainLookupEnd`: DNS 域名查询开始/结束的时间，如果使用了本地缓存（即无 DNS 查询）或持久连接，则与 fetchStart 值相等
-+ `connectStart`: HTTP（TCP）开始/重新 建立连接的时间，如果是持久连接，则与 fetchStart 值相等。
-+ `connectEnd`: HTTP（TCP） 完成建立连接的时间（完成握手），如果是持久连接，则与 fetchStart 值相等。
-+ `secureConnectionStart`: HTTPS 连接开始的时间，如果不是安全连接，则值为 0。
-+ `requestStart`: HTTP 请求读取真实文档开始的时间（完成建立连接），包括从本地读取缓存。
-+ `responseStart`: HTTP 开始接收响应的时间（获取到第一个字节），包括从本地读取缓存。
-+ `responseEnd`: HTTP 响应全部接收完成的时间（获取到最后一个字节），包括从本地读取缓存。
-+ `domLoading`: 开始解析渲染 DOM 树的时间，此时 Document.readyState 变为 loading，并将抛出 readystatechange 相关事件。
-+ `domInteractive`: 完成解析 DOM 树的时间，Document.readyState 变为 interactive，并将抛出 readystatechange 相关事件，注意只是 DOM 树解析完成，这时候并没有开始加载网页内的资源。
-+ `domContentLoadedEventStart`: DOM 解析完成后，网页内资源加载开始的时间，在 DOMContentLoaded 事件抛出前发生。
-+ `domContentLoadedEventEnd`: DOM 解析完成后，网页内资源加载完成的时间（如 JS 脚本加载执行完毕）。
-+ `domComplete`: DOM 树解析完成，且资源也准备就绪的时间，Document.readyState 变为 complete，并将抛出 readystatechange 相关事件。
-+ `loadEventStart`: load 事件发送给文档，也即 load 回调函数开始执行的时间。
-+ `loadEventEnd`: load 事件的回调函数执行完毕的时间。
+### console.log()
 
-```js
-// 计算加载时间
-function getPerformanceTiming() {
-  var t = performance.timing
-  var times = {}
-  // 页面加载完成的时间，用户等待页面可用的时间
-  times.loadPage = t.loadEventEnd - t.navigationStart
-  // 解析 DOM 树结构的时间
-  times.domReady = t.domComplete - t.responseEnd
-  // 重定向的时间
-  times.redirect = t.redirectEnd - t.redirectStart
-  // DNS 查询时间
-  times.lookupDomain = t.domainLookupEnd - t.domainLookupStart
-  // 读取页面第一个字节的时间
-  times.ttfb = t.responseStart - t.navigationStart
-  // 资源请求加载完成的时间
-  times.request = t.responseEnd - t.requestStart
-  // 执行 onload 回调函数的时间
-  times.loadEvent = t.loadEventEnd - t.loadEventStart
-  // DNS 缓存时间
-  times.appcache = t.domainLookupStart - t.fetchStart
-  // 卸载页面的时间
-  times.unloadEvent = t.unloadEventEnd - t.unloadEventStart
-  // TCP 建立连接完成握手的时间
-  times.connect = t.connectEnd - t.connectStart
-  return times
-}
-```
+传递给 `console.log` 的对象是不能被垃圾回收，因为在代码运行之后，devtool 中可以查看对象信息，所以对象不会被释放。
 
-[5 分钟撸一个前端性能监控工具](https://juejin.im/post/5b7a50c0e51d4538af60d995)
+所以最好不要在生产环境中 `console.log` 任何对象。
 
 ## Web sendBeacon API
 
