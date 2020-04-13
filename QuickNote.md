@@ -395,6 +395,27 @@ FireFox / Chrome 浏览器对 `setInterval`, `setTimeout` 做了优化，页面�
 
 ### 闭包
 
++ 没有正确释放闭包
+
++ 没有正确使用闭包
+
+  ```js
+  var theThing = null;
+  var replaceThing = function () {
+      var originalThing = theThing;
+      var unused = function () {
+          if (originalThing) console.log("hi");
+      };
+      theThing = {
+          longStr: new Array(1000000).join('*'),
+          someMethod: function () {
+              console.log("someMessage");
+          }
+      };
+  };
+  setInterval(replaceThing, 1000);
+  ```
+
 ### dom 删除时 dom 绑定事件未删除
 
 ### dom 删除时 子元素存在引用

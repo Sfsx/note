@@ -248,7 +248,7 @@ prefetch 和 preload 的区别
 
 [渐进式加载](https://developer.mozilla.org/zh-CN/docs/Web/Progressive_web_apps/%E5%8A%A0%E8%BD%BD)
 
-## 图片压缩
+## 图片优化
 
 ### webp
 
@@ -256,6 +256,28 @@ WebP 的优势体现在它具有更优的图像数据压缩算法，能带来更
 
 libwebp
 
-### svgo
+### svg
+
+svgo
 
 [SVGOMG - SVGO's Missing GUI](https://jakearchibald.github.io/svgomg/)
+
+### jpeg
+
+jpegtran 和 jpegoptim
+
+### png
+
+OptiPNG 和 PNGOUT
+
+### image sprites （背景精灵图/雪碧图）
+
+一种网页图片应用处理方式，将一个页面涉及到的所有零星图片或者图标都包含到一张大图里面，这样就只需要加载这个一个图片，而不是很多个图片了，这样就减少了很多 `http` 的请求
+
+### 使用 css 和 css3 制作简单的图标
+
+### 字体图库代替图标
+
+### 图片懒加载
+
+先默认加载低质量的图片，用模糊效果展示。当滚动展示的时候再请求高质量的图片。
