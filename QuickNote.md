@@ -416,11 +416,16 @@ FireFox / Chrome 浏览器对 `setInterval`, `setTimeout` 做了优化，页面�
   setInterval(replaceThing, 1000);
   ```
 
-### dom 删除时 dom 绑定事件未删除
+### EventListener
 
-### dom 删除时 子元素存在引用
+1. 由于代码逻辑问题导致对一个 dom 重复添加相同的事件绑
+2. dom 删除时 dom 绑定事件未删除
+
+### dom 删除时，其子元素或本身存在引用
 
 ### 被遗忘的计时器或回调函数
+
+定时器如果不需要使用，记得及时清除。否则会导致定时器回调函数以及函数内部倚赖的外部变量没有办法及时回收。
 
 ### console.log()
 
