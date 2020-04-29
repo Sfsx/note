@@ -2,11 +2,28 @@
 
 ## 概念
 
-### FP FCP FMP
+### 性能指标
 
 + FP（First Paint）： 首次绘制，标记浏览器渲染任何在视觉上不同于导航前屏幕内容的时间点
 + FCP（First Contentful Paint）：首次内容绘制，标记渲染第一帧 DOM 的时间点
-+ FMP（First Meaning Paint）：首次有效绘制，标记主角元素渲染完成的时间点。
++ LCP（Largest Contentfel Paint）最大内容绘制
++ FMP（First Meaning Paint）：首次有效绘制，标记主角元素渲染完成的时间点。对于这个时间如何取值目前并没有官方的规定，所以用户可以自行调用 `performance.mark` 进行标记（如 vue 中就可以在用户认为的主要组建的 mounted 方法中进行标记）
++ TTI（Time to Interactive）可交互时间
+
+![avatar](https://upload-images.jianshu.io/upload_images/5328979-ac2f8427d599a9a8.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
+
+### 渲染方式
+
++ CSR 客户端渲染
++ Prerendering 预渲染
+  
+  用户请求前的服务器渲染即为「预渲染」，就是在 webpack 构建阶段生成匹配预渲染路径的 html 文件
+
++ SSR 服务端渲染
+
+  用户请求后的服务器渲染即为「服务端渲染」
+
++ 同构
 
 ## performace API
 
@@ -281,3 +298,7 @@ OptiPNG 和 PNGOUT
 ### 图片懒加载
 
 先默认加载低质量的图片，用模糊效果展示。当滚动展示的时候再请求高质量的图片。
+
+## 工具链接
+
+[Web.dev](https://web.dev/) 检测的四大项目分別是：效能、可用性、最佳化和 SEO。由 Google 推出
