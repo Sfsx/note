@@ -65,3 +65,57 @@ FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaS
 参考链接
 
 [Angular 7/8 FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory](https://github.com/angular/angular-cli/issues/13734)
+
+## webpack
+
+需要用到 `mini-css-extract-plugin` 需要特别注意 `package.json` 中的 `sideEffect` 字段中要添加 `"*.css"` 否则 css 文件会被当作是可以优化的 tree shaking，被 webpack 忽略
+
+如果是 vue 文件那样 style 写在 vue 文件中，那么 `"*.vue"` 也需要添加
+
+[Doesn't extract when in production mode](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/275)
+
+## mysql 日志文件占用磁盘空间
+
+配置日志文件的过期时间
+
+[MySQL 8.0.12 binlog参数binlog_expire_logs_seconds](https://blog.csdn.net/vkingnew/article/details/81953350)
+
+## mysql 磁盘碎片整理
+
+mysql碎片化整理
+当您的库中删除了大量的数据后，您可能会发现数据文件尺寸并没有减小。这是因为删除操作后在数据文件中留下碎片所致，每当MySQL从你的列表中删除了一行内容，该段空间就会被留空。而在一段时间内的大量删除操作，会使这种留空的空间变得比存储列表内容所使用的空间更大
+
+如果开启了独享表空间，即每张表都有ibdfile。这个时候如果删除了大量的行，索引会重组并且会释放相应的空间因此不必优化
+由于共享表空间所有表的数据与索引都存放于ibddata1文件中，随着数据量的增长会导致该文件越来越大。超过10G的时候查询速度就非常慢，因此在编译的时候最好开启独享表空间。因为mysql默认是关闭了独享表空间，可以在mysql服务器中设置innodb_file_per_table 来开启独享表空间
+
+查看某个表所占空间，以及碎片大小。
+
+```sql
+select table_name,engine,table_rows,data_length+index_length length,DATA_FREE from information_schema.tables where TABLE_SCHEMA='spiderslocal';
+```
+
+注意:如果是共享表空间的话， `data_free` 表示共享表空间的大小而非数据的大小。如果是独享表空间才是该表的剩余空间。
+显示表状态：
+
+```sql
+show table status like 'table.name';
+```
+
+所以需要使用 optimize table 对表进行碎片整理：
+
+```sql
+optimize table table.name;
+```
+
+对于 myisam 引擎可以直接使用
+
+```sql
+optimize table table.name;
+```
+
+但是 innodb 引擎时，会报 “Table does not support optimize, doing recreate + analyze instead”，则使用以下两条命令来进行碎片整理：
+
+```sql
+alter table icbcmall ENGINE = 'InnoDB';
+analyze table icbcmall;
+```
