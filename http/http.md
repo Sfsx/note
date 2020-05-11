@@ -71,7 +71,7 @@
 
 如果只包含一个数据区间，那么整个响应的 `Content-Type` 首部值为所请求的文件类型，同时包含 `Content-Range` 首部。
 
-如果包含多个数据区间，那么整个响应的 `Content-Type` 首部的值为 `multipart/byteranges`，其中一个片段对于一个数据区间，并提供 `Content-Range` 和 `Content-Type` 描述信息
+如果包含多个数据区间，那么整个响应的 `Content-Type` 首部的值为 `multiPart/byteranges`，其中一个片段对于一个数据区间，并提供 `Content-Range` 和 `Content-Type` 描述信息
 
 除去上述所说，该返回首部必须包含以下字段 `Date`，`ETag / Content-Location`，`Cache-Control`
 
@@ -248,7 +248,7 @@ sequence\r\n
 
 ### 为什么有的时候刷新页面不需要重新建立 SSL 连接
 
-问题一中的答案，TCP 连接会被浏览器和服务器维持一段时间。这个时间由 header 中的 `Keep-Alive: timeout=5, max=100` 字段控制。意思为：过期时间5秒（对应httpd.conf里的参数是：KeepAliveTimeout），max是最多一百次请求，强制断掉连。
+问题一中的答案，TCP 连接会被浏览器和服务器维持一段时间。这个时间由 header 中的 `Keep-Alive: timeout=5, max=100` 字段控制。意思为：过期时间5秒（对应httpd.conf里的参数是：KeePaliveTimeout），max是最多一百次请求，强制断掉连。
 
 ### 浏览器对同一个 HOST 建立 TCP 连接的数量有没有限制
 
@@ -306,23 +306,76 @@ sequence\r\n
 
 ![tls handshake](https://i0.hdslb.com/bfs/article/bffa2a2eca17c96a4816d60b53179674a4d44d8a.png@1320w_2306h.webp)
 
-### DH 密钥协商
+### DHE 密钥协商
 
-1. 客户端向服务器发送Client Hello,告诉服务器，我支持的协议版本，加密套件等信息。
+1. 客户端向服务器发送 Client Hello，告诉服务器，我支持的协议版本，加密套件等信息。
 
 2. 服务端收到响应，选择双方都支持的协议，套件，向客户端发送Server Hello。同时服务器也将自己的证书发送到客户端(Certificate)。
 
-3. 服务端向客户端发送服务器DH参数（模数 p，基数 g 和服务端公钥 S）以及用服务器私钥对DH参数生成的签名(Server Key Exchange)。
+3. 服务端向客户端发送服务器 DHE 参数：模数 $p$，基数 $g$ 和服务端公钥 $Pb$（$Pb = g^{Xb}\ mod\ p$，其中 $Xb$ 为 DH 算法的服务器私钥）。使用服务器私钥对参数生成的签名，客户端在收到服务端参数后使用 ca证书 中的公钥验证这个签名(Server Key Exchange)。
 
-4. 客户端向服务端发送客户端DH参数（客户端生成一个随机数 c 作为自己的私钥，然后根据算法参数计算出公钥 C）(Client Key Exchange)。
+4. 客户端向服务端发送客户端 DHE 参数 $Pa$，客户端生成一个随机数 $Xa$ 作为自己的私钥，然后根据算法计算出公钥 $Pa$，$Pa = g^{Xa}\ mod\ p$（Client Key Exchange）。
+
+#### 注意点
+
+DH类 密钥交换与 DHE类 密钥交换，字面上少了一个E，E代表了“临时”，即在握手过程中，作为服务器端，DH类 少了计算 $Pb$ 的过程，**$Pb$ 用证书中的公钥代替**，**而证书对应的私钥就是 $Xb$**。
+
+加上 EC 前缀，例如：ECDH。将模幂运算变为点乘运算，原理为椭圆曲线上的离散对数的分解问题。降低运算耗时。
+
+#### DH 算法原理
+
+算法参数：
+
++ 模数 $p$ (至少300位)
++ 基数 $g$
+
+通过 $g, p$ 和 $g^a\ mod\ p$ 中计算出 $a$ 这个问题就是著名的离散对数问题（DLP），这是非常困难的
+
+b: $Pb = g^{Xb}\ mod\ p$; ($Pb$ b端公钥 $Xb$ b端私钥)
+
+a: $Pa = g^{Xa}\ mod\ p$; ($Pa$ a端公钥 $Xa$ a端私钥)
+
+a: $Sa = Pb^{Xa}\ mod\ p$;
+
+b: $Sb = Pa^{Xb}\ mod\ p$
+
+#### ECDH 算法原理
+
+算法参数：
+
++ 一个质数 $p$ 用于描述有限域的大小（p 当然越大越安全，但越大，计算速度会变慢，200位左右可以满足一般安全要求）
++ 椭圆曲线方程的参数 $a$ 和 $b$。
+
+    $$\{(x,y) \in (F_p)^2 \ | \ y^2 = x^3 + ax + b \ (mod \ p),\ 4a^3+27b^2 \neq 0 \ (mod \ p)\} \cup \{0\}$$
+
++ 一个用于生成循环子群的基点 $G(x, y)$ （椭圆线上任意点）
++ 子群的阶数 $n$
+
+从 $\{1,...,n-1\}$ 中随机选择一个整数 $Xb$ 作为私钥（$n$ 为子群的阶数）。ab 交换 $Pa, Pb$ 后计算出共同的迷药 $Sa$。由于已知 $Pb, G$ 反求 $Xb$ 是求解椭圆曲线离散对数问题（ECDLP），这是个非常困难的问题，从而保证了私钥的有效性。
+
+b: $Pb(x,y) = Xb \cdot G(x,y)$
+
+a: $Pa(x,y) = Xa \cdot G(x,y)$
+
+b: $Sb(x,y) = Xb \cdot Pa(x,y) = Xb \cdot Xa \cdot G(x,y)$
+
+a: $Sa(x,y) = Xa \cdot Pb(x,y) = Xa \cdot Xb \cdot G(x,y)$
+
+##### ECDSA 签名原理
+
+### TLS 加密套件
+
+TLS_ECDHE_ECDSA_WITCH_AES_128_GCM_SHA256
+
+使用 ECDHE 交换密钥，交换时使用 ECDSA 进行签名。交换密钥之后得到共同私钥，使用 AES_128_GCM 进行对称加密，使用 SHA256 哈希算法进行数据完整性检查。
 
 ### 浏览器证书校验
 
 1. 证书是否过期
 
-    CRL（Certificate Revocation List）即**证书撤销名单**，保存在浏览器中定期更新
+    CRL（Certificate Revocation List）即 **证书撤销名单**，保存在浏览器中定期更新
 
-    OCSP （Online Certificate Status Protocol）即**证书在线状态协议**，用于实时查询证书是否有效
+    OCSP （Online Certificate Status Protocol）即 **证书在线状态协议**，用于实时查询证书是否有效
 
 2. 证书是否被篡改
 
