@@ -1149,10 +1149,6 @@ function shuffle(arr){
 
 [洗牌算法(shuffle)的js实现](https://github.com/ccforward/cc/issues/44)
 
-## 二叉树遍历
-
-开坑待填。。。
-
 ## 类数组对象
 
 方法一
@@ -1324,11 +1320,15 @@ JavaScript 没有类的概念（尽管 ES6 中引入 `class` 关键字，但那�
 
 1. 委派（差异化继承）
 
+    ```js
     var child = Object.create(father)
+    ```
 
 2. 克隆（合并式继承）
 
+    ```js
     var child = Object.assign(father)
+    ```
 
 ### 原型继承和经典继承
 

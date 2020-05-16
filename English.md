@@ -179,3 +179,14 @@
 + manifest
 + shallow
 + deep
++ appropriate
+  + The list of available streams is presented to the playback device, and the video player on the device can choose the most appropriate stream based on the size of the device screen and the available network conditions
++ present
+  + The list of available streams is presented to the playback device, and the video player on the device can choose the most appropriate stream based on the size of the device screen and the available network conditions
++ one key metric
+  + One key metric in video streaming is to have the video start as quickly as possible.
++ utilizing
+  + Utilizing the Chrome Network Info API to generate manifest files on the fly might be a good way to quickly optimize video content at startup.
++ pixelate
+  + The initial video quality may be pixelated, but as the player better understands the network quality, it can quickly adjust to a more appropriate (hopefully higher quality) video stream.
++ abandonment
