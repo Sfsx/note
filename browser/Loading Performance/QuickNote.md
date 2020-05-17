@@ -321,3 +321,40 @@ OptiPNG 和 PNGOUT
 + 转为 webm 格式
 + 在视频加载的初始阶段使用低分辨率的视频，根据用户网络状况逐渐过渡到高质量视频
 + 使用 `preload="auto"` 如果视频被观看的可能性比较大。通常，使用 `preload="metadata"` 在数据使用与视频播放前加载时常中提供一个良好的平衡。
+
+## 字体
+
++ 使用 [glyphhanger](https://github.com/filamentgroup/glyphhanger) 生成优化后的字体子集
++ 使用 preload 如 `<link rel="preload" href="FILE_PATH.woff2" as="font" type="font/woff2" crossorigin>` 但是 preload 最好配合 http2 使用，因为 preload 会占用页面加载时的网络资源。
++ 使用 Servic Worker 缓存字体。
++ 通过设置 `font-display: swap or optional`使字体资源不阻止页面渲染，在字体资源加载完成后，刷新页面字体
++ 未完待续。。。
+
+## 构建优化
+
++ 减少 JavaScript 脚本大小
++ 使用轻量级的替换库，例如：Moment.js可以用 date-fns 或 Luxon 代替
++ priority hints 提案
+
+    ```html
+    <link rel="preload" as="style" importance="low">
+
+    <script src="async_but_important.js" async importance="high"></script>
+
+    <img src="/images/in_viewport_but_not_important.svg" importance="low" alt="I'm an unimportant image!">
+
+    <script>
+    fetch("https://example.com/", {importance: "low"}).then(data => {
+      // Do whatever you normally would with fetch data
+    });
+    </script>
+    ```
+
++ 预加载页面中链接页面的资源，例如使用 `quicklink`
+
+## 交互优化
+
++ 使用 intersetion observer 延迟加载昂贵的组件
++ 图片加载
+  + 使用 svg 占位符，图片的边缘绘制，参考 [José M. Pérez](https://jmperezperez.com/svg-placeholders/) 的博客
+  + 使用 webp 占位符，例如 medium 使用模糊效果图片作为占位图，可以通过 webp 生成轻量级模糊效果图片。
