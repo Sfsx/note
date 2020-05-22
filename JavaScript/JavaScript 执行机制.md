@@ -459,3 +459,21 @@ foo();
 bar 执行上下文 outer -> 全局作用域
 
 foo 执行上下文 outer -> 全局作用域
+
+## 自执行函数
+
+在非匿名自执行函数中，函数变量为只读状态无法修改
+
+```js
+var b = 10;
+(function b() {
+  b = 20;
+  console.log(b) // ƒ b() { b = 20; console.log(b) }
+})()
+
+c();
+function c() {
+  c = 20;
+  console.log(c) // 20
+}
+```

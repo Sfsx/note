@@ -358,3 +358,18 @@ OptiPNG 和 PNGOUT
 + 图片加载
   + 使用 svg 占位符，图片的边缘绘制，参考 [José M. Pérez](https://jmperezperez.com/svg-placeholders/) 的博客
   + 使用 webp 占位符，例如 medium 使用模糊效果图片作为占位图，可以通过 webp 生成轻量级模糊效果图片。
+
+## 链接优化
+
++ HTTP2、HTTP3
++ DNS 预解析，DNS 预读取是一项浏览器主动去执行域名解析的功能，其范围包括文档的所有链接，无论是图片的，CSS 的，还是 JavaScript 等其他用户能够点击的 URL
+
+    ```html
+    <!-- 打开 DNS 预读取 -->
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+
+    <!-- 强制查询特定主机名 -->
+    <link rel="dns-prefetch" href="http://www.spreadfirefox.com/">
+    ```
+
++ TSL/SSL 握手加速。TSL v1.2 的版本握手需要两个 RTT

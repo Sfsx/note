@@ -78,6 +78,20 @@ FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaS
 
 配置日志文件的过期时间
 
+清除 binlog
+
+```mysql
+flush logs; # 清除所有的logs
+purge binary logs to 'binlog.xxxx'; # 清除在某个日志之前的日志信息
+```
+
+设置日志过期时间
+
+```mysql
+show variables like '%expire%';
+set global binlog_expire_logs_seconds=259200
+```
+
 [MySQL 8.0.12 binlog参数binlog_expire_logs_seconds](https://blog.csdn.net/vkingnew/article/details/81953350)
 
 ## mysql 磁盘碎片整理
