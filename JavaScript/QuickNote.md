@@ -240,33 +240,6 @@ Buffer对象本身属于普通对象，保存在堆，由V8管理，但是其储
 
 [简介](https://zhuanlan.zhihu.com/p/29786710)
 
-## 页面加载
-
-### 1. Progress Indicator（进度指示器）
-
-1. 使用 NProgress.js 库
-
-### 2. Skeleton Screen（加载占位图）
-
-1. 先写好 Skeleton Screen Loading 组件
-
-   ![avatar][skeletonScreen]
-
-   在加载数据时先使用 Skeleton Screen Loading 组件进行页面展示
-
-2. 先写好 Skeleton Screen 的 CSS 样式，加载完数据后移除 Skeleton Screen 样式
-3. 利用 CSS :empty 伪类辅助实现
-
-最终我选择用 CSS :empty 伪元素实现
-
-[原文链接](https://zhuanlan.zhihu.com/p/41605338)
-
-### 3. 图片加载
-
-1. svg占位
-2. 模糊图像
-3. 完全加载
-
 ## JavaScript `this`
 
 ### 什么是 `this`
@@ -720,70 +693,6 @@ findColor('green')
 + [原文链接](https://zhuanlan.zhihu.com/p/21714695)
 + [JavaScript 函数式编程（一）](https://juejin.im/post/5b7014d5518825612d6441f8)
 
-## SSR vs CSR
-
-SSR (server-side-rendering)
-
-CSR (client-side-rendering)
-
-SEO (Search Engine Optimization)
-
-TTFP (Time To First Page)
-
-### the same
-
-+ React will need to be downloaded
-+ the same process of building a virtual dom
-+ attaching events to make the page interactive
-
-### the different
-
-+ The main difference is that for SSR your server’s response to the browser is the HTML of your page that is ready to be rendered, while for CSR the browser gets a pretty empty document with links to your javascript. That means your browser will start rendering the HTML from your server without having to wait for all the JavaScript to be downloaded and executed.
-
-### The Critical Issues
-
-SSR 能够让用户更早看到页面，但是整个页面加载完成的总时间比 CSR 长。
-
-加载的js文件大小都比较大
-
-Next.js, by design, serves up static files to be not cached. To be honest, this is a bit of a deal-breaker for me (have not found a good solution here).
-
-很关键的一点 Next.js 中，**服务端静态文件没有缓存**
-
-### Pre-Rendering with Create React App
-
-> If you’re hosting your build with a static hosting provider you can use react-snapshot or react-snap to generate HTML pages for each route, or relative link, in your application. These pages will then seamlessly become active, or “hydrated”, when the JavaScript bundle has loaded.
-
-属于官方提供的一种新方法
-
-+ 在有图片的网页，渲染速度比 Next.js 较快，但页面总加载时间比 Next.js 快，js 文件的大小比 Next.js 更小
-+ 在没有图片的网页，渲染速度比 Next.js 慢。因为预渲染需要等待css文件（1KB）加载完成
-
-— Create React App — [Pre-Rendering into Static HTML](https://facebook.github.io/create-react-app/docs/pre-rendering-into-static-html-files)
-
-具体使用就是添加 react-snapshot 这个npm包，并将原有代码修改两行即可
-
-Following the instructions provided in [react-snapshot](https://github.com/geelen/react-snapshot); just changing one line in each of two files.
-
-如果要在 typescript 中使用这个库
-
-For those using TypeScript, react-snapshot does not supply type definitions (neither is there a DefinitelyTyped version). The good news is that because it is just a drop-in replacement for react-dom, it can be easily typed; just drop the following at the end of your:
-
-./src/react-app-env.d.ts
-
-```js
-...
-declare module 'react-snapshot' {
-  import * as ReactDOM from 'react-dom';
-  var render: ReactDOM.Renderer;
-}
-```
-
-参考资料
-
-+ [“服务端渲染”吊打“客户端渲染”的那些事](https://www.w3ctech.com/topic/2005)
-+ [Next.js (SSR) vs. Create React App (CSR)](https://codeburst.io/next-js-ssr-vs-create-react-app-csr-7452f71599f6)
-
 ## RxJs
 
 ### 用于 JavaScript 的 ReactiveX 库
@@ -913,62 +822,6 @@ Cross-Origin Read Blocking (CORB)
 CORB 是一种判断是否要在跨站资源数据到达页面之前阻断其到达当前站点进程中的算法，降低了敏感数据暴露的风险。
 
 [Cross-Origin Read Blocking (CORB)](https://juejin.im/post/5cc2e3ecf265da03904c1e06)
-
-## 节流函数与防抖函数
-
-### 节流函数
-
-#### setTimeout
-
-```js
-function throttle(fn, delay) {
-  let canRun = true;
-  return function() {
-    if (!canRun) return;
-    canRun = false
-    setTimeout(() => {
-      fn.apply(this, arguments);
-      canRun = true;
-    }, delay)
-  }
-}
-```
-
-#### requestAnimationFrame
-
-```js
-var last_known_scroll_position = 0;
-var ticking = false;
-
-function doSomething(scroll_pos) {
-  // do something with the scroll position
-}
-
-window.addEventListener('scroll', function(e) {
-  last_known_scroll_position = window.scrollY;
-  if (!ticking) {
-    window.requestAnimationFrame(function() {
-      doSomething(last_known_scroll_position);
-      ticking = false;
-    });
-  }
-  ticking = true;
-});
-```
-
-### 防抖函数
-
-```js
-function debounce(fn, interval = 300) {
-  let timeout = null;
-  return function () {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      fn.apply(this, arguments);
-    }, interval);
-  };
-}
-```
 
 ## window.requestAnimationFrame()
 
@@ -1187,123 +1040,6 @@ while (myNode.firstChild) {
 
 [Remove all child elements of a DOM node in JavaScript](https://stackoverflow.com/questions/3955229/remove-all-child-elements-of-a-dom-node-in-javascript)
 
-## 对象深拷贝
-
-简单 Array、Object 符合数据结构深度复制
-
-```js
-function deepCopy(obj) {
-  if(Object.prototype.toString.call(arg) === '[object Array]') {
-    var newArr = []
-    for(var i = 0; i < obj.length; i++) newArr.push(deepCopy(obj[i]))
-    return newArr
-  } else if (Object.prototype.toString.call(arg) === '[object Object]') {
-    var newObj = {}
-    for(var key in obj) {
-      obj.hasOwnProperty(key) && (newObj[key] = deepCopy(obj[key]))
-    }
-    return newObj
-  } else {
-    return obj
-  }
-}
-```
-
-## Object.create() 和 new 区别
-
-### Object.create()
-
-```js
-Object.create = function(o) {
-    var F = function() {}; // 隐式构造函数
-    F.prototype = o;
-    return new F(); // 返回一个new
-}
-
-// ES6
-Object.create = function(o) {
-    var newObj = {};
-    Object.setPrototypeOf(b, o);
-    return newObj;
-}
-```
-
-### new
-
-1. 创建一个空的对象
-2. 将构造函数的 `prototype` 属性赋给新对象的 `__proto__`
-3. 将步骤 1 新创建的对象作为 `this` 的上下文，并执行构造函数生成新对象
-4. 当构造函数返回类型不是引用类型时（即返回类型为 `null`，`underfined`，`Number`，`String`，`Boolean`，`Symbol`类型时），返回这个新对象
-
-```js
-/**
- * 模拟实现 new 操作符
- * @param  {Function} ctor [构造函数]
- * @param  {} param [构造函数的参数]
- * @return {Object|Function|Regex|Date|Error}      [返回结果]
- */
-function newOperator(ctor) {
-  if (typeof ctor !== 'function') {
-    throw new TypeError('newOperator function the first param must be a function')
-  }
-  // ES6 new.target 是指向构造函数
-  newOperator.target = ctor;
-  // 1.创建一个全新的对象，
-  // 2.并且执行[[Prototype]]链接
-  var newObj = Object.create(ctor.prototype);
-  // 获得 newOperator 除去 ctor 的其余参数的数组
-  var argsArr = [].slice.call(arguments, 1);
-  // 3.将步骤 1 新创建的对象作为 this 的上下文，并执行构造函数生成新对象
-  var ctorReturnResult = ctor.apply(newObj, argsArr);
-  // 小结4 中这些类型中合并起来只有 Object 和 Function两种类型 typeof null 也是 object 所以要不等于 null，排除 null
-  var isObject = typeof ctorReturnResult === 'object' && ctorReturnResult !== null;
-  var isFunction = typeof ctorReturnResult === 'function';
-  if(isObject || isFunction){
-    return ctorReturnResult;
-  }
-  // 4.如果函数没有返回对象类型 Object (包含 Functoin, Array, Date, RegExg, Error)，那么 new 表达式中的函数调用会自动返回这个新的对象。
-  return newObj;
-}
-```
-
-### 区别
-
-两者都能生成一个继承于构造函数的实例，但 `new` 命令需要执行构造函数，而 `Object.create()` 没有执行构造函数，`new` 创建的对象是构造函数生成的，而 `Object.create()` 创建的是一个空对象。
-
-[面试官问：能否模拟实现JS的new操作符](https://juejin.im/post/5bde7c926fb9a049f66b8b52)
-
-[JavaScript Object.create vs new Function() 的区别](http://fe2x.cc/2017/10/14/Object-create-and-new-JavaScript/)
-
-## async 原理
-
-```js
-function spawn(genF) {
-  return new Promise((resolve, reject) => {
-    const gen = genF();
-    function step(nextF) {
-      let next;
-      try() {
-        next = nextF();
-      } catch(e) {
-        return reject(e);
-      }
-      if(next.done) {
-        return resolve(next.value);
-      }
-      Promise.resolve(next.value).then(
-        function(value) {
-          step(function() { return gen.next(value); });
-        },
-        function(e) {
-          step(function() { return gen.throw(e); });
-        }
-      )
-    }
-    step(function() { return gen.next(undefined); });
-  })
-}
-```
-
 ## 原型与原型链的理解
 
 ### 原型
@@ -1349,5 +1085,3 @@ JavaScript 没有类的概念（尽管 ES6 中引入 `class` 关键字，但那�
 [JavaScript深入之从原型到原型链](https://github.com/mqyqingfeng/blog/issues/2)
 
 [[译] 为什么原型继承很重要](https://segmentfault.com/a/1190000002596600)
-
-[skeletonScreen]:data:image/gif;base64,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

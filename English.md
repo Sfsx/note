@@ -190,3 +190,7 @@
 + pixelate
   + The initial video quality may be pixelated, but as the player better understands the network quality, it can quickly adjust to a more appropriate (hopefully higher quality) video stream.
 + abandonment
++ implementing]
++ intersection
++ detection
+  + Implementing intersection detection in the past involved event handlers and loops calling methods like Element.getBoundingClientRect() to build up the needed information for every element affected
