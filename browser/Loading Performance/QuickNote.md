@@ -358,6 +358,13 @@ OptiPNG 和 PNGOUT
 + 图片加载
   + 使用 svg 占位符，图片的边缘绘制，参考 [José M. Pérez](https://jmperezperez.com/svg-placeholders/) 的博客
   + 使用 webp 占位符，例如 medium 使用模糊效果图片作为占位图，可以通过 webp 生成轻量级模糊效果图片。
++ Skeleton Screen（加载占位图）
+
+  1. 先写好 Skeleton Screen Loading 组件。在加载数据时先使用 Skeleton Screen Loading 组件进行页面展示
+  2. 先写好 Skeleton Screen 的 CSS 样式，加载完数据后移除 Skeleton Screen 样式
+  3. 利用 CSS :empty 伪类辅助实现
+
+  [谈谈App Shell与Skeleton Screen实现](https://zhuanlan.zhihu.com/p/41605338)
 
 ## 链接优化
 
