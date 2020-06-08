@@ -368,9 +368,9 @@ FireFox / Chrome 浏览器对 `setInterval`, `setTimeout` 做了优化，页面�
 
 ### RDB，AOF 区别
 
-+ RDB 持久化机制，对 redis 中的数据执行周期性的持久化
++ RDB 持久化机制，对 redis 中的数据执行周期性的持久化。Redis 调用 fork(), 产生一个子进程。子进程把数据写到临时的 RDB 文件。当子进程完成新的 RDB 文件后，替换掉旧的 RDB 文件
 
-+ AOF 持久化机制通过记录日志的方式，以 append-only 的模式写入一个日志文件中，对 redis 重启的时候，可以通过回放日志文件中的写入指令来重新构建整个数据集
++ AOF 持久化机制通过记录日志的方式，记录 redis 服务收到的每一个写操作，以追加的模式写入一个日志文件中，对 redis 重启的时候，可以通过回放日志文件中的写入指令来重新构建整个数据集
 
 通过 RDB 或 AOF，都可以将 redis 内存中的数据给持久化到磁盘上面来，然后可以将这些数据备份到别的地方，这即使 reids 服务器内存和磁盘数据都丢失了，也可以通过备份还原。
 
@@ -378,7 +378,7 @@ FireFox / Chrome 浏览器对 `setInterval`, `setTimeout` 做了优化，页面�
 
 ### RDB 特点
 
-周期间隔，不影响 redis 读写性能
+在一个特定的间隔后保存那个时间点的一个数据快照，不影响 redis 读写性能
 
 ### AOF 特点
 
@@ -446,3 +446,13 @@ Beacon API 用于将少量数据发送到服务器，而**无需等待响应**
 `Navigator.sendBeacon()` 这个方法还是异步发出请求，但是请求与当前页面脱钩，作为浏览器的任务，因此可以保证会把数据发出去，不拖延卸载流程。
 
 请求方法为 post 可以跨域，并在调用时提供所有相关cookie。
+
+## X-Frame-Options
+
+X-Frame-Options HTTP 响应头是用来给浏览器指示允许一个页面是否可以存在 `<iframe>`、`<frame>`、`<embed>` 或者 `<object>`
+
+可能有三个值:
+
++ deny 表示该页面不允许在 frame 中展示，即便是在相同域名的页面中嵌套也不允许。
++ sameorigin 表示该页面可以在相同域名页面的 frame 中展示。
++ allow-from uri 表示该页面可以在指定来源的 frame 中展示。
