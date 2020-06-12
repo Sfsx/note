@@ -266,6 +266,10 @@ sequence\r\n
 + TLS（Transport Layer Security Protocol，传输层安全协议）
 + TLS 则是标准化之后的 SSL
 
+简单来说握手过程一共4次通信（无论何种密钥协商）
+
+![握手通信](https://www.ruanyifeng.com/blogimg/asset/201402/bg2014020502.png)
+
 ### rsa 密钥协商
 
 #### Client Hello（客户端）
@@ -304,7 +308,7 @@ sequence\r\n
 
 ​Encrypted Handshake Message 这是由客户端服务器之间协商的算法和密钥保护的第一个消息。
 
-![tls handshake](https://i0.hdslb.com/bfs/article/bffa2a2eca17c96a4816d60b53179674a4d44d8a.png@1320w_2306h.webp)
+<!-- ![tls handshake](https://i0.hdslb.com/bfs/article/bffa2a2eca17c96a4816d60b53179674a4d44d8a.png@1320w_2306h.webp) -->
 
 ### DHE 密钥协商
 

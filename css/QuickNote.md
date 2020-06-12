@@ -307,3 +307,54 @@ mix-blend-mode: unset;           //复原
 ```
 
 ### backdrop-filter
+
+### grid
+
+`grid-auto-rows`
+
+瀑布流
+
+```html
+<div
+  style="
+    display: grid;
+    grid-gap: 40px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 10px;"
+>
+  <div style="grid-row: auto / span 4">
+    height: 40px
+  </div>
+  <div style="grid-row: auto / span 3">
+    heigth: 30px
+  </div>
+</div>
+```
+
+## GPU 渲染
+
+以下 CSS 属性都能触发 GPU 的硬件加速
+
++ transform
++ filter
++ opacity
+
+### 为什么 `position: absolute` 不行
+
+因为开启 GPU 加速实质是开启合成渲染，开启合成渲染需要满足三个条件
+
++ 不影响文档流
++ 渲染不依赖于文档流 （position 的定位是依赖于文档流的）
++ 不触发重绘
+
+### 強制 GPU 渲染
+
+```css
+.example1 {
+  transform: translateZ(0);
+}
+
+.example2 {
+  transform: rotateZ(360deg);
+}
+```
