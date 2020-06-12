@@ -378,7 +378,7 @@ FireFox / Chrome 浏览器对 `setInterval`, `setTimeout` 做了优化，页面�
 
 ### RDB 特点
 
-周期间隔，不影响 redis 读写性能
+在一个特定的间隔后保存那个时间点的一个数据快照，不影响 redis 读写性能
 
 ### AOF 特点
 
@@ -460,5 +460,14 @@ Beacon API 用于将少量数据发送到服务器，而**无需等待响应**
 
 请求方法为 post 可以跨域，并在调用时提供所有相关cookie。
 
-## 句柄
+## X-Frame-Options
 
+X-Frame-Options HTTP 响应头是用来给浏览器指示允许一个页面是否可以存在 `<iframe>`、`<frame>`、`<embed>` 或者 `<object>`
+
+可能有三个值:
+
++ deny 表示该页面不允许在 frame 中展示，即便是在相同域名的页面中嵌套也不允许。
++ sameorigin 表示该页面可以在相同域名页面的 frame 中展示。
++ allow-from uri 表示该页面可以在指定来源的 frame 中展示。
+
+## 句柄

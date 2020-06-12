@@ -345,17 +345,34 @@ css 放在 body 会导致浏览器解析 html 的时候，遇到 css 资源，�
 
 [JS 一定要放在 Body 的最底部么？聊聊浏览器的渲染机制](https://segmentfault.com/a/1190000004292479)
 
-## localStorage
+## localStorage、sessionStorage、cookie
 
-`localStorage` 类似 `sessionStorage`，但其区别在于：存储在 `localStorage` 的数据可以长期保留；而当页面会话结束——也就是说，当页面被关闭时，存储在 `sessionStorage` 的数据会被清除
+`sessionStorage`
+
++ 页面会话在浏览器打开期间一直保持，并且重新加载或恢复页面仍会保持原来的页面会话
++ 打开多个相同的 URL 的 Tabs 页面，会创建各自的 sessionStorage
++ 在新标签（`<iframe>`）或窗口打开一个页面时会复制顶级浏览会话上下文作为新的会话上下文
+
+区别：
+
++ 除非用户人为清除，否则存储在 `localStorage` 的数据可以长期保留
++ 当页面被关闭时，存储在 `sessionStorage` 的数据会被清除，并且重新加载或恢复页面仍会保持原来的页面会话
+
+相同点
+
++ 存储大小一般均为5M左右（`cookie` 只有 4K，每个浏览器的限制数量不同）
++ 都有同源限制，跨域无法访问
++ 数据仅在客户端中保进行存储，并不参与和服务器的通信（与 `cookie` 不同）
+
+### session级存储中，session cookie 和 sessionStorage 有哪些区别
+
++ session cookie 存在周期是依赖与服务器设置，而 sessionStorage 只依赖与页面标签
++ session cookie 会随 http 请求发送到服务器，而 sessionStorage 不会如果需要上传需要自己操作
++ session cookie 可以跨标签访问，而 sessionStorage 不能跨标签访问
 
 ### 限制
 
-处于浏览器的同源策略，相同的协议、相同的主机名、相同的端口下才能访问相同的 `localStorage` 中的数据，这点跟 `cookie` 的差别还是蛮大的
-
-### 容量限制
-
-目前业界基本上统一为5M，已经比 `cookie` 的4K要大很多了。
+处于浏览器的同源策略，相同的协议、相同的主机名、相同的端口下才能访问相同的 `localStorage`、`sessionStorage` 中的数据，这点跟 `cookie` 的差别还是蛮大的
 
 ### 数据结构
 

@@ -358,3 +358,30 @@ mix-blend-mode: unset;           //复原
   transform: rotateZ(360deg);
 }
 ```
+
+## fixed
+
+元素会被移除文档流，并不为元素预留空间，而是通过指定元素相对于屏幕视口（viewport）的位置来指定元素位置。元素的位置在屏幕滚动的时候不会改变。fixed 属性会创建新的层叠上下文。当元素祖先的 `transform`、`perspective` 或 `filter` 属性非 `none`，容器由视口改为该先祖。
+
+### stacking context 层叠上下文
+
+我们假定用户正面向视窗或者浏览器，而 HTML 元素沿着其相对与用户的一条虚构的 z 轴排开，层叠上下文就是对这些 HTML 元素的一个三维构想。
+
+文档中的层叠上下文由满足以下任意一个条件的元素形成：
+
++ 文档元素 `<html>`
++ position 为 `absolute` 或 `relative` 且 `z-index` 值不为 `auto`
++ position 为 `fixed` 或 `sticky`
++ flex
++ grid
++ 以下元素值不为 `none`
+  + transform
+  + filter
+  + perspective
+  + clip-path
+  + mask / mask-image / mask-border
++ opacity 属性值小于 1 的元素
++ mix-blend-mode 属性值不为 normal 的元素
++ will-chang 设定任意一属性
++ contain 属性为 layout、paint 或包含它们其中之一的合成值
++ isolation 属性值为 isolate 的元素
