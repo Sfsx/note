@@ -126,3 +126,71 @@ cluster 意为集群，集成了两个方面，第一个方面就是集成了`ch
 [Node.js的线程和进程详解](https://github.com/xiongwilee/blog/issues/9)
 
 [真-Node多线程](https://juejin.im/post/5c63b5676fb9a049ac79a798)
+
+## node debug
+
++ 内存泄漏
++ CPU 长期 100% (类死循环)
+
+### 启用 core dump
+
+当程序由于各种异常或者 bug 导致在运行过程中异常退出或中止，并且在满足一定条件下会产生一个叫做 core 的文件，这个文件会包含了程序运行是的内存，寄存器状态，堆栈指针，内存管理信息还有各种函数调用栈信息等。我们可以定位到程序异常退出的时候对应的堆栈调用等信息，找出问题所在并进行及时解决。
+
+条件:
+
+1. 解除 core dump 文件大小限制
+
+    ```shell
+    # 查看 core dump 大小限制
+    ulimit –c
+    # 可以产生core dump且不受大小限制
+    ulimit  -c unlimited
+    ```
+
+2. 当前用户，即执行对应程序的用户具有对写入core目录的写权限以及有足够的空间。
+3. 几种不会产生core文件的情况说明
+4. 手动调用 `gcore <pid>` 的方式来手动生成。
+
+core dump 文件路径
+
+```shell
+cat /proc/sys/kernel/core_pattern
+|/usr/share/apport/apport %p %s %c %P
+```
+
+### core dump 分析
+
+```shell
+# 分析
+llnode node -c core.<pid>
+```
+
+### 例子
+
+```js
+// crash.js
+const article = { title: "Node.js", content: "Hello, Node.js" };
+
+setTimeout(() => {
+  console.log(article.b.c);
+}, 1000);
+```
+
+执行 `node --abort-on-uncaught-exception crash.js`
+
+找到 `core.<pid>` 格式的文件
+
+```shell
+# 安装 llnode
+npm install llnode -g
+
+# 分析
+llnode node -c core.<pid>
+
+# 回溯
+v8 bt
+```
+
+看到 js 调用栈
+
+[Node 案发现场揭秘 —— Coredump 还原线上异常](https://juejin.im/entry/5b63ee5d6fb9a04f844ae681)
