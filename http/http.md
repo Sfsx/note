@@ -451,6 +451,10 @@ Strict-Transport-Security: max-age=<expire-time>; preload
 + 不再允许对加密报文进行压缩、不再允许双方发起重协商
 + DSA 证书不再允许在 TLS 1.3 中使用
 
+### TCP
+
+建立链接需要三次握手，握手时间为 1.5RTT。
+
 [图解SSL/TLS协议](https://www.ruanyifeng.com/blog/2014/09/illustration-ssl.html)
 
 [SSL/TLS 握手过程详解](https://www.bilibili.com/read/cv1003133/)
