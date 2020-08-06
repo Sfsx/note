@@ -446,6 +446,10 @@ FireFox / Chrome 浏览器对 `setInterval`, `setTimeout` 做了优化，页面�
 
 所以最好不要在生产环境中 `console.log` 任何对象。
 
+### Timer
+
+除了定时器以外，匿名回调函数也需要注意。
+
 ## Web sendBeacon API
 
 Beacon API 用于将少量数据发送到服务器，而**无需等待响应**
@@ -471,3 +475,31 @@ X-Frame-Options HTTP 响应头是用来给浏览器指示允许一个页面是�
 + allow-from uri 表示该页面可以在指定来源的 frame 中展示。
 
 ## 句柄
+
+## 触摸事件
+
+### 触摸屏点击事件
+
+```js
+// chrome
+pointerdown
+touchstart
+pointerup
+touchend
+mouseenter
+mousemove
+mousedown
+click
+```
+
+在触摸屏点击操作中最先触发的是 touch 事件隔 300ms 后才触发 click 事件。
+
+在这个过程中 pointerdown、pointerup、touchstart、touchend 这四个事件中可以调用 `e.preventDefault()` 来中断 touch 的后续事件（mouse 事件和 click 事件）发生。这个特性可以用来阻止触摸屏点击事件穿透
+
+## 翻墙
+
+新加坡 腾讯云 电信 CN2
+
+跳转
+
+google 云
