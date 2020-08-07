@@ -133,3 +133,29 @@ optimize table table.name;
 alter table icbcmall ENGINE = 'InnoDB';
 analyze table icbcmall;
 ```
+
+## 前端视频请求被 pending
+
+### bug 说明
+
+用户反馈 element ui 的走马灯组件滚动展示视频，在页面切换到新的视频时视频播放会被卡住，没有连续自动播放。
+
+使用场景为 chrome 浏览器。由于项目只有在 chrome 下使用的场景，所以没有在其他浏览器上尝试是否有这个 bug
+
+虽然是偶发 bug 但是可以在本地复现，本地 chrome 83.0.4103.106
+
+通过查看 chrome 的 devtool 发现视频请求被 pending
+
+### 可能原因
+
+后端迟迟未返回
+
+### 排查
+
+浏览器对一个资源发起请求前，会先检查本地缓存，此时这个请求对该资源对应的缓存的读写是独占的。那么问题来了，试想一下，当我新开一个标签尝试访问同一个资源的时候，这次请求也会去读取这个缓存，假设之前那次请求很慢，耗时很久，那么后来这次请求因为无法获取对该缓存的操作权限就一直处于等待状态。这样很不科学。于是有人建议优化一下。也就是上面所描述的那样。
+
+开启chrome://net-internals/#events页面来捕获事件日志
+
+TCP 连接重置
+
+[关于请求被挂起页面加载缓慢问题的追查](https://fex.baidu.com/blog/2015/01/chrome-stalled-problem-resolving-process/)

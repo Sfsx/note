@@ -503,3 +503,7 @@ click
 跳转
 
 google 云
+
+## 根据坐标选取 dom
+
+`document.elementFromPoint(x, y)`

@@ -52,4 +52,3 @@
 ## 线性代数
 
 [视频连接](https://www.bilibili.com/video/av6731067/index_1.html)
-

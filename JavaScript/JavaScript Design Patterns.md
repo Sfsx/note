@@ -277,6 +277,34 @@ myModule.foo() // foo() other data
 
 ### 模块化规范
 
+### 模块化规范注册的例子
+
+```js
+;function EventEmitter() {
+
+  ...
+
+  // Module Register
+  if (typeof define === 'function' && define.amd) {
+     // AMD. Register as an anonymous module.
+    define(function() {
+      return EventEmitter;
+    });
+  } else if (typeof exports === 'object') {
+    // CommonJS
+    module.exports = EventEmitter;
+  }
+  else {
+    // global for any kind of environment.
+    var _global= new Function('','return this')();
+    _global.EventEmitter2 = EventEmitter;
+
+    exports.EventEmitter = EventEmitter;
+  }
+}();
+
+```
+
 #### CommonJS规范简介
 
 + 同步加载
