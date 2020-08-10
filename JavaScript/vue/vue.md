@@ -154,3 +154,11 @@ function sameVnode (a, b) {
 ```
 
 `sameVnode` 的逻辑非常简单，如果两个 `vnode` 的 `key` 不相等，则是不同的；否则继续判断对于同步组件，则判断 `isComment`、`data`、`input` 类型等是否相同，对于异步组件，则判断 `asyncFactory` 是否相同。
+
+## vue 组件通信
+
++ vuex 使用 vuex npm 包
++ pubsub-js 使用 pubsub-js npm 包
++ emit / on，vue 原生
++ props，vue 原生
++ event bus 将一个无关 dom 的 vue 实例作为事件中心，通过该实例发送和接受消息，在需要通信的组件中引入该实例即可

@@ -25,7 +25,9 @@
 
 + 同构
 
-## performace API
+## 前端性能监控
+
+### performace API
 
 + `navigationStart`: 表示从上一个文档卸载结束时的 unix 时间戳，如果没有上一个文档，这个值将和 fetchStart 相等。
 + `unloadEventStart`: 表示前一个网页（与当前页面同域）unload 的时间戳，如果无前一个网页 unload 或者前一个网页与当前页面不同域，则值为 0。
@@ -76,6 +78,12 @@ function getPerformanceTiming() {
   return times
 }
 ```
+
+### 前端卡顿监控
+
+卡顿即渲染 FPS 达不到60帧，我们的目标就是监控前端 FPS
+
+理想解决方案 PerformanceFrameTiming。但由于该技术还在试验阶段，故使用 frame-timing-polyfill 即 `requestAnimationFrame` 实现监控前端 FPS
 
 [5 分钟撸一个前端性能监控工具](https://juejin.im/post/5b7a50c0e51d4538af60d995)
 
