@@ -300,10 +300,6 @@ sequence\r\n
 
 这一步是客户端通知服务端后面再发送的消息都会使用前面协商出来的秘钥加密了，是一条事件消息
 
-#### Change Cipher Spec（服务端）
-
-这一步是服务端通知客户端后面再发送的消息都会使用前面协商出来的秘钥加密了，是一条事件消息
-
 #### Finished（Encrypted Handshake Message）
 
 ​Encrypted Handshake Message 这是由客户端服务器之间协商的算法和密钥保护的第一个消息。
