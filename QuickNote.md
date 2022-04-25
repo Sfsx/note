@@ -507,3 +507,99 @@ google 云
 ## 根据坐标选取 dom
 
 `document.elementFromPoint(x, y)`
+
+## 说话的逻辑
+
+主张 a 是好的 因为 a 造成 b 
+
+通才(a) 适应 变动(b)
+
+a 未必造成 b
+
+没有 a 也能达到 b
+
+b 不重要
+
+## bug
+
+image isTrusted
+
+## 移动端滚动问题
+
+### 滚动穿透
+
+弹窗中如果需要设置滚动。如果主页面也可以滚动，那么要先禁止主页面滚动。用 css 样式 `height: 100vh; overflow: hidden` 这种可以同时兼容 ios 以及 android
+
+使用 touchmovue 这个可以禁止主页滚动，但是弹窗本身也无法滚动了。
+
+使用 position: fixed 禁止主页滚动。在ios端使用这个属性，会导致页面被顶起一段距离。（坑爹的ios)
+
+经过 debug 发现 `<body>` 设置 `position: fixed`，在 ios 会将页面顶起是由于 ios 上 `<html>` 的高度不是全屏，需要手动给 `<html>` 设置 `height: 100vh`。故 ios 弹窗可滚动，页面不可滚动的最佳解决方式是使用 `position: fixed`
+
+## 移动端 video 隐藏播放控件问题
+
+### 常用 css
+
+```css
+::-webkit-media-controls-play-button {
+  display:none !important;
+  visibility: hidden!important;
+  opacity: 0 !important;
+ -webkit-appearance: none !important;
+}
+
+::-webkit-media-controls-enclosure {
+  display:none !important;
+  visibility: hidden!important;
+  opacity: 0 !important;
+ -webkit-appearance: none !important;
+}
+
+::-webkit-media-controls-start-playback-button {
+  display:none !important;
+  visibility: hidden!important;
+  opacity: 0 !important;
+ -webkit-appearance: none !important;
+}
+
+::-webkit-media-controls {
+  display:none !important;
+  visibility: hidden!important;
+  opacity: 0 !important;
+ -webkit-appearance: none !important;
+}
+  
+::-webkit-media-controls-panel {
+  display:none !important;
+  visibility: hidden!important;
+  opacity: 0 !important;
+ -webkit-appearance: none !important;
+}
+
+::-webkit-media-controls-container {
+  display:none !important;
+  visibility: hidden!important;
+  opacity: 0 !important;
+ -webkit-appearance: none !important;
+}
+```
+
+video 标签自动播放，在 ios 低电量情况下，还是会有一个播放按钮图标一闪而过
+
+这种情况的唯一解决方案就是去掉 video 的 autoplay 属性
+
+## 拓展
+
+### remix vs next
+
+## special
+
+人保 人民银行
+
+## 后端限流
+
+1. 整个网关层面的整体接口限流， 一般用滑动窗口
+
+2. 机器实例级别的限流，一般采用是 令牌桶
+
+3. 用户级别的限流，一般采用 redis 这些来记录倒计时
