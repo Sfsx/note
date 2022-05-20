@@ -1,6 +1,9 @@
 # Computer Graphics
 
-## Rasterization
+## GAMES 101
+
+Graphics And Mixed Environment Symposium
+### Rasterization
 
 ### Triangles
 
@@ -223,7 +226,7 @@ $$\vec{O} + t\vec{D} = (1- b_0-b_1)\vec{P}_0+b_1\vec{P}_1+b_2\vec{P}_2$$
 
   立体角 在球面上的面积 $A$ 除以半径 $r$ 的平方 $A/r^2$，所以整个球的立体角就是 $4\pi$
 
-+ Irradiance 单位面积上接收到的能量
++ Irradiance 单位面积上接收到的能量 (power per unit area)
 
 + Radiance 单位面积上，每单位立体角，发射的能量。将每个立体角积分起来就是 Irradiance
 
@@ -305,3 +308,303 @@ Probability Density Function $ Xi \sim p(x) $
 
 为了解决 whitted-style ray tracing 只做镜面反射，而且对于漫反射不做处理
 
+### Ray Generation
+
+### Path Tracing
+
+#### Russian Roulette (RR)
+
+离散概率数学期望 expect:
+
+$$ E = P * (Lo / P) + (1-P)*0 = Lo$$
+
+    shade(p, wo)
+      Randomly choose One direction wi~pdf(w)
+      Trace a ray r(p, wi)
+      If ray r hit the light
+        Return  L_i * f_r * cosine / pdf(wi) / P_RR
+      Else If ray r hit an object at q
+        Return shade(q, -wi) * f_r * cosine / pdf(wi) / P_RR
+
+### Things we haven't covered / won't cover
+
++ how to sample any function?
++ Monte Carlo integration allows arbitrary pdfs
+  + What's the best choice?(importance sampling)
+  + 当被积函数与pdf同形状时，是最佳的 pdf
++ Do random numbers matter?
+  + Yes! (low discrepancy sequences 控制随机数生成间距，使随机数没有那么密集)
++ The radiance of a pixel is the average of radiance on all paths passing through it
+  + Why?(pixel recinstruction filter)
++ Is the radiance of a pixel the color of a pixel?
+  + No.(gamma correction, curves, color space)
+
+<!-- lecture 17 -->
+### Materials And Apperances
+
+Matrerial === BRDF
+
+### Diffuse / Materials
+
+### Diffuse materials
+
+albedo
+
+$$f_{r} = \frac{\rho}{\pi}$$
+
+### Glossy material 
+
+### Ideal reflection / refractive material
+
+BRDF BTDF BSTF
+
+### Fresnel Reflection / Term (菲涅尔项)
+
+### Microfacet Material
+
+$$ f(i, o) = \frac{F(i, h)G(i, o, h)D(h)}{4(n, i)(n,o)} $$
+
+$F(i,h)$ 表示菲涅尔项
+
+$G(i, o, h)$ 表示shadowing-masking term, 修正物体微表面对光线遮挡损失的能量
+
+$D(h)$ distribution of normals 查询微表面的法线在某一个值下的分布情况
+
+
+### Mesuring BRDFs
+
+<!-- lecture 17 -->
+## Advanced Topics in Rendering
+
+### Advanced Light Transport
+
+### Bidirectional Path Tracing (BDPT 双向路径追踪) 
+
+优点
++ 从相机出发的第一次反射为漫反射时，比较适合双向路径追踪。
+换一种说法，光源没有直接照亮场景，而是通过漫反射照亮，这种情况适合双向路径追踪
+
+缺点：
++ 这种算法比较满比路径追踪慢
+
+### Metropolis Light Transport(MLT)
+
++ A Markov Chain Monte Carlo 马尔可夫链
+
+优点
++ 适用于复杂场景，用于寻找路径追踪的 path
+
+缺点
++ 不知道什么时候会收敛
++ 操作是局部的，导致有的像素点收敛较快，有的像素点收敛较慢，导致图片出现“脏点”
+
+### Photon Mapping 光子映射 
+
+优点
++ 适合处理 caustics 场景，适合处理 Specular-Diffuse-Specular
+
+### Instant Radiosity
+
+多光源
+
+### Advanced Apperances Modeling (外观建模)
+
+### Participating Media(散射介质): Fog
+
+### Hair Apperance
+
+#### Jajiya-Kay Model
+
+不够真实，只考率头发表面的散射
+
++ 没有考虑光线穿入头发内部，在穿出头发表皮到空气中
++ 没有考虑光线穿入头发内部，再发生反射，再穿出头发表皮到空气中
+
+#### Marschner Model
+
+将头发理解为带色素的玻璃柱
+
+#### Double Cylinder Model
+
+课程作者提出的模型
+
+双层圆柱模型，模拟头发中的髓质
+
+应用于《猩球崛起》《狮子王HD》
+
+### Granular Material
+
+### Translucent Materail
+
+### BSSRDF 次表面反射
+
+### Cloth
+
+### Observations
+
+### Detailed Material under Wave Optics
+
+### Procedural Apperance
+
+<!-- Lecture 19 -->
+### Cameras, Lenses and Light Fields
+
+### Field of view
+
+### Exposure
+
+Exposuer = time x irradiance
+
+影响图片亮度的因素
++ Aperture size
+  + F-Number 数字越小光圈越大，景深就越明显 
++ Shutter speed
+  + 快门时间减短可以消除运动模糊，但会导致照片亮度变暗
+  + rolling shutter
++ ISO gain
+
+### High-Speed Photography
+
+### Real Lens Elements Are Not Ideal - Aberrations
+
+### Gauss' Ray Tracing Construction
+
+### Defocuse Blur
+
+### Compuying Circle of Confusion (CoC) Size
+
+$$ \frac{C}{A} = \frac{|z_{s} - z_{i}|}{z_{i}} $$
+
+$z_{s}$ 相距，像与镜片之间的距离
+
+$z_{i}$ 焦距
+
+$C$ Circle of Confusion (CoC) Size
+
+$A$ 镜片直径约等于光圈大小
+
+故在 $z_{s}$ $z_{i}$ 固定的情况下，模糊效果与镜片大小成正比
+
+### Deptch of Field
+
+某一个CoC的阙值内，认为其成像是不模糊的，这段成像区域记为景深，物体在这段距离内是模糊的，超出这段距离就是模糊的
+
+<!-- Lecture 20 -->
+### Light of Field
+
+### Light Field Camera
+
+光场照相机记录的是原本的世界在某一个像素上各个方向的光线(Radiance)，是一种真正的记录（记录了整个光场的相机），由此他可以支持后期聚焦，修改光圈，修改iso，修改相机角度
+
+普通光学照相机，记录像素点上收到的各个方向光线叠加之后的颜色(Irradiance)
+
+缺点：
++ 光场照相机分辨率较低，原本胶片一个像素记录一个像素，现在一个像素记录了100个方向的光线，即需要一百个胶片像素来记录原本一个像素的信息
+
+### Linearity of Spectral Power Distributions
+
+光谱
+### Spectral Response of Human Cone Cells
+
+S，M，L cone cells
+
+$$S = \displaystyle \int^{}_{} r_{S}(\lambda)s(\lambda)d\lambda $$
+
+$$M = \displaystyle \int^{}_{} r_{M}(\lambda)s(\lambda)d\lambda $$
+
+$$L = \displaystyle \int^{}_{} r_{L}(\lambda)s(\lambda)d\lambda $$
+
+
+人感知到的颜色就是 $S$ $M$ $L$ 的值，并不是光谱
+
+不同光谱的可能积分得到一个一样结果，这种现象就叫做同色异谱
+
+### Metamerism
+
+### Additive Color
+
+### Standard Color Spaces
+
+Standardized RGB (sRGB)
+ 
+Adobe RGB
+
+### Gamut
+
+### HSV Color Space(Hue-Saturation-Value)
+
+Hue 色调
+
+Saturation 饱和度
+
+Light 亮度
+
+### CIELAB Space
+
+互补色
+
+### CMYK
+
+减色系统，红绿蓝混合后变黑（CMYK）
+
+加色系统，红绿蓝混合后变白
+
+<!-- Lecture -->
+### Animation
+
+虚拟现实，为了让人不会感到晕眩，要达到90fps
+
+### Keyfram Animation
+
+### Physical Simulation
+
+### Mass Spring System 质点弹簧系统
+
+可以描述布
+### Structures from Spring
+
+模拟布的材质
+
+### Finite Element Method
+
+### Particle System
+
+可以模拟流体，个体与群体的各种模型
+
+先模拟后渲染
+
+### Forward Kinematics
+
+### Inverse Kinematics
+
+已知最后点的位置，求各个关节的位置，用梯度下降求解
+
+### Rigging
+
+### Motion Capture
+
+<!-- Lecture 22 -->
+### Single Particle Simulation
+
+### Eulers methods
+
+### Implicit Euler Method
+
+### Runge-Kutta Families
+
+### Rigid Body Simulation
+
+### Fluid Simulation
+
+### A Simple Position-Based Method
+
+gradient descent
+
+### Eulerian vs Lagrangian
+
++ LAGRANGIAN APPROACH(质点法)
++ EULERIAN APPROACH(网格法)
+
+### finale
+
+几何
