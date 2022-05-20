@@ -392,3 +392,6 @@ chunks: 表示哪些代码需要优化，有三个可选值：`initial`(初始�
 ## Manifest
 
 当编译器（compiler）开始执行、解析和映射应用程序时，它会保留所有模块的详细要点，这个数据集合称之为 Manifest
+
+## Module Federation
+
