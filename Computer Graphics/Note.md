@@ -5,6 +5,16 @@
 Graphics And Mixed Environment Symposium
 ### Rasterization
 
+光栅化流程
+
+1. 判断像素点中心是否在三角形内部
+
+利用向量叉乘
+
+2. 判断被覆盖的像素的颜色
+
+基于三角形重心坐标对三角形的顶点数据进行插值
+
 ### Triangles
 
 ### Aliasing 走样
@@ -84,6 +94,33 @@ $$L_d = k_d(I/r^2)max(0, n \cdot l)$$
 当视角与镜面反射方向比较接近的时候，才能看到高光。$h$ 表示 $l$ 与 $v$ 的角平分线向量 $h$，$n \cdot h$ 表示入射角向量与$l$ 与 $v$ 的角平分线向量的余弦，$p$ 系数在 100 ～ 200 之间
 
 $$ L_s = k_s(I/r^2)max(0, n \cdot h)^p $$
+
+phone 和 blinn-phone 的区别：
+
+phone 是根据视角与反射光线的重合度来判断是否能看到高光（镜面反射）
+
+blinn-phone 是判断入射向量与反射向量的半程向量（halfway vector）与平面法向量的夹角来判断是否能看到高光
+
+共同点：
+
+都需要计算三个分量 ambient(环境光分量)、specular(镜面反射分量)、diffuse(漫反射分量)
+
+```glsl
+// ambient 这里 0.1 是环境光系数（一般是0.1 ～ 0.2）
+vec3 ambient = 0.1 * lightColor;
+// diffuse
+vec3 lightDir = normalize(lightPos - fragPos);
+float diff = max(dot(lightDir, normal), 0.0);
+vec3 diffuse = diff * lightColor;
+// specular
+vec3 viewDir = normalize(viewPos - fragPos);
+vec3 reflectDir = reflect(-lightDir, normal);
+vec3 halfwayDir = normalize(lightDir + viewDir);  
+// 这里 64 是
+float spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
+vec3 specular = spec * lightColor;
+
+```
 
 ### Shading Frequencies 着色频率
 
@@ -220,11 +257,11 @@ $$\vec{O} + t\vec{D} = (1- b_0-b_1)\vec{P}_0+b_1\vec{P}_1+b_2\vec{P}_2$$
 
   单位 Watt 瓦特(说明和物理上的功有点类似，都是用瓦特做单位)或 lumens 流明
  
-+ Radiant Intensity 发光强度，光源在给定方向上，每单位**立体角**内所发出的光通量。
++ Radiant Intensity: radiant intensity measures the amount of radiant flux per solid angle (发光强度，光源在给定方向上，每单位**立体角**内所发出的光通量。)
 
   candelas（cd= lm/sr) lm 流明 sr 立体角
 
-  立体角 在球面上的面积 $A$ 除以半径 $r$ 的平方 $A/r^2$，所以整个球的立体角就是 $4\pi$
++ Solid angle(立体角) 在球面上的面积 $A$ 除以半径 $r$ 的平方 $A/r^2$，所以整个球的立体角就是 $4\pi$
 
 + Irradiance 单位面积上接收到的能量 (power per unit area)
 
@@ -370,6 +407,27 @@ $G(i, o, h)$ 表示shadowing-masking term, 修正物体微表面对光线遮挡�
 
 $D(h)$ distribution of normals 查询微表面的法线在某一个值下的分布情况
 
+#### Normal distribution function
+
+$$ NDF_{GGXTR}(n, h, a)= \frac{a^2}{\pi((n \cdot h)^2(a^2 - 1) + 1)^2}$$
+
+$n$ is normal vector, $h$ is the halfway vector between the surface normal and light direction, $a$ is the surface roughness parameter
+
+#### Geometry function
+
+$$ G_{SchlickGGX}(n, v, k)= \frac{n \cdot v}{(n \cdot v)(1-k)+k} $$
+
+$n$ is normal vector, $v$ is view direction vector, $k$ is a remapping fo  $a$ based on whether we're using the geometry function for either direct lighting or IBL lightng:
+
+$$ k_{direct} = \frac{(a + 1)^2}{8} $$
+
+$$ k_{IBL} = \frac{a^2}{2} $$
+
+#### Fresnel equation
+
+Fresnel-Schlick approximation
+
+$$ F_{Schlick}(h,v,F_{0}) = F_{0} + (1 - F_{0})(1 - (h \cdot v)^5)$$
 
 ### Mesuring BRDFs
 
