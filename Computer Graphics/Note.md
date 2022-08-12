@@ -276,21 +276,17 @@ $$\vec{O} + t\vec{D} = (1- b_0-b_1)\vec{P}_0+b_1\vec{P}_1+b_2\vec{P}_2$$
 
 ### The Reflection Equation 反射方程
 
-$L_r(p, \omega_r) = \displaystyle \int^{}_{H^2} f_r(p, \omega_i \to \omega_r)L_i(p, \omega_i)cos\theta_id\omega_i$
-
-### The Rendering Equation 渲染方程
-
 $L_o(p, \omega_o) = L_e(p, \omega_o) + \displaystyle \int^{}_{\Omega^+} L_i(p, \omega_i)f_r(p, \omega_i, \omega_o)(n \cdot \omega_i)d\omega_i$
 
-$L_e(p, \omega_o)$ 为改点自己发的光
+$L_e(p, \omega_o)$ 为该点 $p$ 自己发的光，单位时间内 $p$ 点发的光向  $\omega_o$ 方向贡献的 radiance
 
-$L_i(p, \omega_i)$ 为 BRDF 函数
+$f_r(p, \omega_i, \omega_o)$ 为 BRDF 函数，表示点 $p$，在 $\omega_i$ 方向入射的光，反射到 $\omega_o$ 方向的 radiance
 
-$\displaystyle \int^{}_{\Omega^+} L_i(p, \omega_i)f_r(p, \omega_i, \omega_o)(n \cdot \omega_i)d\omega_i$ 
+$L_i(p, \omega_i)$ 表示单位时间内 $p$ 点接受 $\omega_i$ 方向的 radiance
 
-为对四面八方反射过来的光线进行积分
+$(n \cdot \omega_i)$ 表示 $\omega_i$ 方向的光，由于角度带来的衰减 
 
-$n \cdot \omega_i$ = $cos\theta_i$ 其中 $n$ 为法线向量与 $\omega_i$ 向量的点乘
+$\displaystyle \int^{}_{\Omega^+} L_i(p, \omega_i)f_r(p, \omega_i, \omega_o)(n \cdot \omega_i)d\omega_i$ 为对四面八方反射过来的光线进行积分
 
 ### Linear Operator Equation
 

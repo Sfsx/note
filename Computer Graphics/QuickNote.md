@@ -156,3 +156,67 @@ $$ c_{o} = c_{i}^{\frac{1}{2.2}} $$
 
 [Gamma、Linear、sRGB 和Unity Color Space，你真懂了吗？](https://zhuanlan.zhihu.com/p/66558476)
 
+## Cook–Torrance model
+
+In 1982, Robert Cook and Kenneth Torrance published a reflectance model that more accurately represented the physical reality of light reflectance than the Phong and Blinn-Phong models.
+
+### The Rendering Equation
+
+$L_o(p, \omega_o) = L_e(p, \omega_o) + \displaystyle \int^{}_{\Omega^+} L_i(p, \omega_i)f_r(p, \omega_i, \omega_o)(n \cdot \omega_i)d\omega_i$
+
+$L_e(p, \omega_o)$ 为该点 $p$ 自己发的光，单位时间内 $p$ 点发的光向  $\omega_o$ 方向贡献的 radiance
+
+$f_r(p, \omega_i, \omega_o)$ 为 BRDF 函数，表示点 $p$，在 $\omega_i$ 方向入射的光，反射到 $\omega_o$ 方向的 radiance
+
+$L_i(p, \omega_i)$ 表示单位时间内 $p$ 点接受 $\omega_i$ 方向的 radiance
+
+$(n \cdot \omega_i)$ 表示 $\omega_i$ 方向的光，由于角度带来的衰减 
+
+$\displaystyle \int^{}_{\Omega^+} L_i(p, \omega_i)f_r(p, \omega_i, \omega_o)(n \cdot \omega_i)d\omega_i$ 为对四面八方反射过来的光线进行积分
+
+
+### Cook-Torrance Equation
+
+$$ f_{r} = k_{d}f_{lambert} + k_{s}f_{cook-torrance} $$
+
+$k_d$ 入射光线能量中折射部分的比率, $k_s$ 入射光线能量中反射部分的比率，由能量守恒定律可知 $k_d + k_s = 1$
+
+$$f_{lambert} = \frac{c}{\pi}$$
+
+$f_{lambert}$代表漫反射部分，$c$ 是可以是一个单通道的反射率（albedo）在[0, 1]之间的一个数；也可以是三通道的，RGB；也可以是光谱
+
+$$f_{cook-torrance} = \frac{DFG}{4(\omega_o \cdot n)(\omega_i \cdot n)} $$
+
+其中 $F$ 为菲涅尔项(Fresnel equation), $D$ 为法线分布函数(Normal Distribution function)，$G$ 为几何函数(Geometry funciton), $f_{cook-torrance}$ 代表镜面反射部分
+
+### Fresnel equation
+
+菲涅尔效应：
+
+物体在不同角度观察下，表面反射率是不一样的。简单的讲，视线垂直于表面时，反射较弱，当视线与法线的夹角越大，反射越明显。
+
+![](https://s2.ax1x.com/2020/02/21/3nUA4s.png)
+
+菲涅尔函数就是用来描述我们改变不同的入射角时光线发生反射与光线发生折射的比率
+
+s偏振：
+
+<img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/6b92746c5ddf76cd0560b4798438aa7efc04f009" style="background: white;">
+
+p偏振：
+
+<img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/269fc0d8deb5f59f0349c28ad15504fc8ed44aff" style="background: white;">
+
+菲涅尔方程中用到的变量
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Fresnel.svg/2880px-Fresnel.svg.png" style="width: 300px;">
+
+由于菲涅尔函数比较复杂这里我们计算的时候用 Fresnel-Schlick 来近似
+
+$$ F_{Schlick}(h, v, F_0) = F_0 + (1 - F_0)(1 - (h \cdot v))^5$$
+
+这里需要注意的是要满足菲涅尔方程光线一定是**从折射率低的介质射入折射率高的介质**
+
+### 参考资料
+
+[菲涅耳方程](https://zh.m.wikipedia.org/zh-hans/%E8%8F%B2%E6%B6%85%E8%80%B3%E6%96%B9%E7%A8%8B)
