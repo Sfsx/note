@@ -300,10 +300,6 @@ sequence\r\n
 
 这一步是客户端通知服务端后面再发送的消息都会使用前面协商出来的秘钥加密了，是一条事件消息
 
-#### Change Cipher Spec（服务端）
-
-这一步是服务端通知客户端后面再发送的消息都会使用前面协商出来的秘钥加密了，是一条事件消息
-
 #### Finished（Encrypted Handshake Message）
 
 ​Encrypted Handshake Message 这是由客户端服务器之间协商的算法和密钥保护的第一个消息。
@@ -451,6 +447,20 @@ Strict-Transport-Security: max-age=<expire-time>; preload
 + 不再允许对加密报文进行压缩、不再允许双方发起重协商
 + DSA 证书不再允许在 TLS 1.3 中使用
 
+### TLS 1.3 握手
+
+![握手](https://pic2.zhimg.com/80/v2-92d195e62d01c0e085952c6e6c90a75d_1440w.jpg)
+
+### Client Hello
+
+客户端向服务端发送 client hello 消息，这个消息包含一个客户端随机数（client random），客户端支持的加密方法（Cipher Suites）和 SSL 版本号。会话ID（Session ID）
+
+### Server Hello, Change Cipher Spec, Application Data
+
+服务端向客户端发送 server hello 消息，这个消息包含一个服务端随机数（server random），服务器选取的加密套件（Cipher Suites），以及服务器选择的 SSL 版本号。
+
+
+### Application Data
 ### TCP
 
 建立链接需要三次握手，握手时间为 1.5RTT。
