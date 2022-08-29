@@ -101,7 +101,7 @@ base on GAMES 101
 
 这里的切线矩阵，实际就是表面（三角形）的一个正交矩阵，通过计算的到的三个分量，有可能不正交（这里计算过程略）。这个时候需要施密特正交化(Gram-Schmidt process)，将向量转换为正交向量
 
-## euler angle
+## Euler Angle 欧拉角
 ---
 <div style="">
 
@@ -112,6 +112,201 @@ $$ R_x(\alpha) = \begin{bmatrix} cos\alpha & -sin\alpha & 0 \\ sin\alpha & cos\a
 $$ R_z(\alpha) = \begin{bmatrix} cos\alpha & -sin\alpha & 0 \\ sin\alpha & cos\alpha & 0 \\ 0 & 0 & 1 \\ \end{bmatrix} $$
 
 </div>
+
+## Quaternions 四元数
+
+### 复数与二维平面旋转
+
+$z_1 = a + bi$, $z_2 = c + di$ 为任意两个复数
+
+#### 复数加法
+
+$z_1 + z_2 = (a + bi) + (c + di) = (a + c) + (c + d)i$
+
+复数的加法满足交换律和结合律，复数加法得到的结果仍然是一个复数
+
+#### 复数减法
+
+$z_1 - z_2 = (a + bi) - (c + di) = (a - c) + (c - d)i$
+
+复数减法的结果仍然是一个复数
+
+#### 虚数乘法
+
+$$
+\begin{aligned}
+z_1 * z_2 &= (a + bi) * (c + di) \\
+&= ac + adi + bci - bd \\
+&= (ac - bd) + (ad + bc)i \\
+\end{aligned}
+$$
+
+#### 复数乘法与旋转
+
+![](../image/plural-rorate.png)
+
+虚数 Q(x, y) 旋转至 T(x', y')，旋转角度为 $\theta$， 由于 Q, T 长度相同仅仅方向不同，可以用极坐标表示 Q($rcos\alpha$, $rsin\alpha$), T($rcos(\alpha + \theta)$, $rsin(\alpha + \theta)$)
+
+展开代入得
+
+$x' = xcos\theta - ysin\theta$
+
+$y' = xsin\theta + ycos\theta$
+
+也就是：
+
+$\begin{bmatrix}
+cos\theta&-sin\theta\\
+sin\theta&cos\theta\\
+\end{bmatrix} $
+$\begin{bmatrix}x\\y\\\end{bmatrix}$
+
+### 四元数
+
+#### 四元数乘法
+
+四元数乘法不满足交换律。但是满足**结合律**以及**分配律**
+
+但其中有一种特殊的四元数满足交换律，即共轭四元数
+
+#### 共轭四元数
+
+一个四元数 $q = a + bi + cj + dk$ 的**共轭**为 $q^* = a - bi - cj - dk$
+
+标量向量序对表示 $q = [s, v]$， $q^* = [s, -v]$
+
+$$
+\begin{aligned}
+qq^* &= s^2 - v \cdot (-v) + sv + s(-v) + v \times (-v) \\
+&= s^2 + v \cdot v \quad\quad\quad\quad\quad\quad (由于 v 与 -v 平行，故外积等于0)\\
+&= s^2 + x^2 + y^2 + z^2 \\
+&= ||q||^2 \\
+\end{aligned}
+$$
+
+因为 $(q^*)^* = [s, -(-v)] = [s, v] = q$
+
+$$
+\begin{aligned}
+q^*q &= q^* (q^*)^* \\
+&= ||q^*||^2 \\
+&= s^2 + x^2 + y^2 + z^2 \\
+&= ||q||^2 \\
+&= qq^* \\
+\end{aligned}
+$$
+
+故共轭四元数满足**乘法交换律**
+
+并且我们可以快速计算 $q^{-1}$
+
+$$
+\begin{aligned}
+qq^{-1} &= 1 \\
+q^*qq^{-1} &= q^* \\
+||q||^2q^{-1} &= q^* \\
+q^{-1} &= \frac {q^*} {||q||^2} \\
+\end{aligned}
+$$
+
+如果$q$是单位四元数，即$||q||^2 = 1$那么
+
+$$q^{-1} = \frac {q^*} {||q||^2} = q^* $$
+
+#### 四元数与3维旋转
+
+##### $v_\bot$ 的旋转
+
+$$ \sf v_\bot^{'} = cos(\theta)v_\bot + sin(\theta)(u \times v_\bot)$$
+
+设 $v_\bot=[0, \sf v_\bot]$ $u=[0, \sf u]$ 由四元数乘法
+
+$$
+\begin{aligned}
+uv_\bot &= [\sf -u \cdot v_\bot, \sf u \times v_\bot] \\
+&= [0, \sf u \times v_\bot] \quad\quad(垂直点积等于0) \\ 
+&=\sf u \times v_\bot
+\end{aligned}
+$$
+
+将 $ uv_\bot $代入
+
+$$
+\begin{aligned}
+\sf v_\bot^{'} &= cos(\theta)v_\bot + sin(\theta)(uv_\bot) \\
+&= (cos(\theta) + sin(\theta)u)v_\bot
+\end{aligned}
+$$
+
+将 $(cos(\theta) + sin(\theta)u)$ 看作是一个四元数 $q (cos(\theta), sin(\theta)u_xi, sin(\theta)u_yj, sin(\theta)u_zk)$
+
+$ \sf v_\bot^{'} = \it qv_\bot$
+
+##### $v_{||}$ 的旋转
+
+$v_{||}$ 的旋转等与它本身
+
+##### $v$ 的旋转
+
+转换一般情况下 $v^{'}$ 的表达式
+
+$$
+\begin{aligned}
+\sf v^{'} &= \it v_{||}^{'} + v_\bot^{'} \\
+&= v_{||} + qv_\bot
+\end{aligned}
+$$
+
+在进一步简化之前我们需要几个引理
+
+1. $q=[cos(\theta), sin(\theta)u]$ 而且 $\sf u$ 为单位向量，那么 $q^2 = qq = [cos(2\theta), sin(2\theta)u]$
+2. 假设 $v_{||}=[0, \sf v_{||}]$ 是一个纯四元数，而 $q = [\alpha, \beta \sf u]$，其中 $\sf u$ 是一个单位向量，$ \alpha, \beta \in \mathbb R$，且 $\sf v_{||}$ 平行于 $\sf u$，那么 $v_{||} q = q v_{||}$
+3. 假设 $v_\bot=[0, \sf v_\bot]$ 是一个纯四元数，而 $q = [\alpha, \beta \sf u]$，其中 $\sf u$ 是一个单位向量，$ \alpha, \beta \in \mathbb R$，且 $\sf v_\bot$ 垂直于 $\sf u$，那么 $qv_\bot = v_\bot q^*$
+
+继续简化
+
+$$
+\begin{aligned}
+\sf v^{'} &= v_{||} + qv_\bot \\
+&= 1v_{||} + qv_\bot \\
+&= pp^{-1}v_{||} + ppv_\bot \quad\quad(四元数p(cos(\frac {\theta} {2}), sin(\frac {\theta} {2})u))\\
+&= pv_{||}p^{-1} + pv_\bot p^* \quad\quad(根据定理2与定理3)\\
+&= pv_{||}p^* + pv_\bot p^* \quad\quad(p是单位四元数，p^{-1} = \frac {p^*} {||p||^2} = p^*)\\
+&= p(v_{||}+v_\bot)p^*\\
+&= pvp^*
+\end{aligned}
+$$
+
+通过上述证明可知，单位四元数$q=[a, b]$的实数部分为旋转角的余弦值故
+
+$$\theta = cos^{-1}(a)$$
+
+旋转轴 $\sf u$
+
+$$\sf u = \frac {b} {1-sin(cos^{-1}(a))}$$
+
+##### 双倍覆盖
+
+对于任意单位四元数$q=[cos(\frac {\theta} {2}), sin(\frac {\theta} {2})u]$, $q$ 与 $-q = [-cos(\frac {\theta} {2}), -sin(\frac {\theta} {2})u]$ 表示同一个旋转。如果$q$ 表示沿着 $\sf u$ 轴旋转 $\theta$ 角度，那么 $-q$ 表示沿着 $\sf -u$ 轴方向旋转 $2\pi - \theta$
+
+$$
+\begin{aligned}
+-q &= [-cos(\frac {\theta} {2}), -sin(\frac {\theta} {2})u] \\
+&= [cos(\pi - \frac {\theta} {2}), sin(\pi - \frac {\theta} {2})(-u)]
+\end{aligned}
+$$
+
+所以我们说单位四元数与3D 旋转有一个「2对1满射同态」
+
+#### 四元数插值
+
+
+
+参考文献
+
+[复数与2D旋转](https://zhuanlan.zhihu.com/p/85321120)
+
+[quaternion](https://krasjet.github.io/quaternion/quaternion.pdf)
 
 ## Order Independent Transparency 顺序无关透明度
 ---
