@@ -163,7 +163,27 @@ $\begin{bmatrix}x\\y\\\end{bmatrix}$
 
 ### 四元数
 
-#### 四元数乘法
+#### 四元数点积
+
+假设两个四元数$q[a, \sf u]$, $p[t, \sf v]$，则
+
+$$
+\begin{aligned}
+q\cdot p &= at + \sf u \cdot \sf v\\
+\end{aligned}
+$$
+
+可以看到四元数内积和向量内积类似，返回一个标量
+
+##### 四元数乘法
+
+假设两个四元数$q(a, b, c, d)$, $p(e, f, g, h)$，则
+
+$$
+\begin{aligned}
+qp = 
+\end{aligned}
+$$
 
 四元数乘法不满足交换律。但是满足**结合律**以及**分配律**
 
@@ -298,9 +318,130 @@ $$
 
 所以我们说单位四元数与3D 旋转有一个「2对1满射同态」
 
+##### 四元数指数形式
+
+如果$\sf u$是一个单位向量，那么对于单位四元数$u=[0, \sf u]$ 有
+
+$$e^{u\theta} = cos(\theta) + usin(\theta) = cos(\theta) + \sf u\it sin(\theta)$$
+
+也就是说 $q=[cos(\theta), \sf u\it sin(\theta)]$ 可以用指数$e^{u\theta}$表示
+
+四元数幂运算
+
+$$ (e^{u\theta})^t = e^{u(t\theta)} = cos(t\theta) + \sf u \it sin(t\theta)$$
+
 #### 四元数插值
 
+设有两个旋转变换$q_0=[cos(\theta_0), sin(\theta_0)\sf u_0]$，$q_1=[cos(\theta_1), sin(\theta_1)\sf u_1]$
 
+我们现在需要生成到这两个变换的中间位置，那么这个中间位置也是一个旋转变换，也就是说先进行$q_0$变换，在进行 $\Delta q$变换，最后得到的结果等于 $q_1$ 变换
+
+$$
+\begin{aligned}
+\Delta q q_0 &= q_1 \\
+\Delta q &= q_1q^{-1}_0 \\
+\Delta q &= q_1q^{*}_0 \quad\quad(所有旋转q都是单位四元数)\\
+\end{aligned}
+$$
+
+为了寻找3D空间旋转与4维向量之间的关系，我们来计算一下这个式子的实数部分
+
+$$
+\begin{aligned}
+\Delta q &= q_1q^{*}_0 \\
+&= [cos(\theta_1), sin(\theta_1)\sf u_1][cos(\theta_0), -sin(\theta_0)\sf u_0] \\
+&= [cos(\theta_1)cos(\theta_0)+sin(\theta_1)sin(\theta_0)\sf u_1 \cdot \sf u_0, ...] \\
+\end{aligned}
+$$
+
+可以看到实数部分正好是 $q_0 \cdot q_1$，由于$q_0$与$q_1$都是单位四元数，故 $q_0 \cdot q_1$ 表示4维空间中 $q_0$向量与$q_1$向量夹角的余弦值，设夹角为 $\theta$，那么 $q_0 \cdot q_1 = cos(\theta)$
+
+我们知道 $\Delta q$，表示一个旋转，如果它代表的旋转角度是$2\phi$，那么 $\Delta q$ 的实数部分 $\Delta q = [cos(\theta),...]$，所以
+
+$$
+\begin{aligned}
+\Delta q &= [cos(\phi),...] = [cos(\theta)]\\
+cos(\phi) &= cos(\theta)
+\end{aligned}
+$$
+
+又因为 $\phi$ 与 $\theta$ 都是夹角，$\phi, \theta \in [0, \pi]$ 所以
+
+$$\phi = \theta$$
+
+虽然四元数是四维空间之内，但是由于只有两个四元数，我们可以投影到二维平面内，也就是左图，右图则表示3维空间中发生的旋转
+
+![](../image/rorate-projection.png)
+
+#### Linear Interpolation, Normizle Linear Interpolation, Spherical Linear Interpolation
+
+##### Linear Interpolation
+
+$$
+\begin{aligned}
+q_t= Lerp(q_0,q_1,t) &= q_0 + t(q_1 - q_0) \\
+&= tq_1 + (1-t)q_0 \\
+\end{aligned}
+$$
+
+##### Normizle Linear Interpolation
+
+先进行线性插值，并将结果归一化。使用的前提条件是 $q_0$ 与 $q_1$ 是单位向量
+
+$$
+\begin{aligned}
+q_t = Nlerp(q_0, q_1, t) = \frac {tq_1 + (1 - t)q_0} {||tq_1 + (1 - t)q_0||}
+\end{aligned}
+$$
+
+##### Spherical Linear Interpolation
+
+对角度进行插值，那么
+$$\theta_t = (1 - t)0 + t\theta = t\theta$$
+
+由于这还是一个线性插值故写出线性表达式
+
+$$\sf v_{\it t} = \alpha \sf v_{0} + \beta \sf v_{1} \quad \quad (1)$$
+
+为了求解 $\alpha$ 与 $\beta$ 看下图
+<!-- 
+<img src="../image/spherical-linear-interpolation.png" style="width: 250px"> -->
+
+我们对(1)式两边乘上$\sf v_0$ 得
+
+$$
+\begin{aligned}
+\sf v_0 \cdot \sf v_{\it t}&= \alpha \sf v_{0} \cdot \sf v_{0} + \beta \sf v_{1} \cdot \sf v_{0} \\
+ cos(t\theta)&= \alpha + \beta cos(\theta) \quad \quad (2)\\
+\end{aligned}
+$$
+
+同理对(1)式两边乘上$\sf v_1$ 得
+
+$$
+\begin{aligned}
+\sf v_1 \cdot \sf v_{\it t}&= \alpha \sf v_{0} \cdot \sf v_{1} + \beta \sf v_{1} \cdot \sf v_{1} \\
+cos((1-t)\theta) &= \alpha cos(\theta) + \beta \quad \quad (3)\\
+\end{aligned}
+$$
+
+(2)式与(3)式，两个未知数两个方程，可得
+
+$$\beta = \frac {sin(t\theta)} {sin(\theta)}$$
+
+$$\alpha = \frac {sin((1-t)\theta)} {sin(\theta)}$$
+
+即
+
+$$ q_t = Slerp(q_0, q_1, t) = \frac {sin(t\theta)} {sin(\theta)} q_0 + \frac {sin((1-t)\theta)} {sin(\theta)} q_1$$
+
+##### 双倍覆盖
+
+由于四元数 $q$ 与 $-q$ 可以表示同一个旋转，所以进行计算的时候，但两者的旋转角度与方向是不同的，所以这里要根据实际情况来决定，使用小的旋转还是用大的旋转
+
+##### Squad
+
+这里比较复杂，简单说一下，假设有一个四元数序列，为了得到一个平滑的过度（为了得到的曲线不仅仅是连续，且一阶导数，甚至是高阶导数连续），我们需要用贝塞尔曲线。但贝塞尔曲线的曲线方程求解计算量过大，我们这里使用 squad 来近似
 
 参考文献
 
