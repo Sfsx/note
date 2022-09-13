@@ -58,7 +58,6 @@ base on GAMES 101
 [vulkan_Graphics_pipeline_basic](https://vulkan-tutorial.com/Drawing_a_triangle/Graphics_pipeline_basics/Introduction)
 
 ## geometry shader
----
 
 + points: when drawing GL_POINTS primitives (1).
 + lines: when drawing GL_LINES or GL_LINE_STRIP (2).
@@ -67,7 +66,6 @@ base on GAMES 101
 + triangles_adjacency : GL_TRIANGLES_ADJACENCY or + GL_TRIANGLE_STRIP_ADJACENCY (6).
 
 ## Shadow Map Antialiasing
----
 
 ### Percentage-Closer Filtering
 
@@ -93,7 +91,6 @@ base on GAMES 101
 ## Cascaded Shadow Maps
 
 ## NormalMap
----
 
 将法线存入在纹理图片会导致，纹理图片显示蓝色，这是用于物体表面法线默认为 z 轴，故大部分法线也是朝向 z 轴及(0, 0, 1)这种坐标转换为 grb 三个分量，刚好 b 分量为 1 即为蓝色
 
@@ -102,7 +99,6 @@ base on GAMES 101
 这里的切线矩阵，实际就是表面（三角形）的一个正交矩阵，通过计算的到的三个分量，有可能不正交（这里计算过程略）。这个时候需要施密特正交化(Gram-Schmidt process)，将向量转换为正交向量
 
 ## Euler Angle 欧拉角
----
 <div style="">
 
 $$ R_z(\alpha) = \begin{bmatrix} cos\alpha & -sin\alpha & 0 \\ sin\alpha & cos\alpha & 0 \\ 0 & 0 & 1 \\ \end{bmatrix} $$
@@ -155,17 +151,21 @@ $y' = xsin\theta + ycos\theta$
 
 也就是：
 
-$\begin{bmatrix}
+$
+\begin{bmatrix}
 cos\theta&-sin\theta\\
 sin\theta&cos\theta\\
-\end{bmatrix} $
-$\begin{bmatrix}x\\y\\\end{bmatrix}$
+\end{bmatrix} 
+\begin{bmatrix}
+x\\y\\
+\end{bmatrix}
+$
 
 ### 四元数
 
 #### 四元数点积
 
-假设两个四元数$q[a, \sf u]$, $p[t, \sf v]$，则
+假设两个四元数 $q[a, \sf u]$, $p[t, \sf v]$，则
 
 $$
 \begin{aligned}
@@ -177,7 +177,7 @@ $$
 
 ##### 四元数乘法
 
-假设两个四元数$q(a, b, c, d)$, $p(e, f, g, h)$，则
+假设两个四元数 $q(a, b, c, d)$, $p(e, f, g, h)$，则
 
 $$
 \begin{aligned}
@@ -204,63 +204,65 @@ qq^* &= s^2 - v \cdot (-v) + sv + s(-v) + v \times (-v) \\
 \end{aligned}
 $$
 
-因为 $(q^*)^* = [s, -(-v)] = [s, v] = q$
+因为 $(q^*)^* = [s, -(-v)] = [s, v] = q$ 
 
 $$
 \begin{aligned}
-q^*q &= q^* (q^*)^* \\
-&= ||q^*||^2 \\
+q^{*}q &= q^{*} (q^{*})^{*} \\
+&= ||q^{*}||^2 \\
 &= s^2 + x^2 + y^2 + z^2 \\
 &= ||q||^2 \\
-&= qq^* \\
+&= qq^{*} \\
 \end{aligned}
 $$
 
 故共轭四元数满足**乘法交换律**
 
-并且我们可以快速计算 $q^{-1}$
+并且我们可以快速计算 $q^{-1}$ 
 
 $$
 \begin{aligned}
 qq^{-1} &= 1 \\
-q^*qq^{-1} &= q^* \\
-||q||^2q^{-1} &= q^* \\
-q^{-1} &= \frac {q^*} {||q||^2} \\
+q^{*}qq^{-1} &= q^{*} \\
+||q||^2q^{-1} &= q^{*} \\
+q^{-1} &= \frac {q^{*}} {||q||^2} \\
 \end{aligned}
 $$
 
-如果$q$是单位四元数，即$||q||^2 = 1$那么
+如果 $q$ 是单位四元数，即 $||q||^2 = 1$ 那么
 
-$$q^{-1} = \frac {q^*} {||q||^2} = q^* $$
+$$
+q^{-1} = \frac {q^{*}} {||q||^2} = q^{*}
+$$
 
 #### 四元数与3维旋转
 
 ##### $v_\bot$ 的旋转
 
-$$ \sf v_\bot^{'} = cos(\theta)v_\bot + sin(\theta)(u \times v_\bot)$$
+$$ \sf {v_\bot^{'}} = cos(\theta)v_\bot + sin(\theta)(u \times v_\bot)$$
 
-设 $v_\bot=[0, \sf v_\bot]$ $u=[0, \sf u]$ 由四元数乘法
+设 $v_\bot=[0, \sf {v_\bot}]$ $u=[0, \sf {u}]$ 由四元数乘法
 
 $$
 \begin{aligned}
-uv_\bot &= [\sf -u \cdot v_\bot, \sf u \times v_\bot] \\
-&= [0, \sf u \times v_\bot] \quad\quad(垂直点积等于0) \\ 
-&=\sf u \times v_\bot
+uv_\bot &= [\sf {-u \cdot v_\bot}, \sf {u \times v_\bot}] \\
+&= [0, \sf {u \times v_\bot}] \quad\quad(垂直点积等于0) \\ 
+&=\sf {u \times v_\bot}
 \end{aligned}
 $$
 
-将 $ uv_\bot $代入
+将 $ u v_\bot $代入
 
 $$
 \begin{aligned}
-\sf v_\bot^{'} &= cos(\theta)v_\bot + sin(\theta)(uv_\bot) \\
+\sf {v_\bot^{'}} &= cos(\theta)v_\bot + sin(\theta)(uv_\bot) \\
 &= (cos(\theta) + sin(\theta)u)v_\bot
 \end{aligned}
 $$
 
 将 $(cos(\theta) + sin(\theta)u)$ 看作是一个四元数 $q (cos(\theta), sin(\theta)u_xi, sin(\theta)u_yj, sin(\theta)u_zk)$
 
-$ \sf v_\bot^{'} = \it qv_\bot$
+$$ \sf v_\bot^{'} = \it qv_\bot $$
 
 ##### $v_{||}$ 的旋转
 
@@ -280,20 +282,20 @@ $$
 在进一步简化之前我们需要几个引理
 
 1. $q=[cos(\theta), sin(\theta)u]$ 而且 $\sf u$ 为单位向量，那么 $q^2 = qq = [cos(2\theta), sin(2\theta)u]$
-2. 假设 $v_{||}=[0, \sf v_{||}]$ 是一个纯四元数，而 $q = [\alpha, \beta \sf u]$，其中 $\sf u$ 是一个单位向量，$ \alpha, \beta \in \mathbb R$，且 $\sf v_{||}$ 平行于 $\sf u$，那么 $v_{||} q = q v_{||}$
-3. 假设 $v_\bot=[0, \sf v_\bot]$ 是一个纯四元数，而 $q = [\alpha, \beta \sf u]$，其中 $\sf u$ 是一个单位向量，$ \alpha, \beta \in \mathbb R$，且 $\sf v_\bot$ 垂直于 $\sf u$，那么 $qv_\bot = v_\bot q^*$
+2. 假设 $v_{||}=[0, \sf {v_{||}}]$ 是一个纯四元数，而 $q = [\alpha, \beta \sf {u}]$，其中 $\sf u$ 是一个单位向量，$ \alpha, \beta \in \mathbb R $，且 $\sf v_{||}$ 平行于 $\sf u$，那么 $v_{||} q = q v_{||}$
+3. 假设 $v_\bot=[0, \sf {v_\bot}]$ 是一个纯四元数，而 $q = [\alpha, \beta \sf {u}]$，其中 $\sf u$ 是一个单位向量，$ \alpha, \beta \in \mathbb R $，且 $\sf v_\bot$ 垂直于 $\sf u$，那么 $qv_\bot = v_\bot q^*$
 
 继续简化
 
 $$
 \begin{aligned}
-\sf v^{'} &= v_{||} + qv_\bot \\
+\sf {v^{'}} &= v_{||} + qv_\bot \\
 &= 1v_{||} + qv_\bot \\
 &= pp^{-1}v_{||} + ppv_\bot \quad\quad(四元数p(cos(\frac {\theta} {2}), sin(\frac {\theta} {2})u))\\
-&= pv_{||}p^{-1} + pv_\bot p^* \quad\quad(根据定理2与定理3)\\
-&= pv_{||}p^* + pv_\bot p^* \quad\quad(p是单位四元数，p^{-1} = \frac {p^*} {||p||^2} = p^*)\\
-&= p(v_{||}+v_\bot)p^*\\
-&= pvp^*
+&= pv_{||}p^{-1} + pv_\bot p^{*} \quad\quad(根据定理2与定理3)\\
+&= pv_{||}p^{*} + pv_\bot p^{*} \quad\quad(p是单位四元数，p^{-1} = \frac {p^{*}} {||p||^2} = p^{*})\\
+&= p(v_{||}+v_\bot)p^{*}\\
+&= pvp^{*}
 \end{aligned}
 $$
 
@@ -303,11 +305,11 @@ $$\theta = cos^{-1}(a)$$
 
 旋转轴 $\sf u$
 
-$$\sf u = \frac {b} {1-sin(cos^{-1}(a))}$$
+$$\sf {u} = \frac {b} {1-sin(cos^{-1}(a))}$$
 
 ##### 双倍覆盖
 
-对于任意单位四元数$q=[cos(\frac {\theta} {2}), sin(\frac {\theta} {2})u]$, $q$ 与 $-q = [-cos(\frac {\theta} {2}), -sin(\frac {\theta} {2})u]$ 表示同一个旋转。如果$q$ 表示沿着 $\sf u$ 轴旋转 $\theta$ 角度，那么 $-q$ 表示沿着 $\sf -u$ 轴方向旋转 $2\pi - \theta$
+对于任意单位四元数 $q=[cos(\frac {\theta} {2}), sin(\frac {\theta} {2})u]$, $q$ 与 $-q = [-cos(\frac {\theta} {2}), -sin(\frac {\theta} {2})u]$ 表示同一个旋转。如果 $q$ 表示沿着 $\sf u$ 轴旋转 $\theta$ 角度，那么 $-q$ 表示沿着 $\sf -u$ 轴方向旋转 $2\pi - \theta$
 
 $$
 \begin{aligned}
@@ -320,19 +322,19 @@ $$
 
 ##### 四元数指数形式
 
-如果$\sf u$是一个单位向量，那么对于单位四元数$u=[0, \sf u]$ 有
+如果 $\sf u$ 是一个单位向量，那么对于单位四元数 $u=[0, \sf {u}]$ 有
 
-$$e^{u\theta} = cos(\theta) + usin(\theta) = cos(\theta) + \sf u\it sin(\theta)$$
+$$e^{u\theta} = cos(\theta) + usin(\theta) = cos(\theta) + \sf {u} sin(\theta)$$
 
-也就是说 $q=[cos(\theta), \sf u\it sin(\theta)]$ 可以用指数$e^{u\theta}$表示
+也就是说 $q=[cos(\theta), \sf {u} sin(\theta)]$ 可以用指数$e^{u\theta}$表示
 
 四元数幂运算
 
-$$ (e^{u\theta})^t = e^{u(t\theta)} = cos(t\theta) + \sf u \it sin(t\theta)$$
+$$ (e^{u\theta})^t = e^{u(t\theta)} = cos(t\theta) + \sf {u} sin(t\theta)$$
 
 #### 四元数插值
 
-设有两个旋转变换$q_0=[cos(\theta_0), sin(\theta_0)\sf u_0]$，$q_1=[cos(\theta_1), sin(\theta_1)\sf u_1]$
+设有两个旋转变换 $q_0=[cos(\theta_0), sin(\theta_0)\sf {u_0}]$，$q_1=[cos(\theta_1), sin(\theta_1)\sf u_1]$
 
 我们现在需要生成到这两个变换的中间位置，那么这个中间位置也是一个旋转变换，也就是说先进行$q_0$变换，在进行 $\Delta q$变换，最后得到的结果等于 $q_1$ 变换
 
@@ -349,14 +351,14 @@ $$
 $$
 \begin{aligned}
 \Delta q &= q_1q^{*}_0 \\
-&= [cos(\theta_1), sin(\theta_1)\sf u_1][cos(\theta_0), -sin(\theta_0)\sf u_0] \\
-&= [cos(\theta_1)cos(\theta_0)+sin(\theta_1)sin(\theta_0)\sf u_1 \cdot \sf u_0, ...] \\
+&= [cos(\theta_1), sin(\theta_1)\sf {u_1}][cos(\theta_0), -sin(\theta_0)\sf {u_0}] \\
+&= [cos(\theta_1)cos(\theta_0)+sin(\theta_1)sin(\theta_0)\sf {u_1} \cdot \sf {u_0}, ...] \\
 \end{aligned}
 $$
 
-可以看到实数部分正好是 $q_0 \cdot q_1$，由于$q_0$与$q_1$都是单位四元数，故 $q_0 \cdot q_1$ 表示4维空间中 $q_0$向量与$q_1$向量夹角的余弦值，设夹角为 $\theta$，那么 $q_0 \cdot q_1 = cos(\theta)$
+可以看到实数部分正好是 $q_0 \cdot q_1$，由于 $q_0$ 与 $q_1$ 都是单位四元数，故 $q_0 \cdot q_1$ 表示4维空间中 $q_0$ 向量与 $q_1$ 向量夹角的余弦值，设夹角为 $\theta$，那么 $q_0 \cdot q_1 = cos(\theta)$
 
-我们知道 $\Delta q$，表示一个旋转，如果它代表的旋转角度是$2\phi$，那么 $\Delta q$ 的实数部分 $\Delta q = [cos(\theta),...]$，所以
+我们知道 $\Delta q$，表示一个旋转，如果它代表的旋转角度是 $2\phi$，那么 $\Delta q$ 的实数部分 $\Delta q = [cos(\theta),...]$，所以
 
 $$
 \begin{aligned}
@@ -450,7 +452,6 @@ $$ q_t = Slerp(q_0, q_1, t) = \frac {sin(t\theta)} {sin(\theta)} q_0 + \frac {si
 [quaternion](https://krasjet.github.io/quaternion/quaternion.pdf)
 
 ## Order Independent Transparency 顺序无关透明度
----
 ### Depth Peeling 深度剥离
 
 出自 NVIDIA，其核心
@@ -462,7 +463,6 @@ $$ q_t = Slerp(q_0, q_1, t) = \frac {sin(t\theta)} {sin(\theta)} q_0 + \frac {si
 ### Per-Pixel Linked Lists
 
 ## gamma correct 伽马校正
----
 ### 什么是Linear、Gamma、sRGB和伽马校正？
 
 而历史上最早的显示器(阴极射线管)显示图像的时候，电压增加一倍，亮度并不跟着增加一倍。即输出亮度和电压并不是成线性关系的，而是呈亮度增加量等于电压增加量的2.2次幂的非线性关系：
