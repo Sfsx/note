@@ -217,7 +217,7 @@ B-splines
 
 ### Whitted style ray tracing
 
-因为Blinn-Phong这种局部模型无法处理全局效果！即 Blinn-Phong 模型仅仅考虑的直接光源，而实际空间中充斥着各种漫反射而产生的间接光源
+因为Blinn-Phong这种局部模型无法处理全局效果！即 Blinn-Phong 模型仅仅考虑的直接光源，对阴影以及空间中光线的多次弹射处理不好，而实际空间中充斥着各种漫反射而产生的间接光源
 
 特点：
 

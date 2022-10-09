@@ -141,7 +141,7 @@ $$
 
 ![](../image/plural-rorate.png)
 
-虚数 Q(x, y) 旋转至 T(x', y')，旋转角度为 $\theta$， 由于 Q, T 长度相同仅仅方向不同，可以用极坐标表示 Q($rcos\alpha$, $rsin\alpha$), T($rcos(\alpha + \theta)$, $rsin(\alpha + \theta)$)
+虚数 Q(x, y) 旋转至 T(x', y')，旋转角度为 $\theta$， 由于 Q, T 长度相同仅仅方向不同，可以用极坐标表示 Q( $rcos\alpha$, $rsin\alpha$), T( $rcos(\alpha + \theta)$, $rsin(\alpha + \theta)$)
 
 展开代入得
 
@@ -282,8 +282,8 @@ $$
 在进一步简化之前我们需要几个引理
 
 1. $q=[cos(\theta), sin(\theta)u]$ 而且 $\sf u$ 为单位向量，那么 $q^2 = qq = [cos(2\theta), sin(2\theta)u]$
-2. 假设 $v_{||}=[0, \sf {v_{||}}]$ 是一个纯四元数，而 $q = [\alpha, \beta \sf {u}]$，其中 $\sf u$ 是一个单位向量，$ \alpha, \beta \in \mathbb R $，且 $\sf v_{||}$ 平行于 $\sf u$，那么 $v_{||} q = q v_{||}$
-3. 假设 $v_\bot=[0, \sf {v_\bot}]$ 是一个纯四元数，而 $q = [\alpha, \beta \sf {u}]$，其中 $\sf u$ 是一个单位向量，$ \alpha, \beta \in \mathbb R $，且 $\sf v_\bot$ 垂直于 $\sf u$，那么 $qv_\bot = v_\bot q^*$
+2. 假设 $v_{||}=[0, \sf {v_{||}}]$ 是一个纯四元数，而 $q = [\alpha, \beta {\sf {u}}]$，其中 $\sf u$ 是一个单位向量，$ \alpha , \beta \in {\mathbb R} $，且 $\sf {v_{||}}$ 平行于 $\sf u$，那么 $v_{||} q = q v_{||}$
+3. 假设 $v_\bot=[0, \sf {v_\bot}]$ 是一个纯四元数，而 $q = [\alpha, \beta {\sf {u}}]$，其中 $\sf u$ 是一个单位向量，$ \alpha , \beta \in {\mathbb R} $，且 $\sf {v_\bot}$ 垂直于 $\sf u$，那么 $qv_\bot = v_\bot q^*$
 
 继续简化
 
@@ -334,9 +334,9 @@ $$ (e^{u\theta})^t = e^{u(t\theta)} = cos(t\theta) + \sf {u} sin(t\theta)$$
 
 #### 四元数插值
 
-设有两个旋转变换 $q_0=[cos(\theta_0), sin(\theta_0)\sf {u_0}]$，$q_1=[cos(\theta_1), sin(\theta_1)\sf u_1]$
+设有两个旋转变换 $q_0=[cos(\theta_0), sin(\theta_0){\sf {u_0}}]$，$q_1=[cos(\theta_1), sin(\theta_1){\sf {u_1}}]$
 
-我们现在需要生成到这两个变换的中间位置，那么这个中间位置也是一个旋转变换，也就是说先进行$q_0$变换，在进行 $\Delta q$变换，最后得到的结果等于 $q_1$ 变换
+我们现在需要生成到这两个变换的中间位置，那么这个中间位置也是一个旋转变换，也就是说先进行 $q_0$ 变换，在进行 $\Delta q$变换，最后得到的结果等于 $q_1$ 变换
 
 $$
 \begin{aligned}
@@ -367,7 +367,7 @@ cos(\phi) &= cos(\theta)
 \end{aligned}
 $$
 
-又因为 $\phi$ 与 $\theta$ 都是夹角，$\phi, \theta \in [0, \pi]$ 所以
+又因为 $\phi$ 与 $\theta$ 都是夹角，$\phi , \theta \in [0, \pi]$ 所以
 
 $$\phi = \theta$$
 
@@ -556,3 +556,11 @@ $$ F_{Schlick}(h, v, F_0) = F_0 + (1 - F_0)(1 - (h \cdot v))^5$$
 ### 参考资料
 
 [菲涅耳方程](https://zh.m.wikipedia.org/zh-hans/%E8%8F%B2%E6%B6%85%E8%80%B3%E6%96%B9%E7%A8%8B)
+
+## 图像信号处理
+
+[JPEG压缩方法](https://www.zhihu.com/zvideo/1510204586644664321?playTime=594.2)
+
+## 傅立叶变换
+
+[傅立叶变换](http://bgrawi.com/Fourier-Visualizations/)
