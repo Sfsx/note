@@ -564,3 +564,63 @@ $$ F_{Schlick}(h, v, F_0) = F_0 + (1 - F_0)(1 - (h \cdot v))^5$$
 ## 傅立叶变换
 
 [傅立叶变换](http://bgrawi.com/Fourier-Visualizations/)
+
+## Lecture4 Real-time shadow 2
+
+step 1 Block search 获得遮挡物的平均深度，就可以估算出 step 3 PCF 的 filtering 的区域大小。
+
+### Variance Soft Shadow Mapping
+
+在 Step 3 中的加权平均运算，可以看作求一场考试中自己分数的排名
+
+这个问题可以近似看作是在一个正太分布中查询大于某个分数的概率
+
+为了求解这个问题，我们需要知道这个正太分布的均值和方差
+
+#### Mean 均值
+
++ MIPMAP
++ Summed Area Tables(SAT)
+  + 二维前缀和
+
+#### Variance 方差
+
+$${\rm Var}(X) = E(X^{2})-E^{2}(X)$$
+
+在渲染深度纹理时同时积算深度的平方并记录在纹理上某一个rgba其中一个分量上，对这个纹理做 MIPMAP 就能拿到 $E(X^{2})$ 与 $E^{2}(X)$ 的值
+
+CDF 没有解析解，但有数值解，通过查表可得，但这个方法过于麻烦
+
+切比雪夫不等式
+
+$$P(x > t) \leq \frac{\sigma^{2}}{\sigma^{2}+(t - \mu)^{2}}$$
+
+$\sigma$ 为 variance
+
+$\mu$ 为 mean
+
+这里解决了第三步，但是如果光源出现移动，或者场景移动都需要重新计算
+
+Step 1 Block Seaqrch
+
+$$ \frac{N_{unocc}}{N} z_{unocc} + \frac{N_{occ}}{N}z_{occ} = z_{Avg}$$
+
+$z_{Avg}$ 为整体深度均值
+
+$\frac{N_{unocc}}{N} = P(x > t)$ 通过切比雪夫不等式近似
+
+$\frac{N_{occ}}{N} = 1 - \frac{N_{unocc}}{N}$
+
+$z_{unocc}$ 假色为 shading point 的深度
+
+#### Light leaking
+
+当遮挡物分布并不是一个正太分布，而是某种离散分布时会导致 artifact
+
+### Moment Shadow mapping(矩阴影映射)
+
+为了解决 vsm 深度分布描述不准确的问题
+
+在 vsm 我们使用 $depth$ 和 $depth^2$，来描述深度分布，但仅有这两项并不能很好的还原深度分布
+
+在 msm 中将增加 $depth^3, depth^4,...$ 来描述深度分布，使深度分布函数更贴合实际。这里可以理解为将深度函数用级数展开，级数项越多，拟合程度越高。
