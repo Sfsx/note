@@ -624,3 +624,23 @@ $z_{unocc}$ 假色为 shading point 的深度
 在 vsm 我们使用 $depth$ 和 $depth^2$，来描述深度分布，但仅有这两项并不能很好的还原深度分布
 
 在 msm 中将增加 $depth^3, depth^4,...$ 来描述深度分布，使深度分布函数更贴合实际。这里可以理解为将深度函数用级数展开，级数项越多，拟合程度越高。
+
+## Lecture5 Distance Field Soft Shadow
+
+### Signed distance function 有向距离场
+
+Optimal Transport
+
+#### Usage 1
+
+Ray matching
+
+给定一个光源位置，以及光线方向，通过查询 SDF 得到最小安全距离，向关系方向移动最小距离，重新查询 SDF 得到当前位置的最小安全距离。重复步骤得到光线的交点
+
+#### Usage 2
+
+Use SDF to determine the percentage of occlusion
+
+和 usage 1 方法查询点 $p$，查询过程中以最小半径 ${\rm SDF}(p)$ 做圆，过起始点与圆做切线，起始点 $o$ 与圆心距离为 $p - o$ 那么夹角 $\theta = arccos(\frac{{\rm SDF}(p)}{p-o})$ 对几个点依次计算，最后比较得到最小夹角
+
+反三角函数
