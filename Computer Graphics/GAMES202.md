@@ -1,5 +1,36 @@
 # GAMES202
+<!-- TOC -->
 
+- [GAMES202](#games202)
+  - [Lecture2 Recap of CG Basics](#lecture2-recap-of-cg-basics)
+    - [OpenGL](#opengl)
+  - [Lecture3 Real-time shadows](#lecture3-real-time-shadows)
+    - [Shadow Mapping](#shadow-mapping)
+    - [detached shadow](#detached-shadow)
+    - [Inequalities in Calculus](#inequalities-in-calculus)
+    - [Approximation in RTR](#approximation-in-rtr)
+    - [Percentage-closer Filtering](#percentage-closer-filtering)
+    - [Percentage-closer soft shadows](#percentage-closer-soft-shadows)
+  - [Lecture4 Real-Time Shadows 2](#lecture4-real-time-shadows-2)
+    - [PCSS](#pcss)
+    - [Variance Soft Shadow Mapping](#variance-soft-shadow-mapping)
+      - [Mean 均值](#mean-%E5%9D%87%E5%80%BC)
+      - [Variance 方差](#variance-%E6%96%B9%E5%B7%AE)
+      - [Light leaking](#light-leaking)
+    - [Moment Shadow mapping矩阴影映射](#moment-shadow-mapping%E7%9F%A9%E9%98%B4%E5%BD%B1%E6%98%A0%E5%B0%84)
+  - [Lecture5 Distance Field Soft Shadow](#lecture5-distance-field-soft-shadow)
+    - [Signed distance function 有向距离场](#signed-distance-function-%E6%9C%89%E5%90%91%E8%B7%9D%E7%A6%BB%E5%9C%BA)
+      - [Usage 1](#usage-1)
+      - [Usage 2](#usage-2)
+    - [Shading from Environment Lighting](#shading-from-environment-lighting)
+    - [Split sum approximation](#split-sum-approximation)
+  - [Lecture6 Real-time Environment Mapping](#lecture6-real-time-environment-mapping)
+    - [Shadow from Environment Lighting](#shadow-from-environment-lighting)
+    - [Spherical Harmonics](#spherical-harmonics)
+    - [Recall: Prefiltering](#recall-prefiltering)
+    - [Precomputed Radiance Transfer](#precomputed-radiance-transfer)
+
+<!-- /TOC -->
 ## Lecture2 Recap of CG Basics
 
 ### OpenGL
@@ -176,9 +207,40 @@ Ray matching
 
 Use SDF to determine the percentage of occlusion
 
-和 usage 1 方法查询点 $p$，查询过程中以最小半径 ${\rm SDF}(p)$ 做圆，过起始点与圆做切线，起始点 $o$ 与圆心距离为 $p - o$ 那么夹角 $\theta = arccos(\frac{{\rm SDF}(p)}{p-o})$ 对几个点依次计算，最后比较得到最小夹角
+和 usage 1 方法查询点 $p$，查询过程中以最小半径 ${\rm SDF}(p)$ 做圆，过起始点与圆做切线，起始点 $o$ 与圆心距离为 $|p - o|$ 那么夹角 $\theta = arccos(\frac{{\rm SDF}(p)}{p-o})$ 圆与向量 $\overrightarrow{op}$ 的交点为下一个迭代点 $p_2$，对几个点依次计算，最后比较得到最小夹角
 
-反三角函数
+反三角函数运算过于**巨大**，用斜边比领边的比值近似这个角度
+
+### Shading from Environment Lighting
+
++ Monte Carlo integration
+
+    too slow
+
++ BRDF approximation
+  
+    ![BRDF-approximation](../image/BRDF-approximation.png)
+
+### Split sum approximation
+
++ Prefiltering of the environment lighting
+
+    这里对上图黄色方框里的项做一次预计算，生成纹理
+
++ pre caculate LUT texture
+
+    将上图右侧积分变形乘以 F (菲涅尔项) 再除以 F，这里使用 Fresnel-Schlick 近似
+
+    $$ F_{Schlick}(h,v,F_{0}) = F_{0} + (1 - F_{0})(1 - (h \cdot v)^5)$$
+
+    $$\int_{\Omega^{+}}^{} f_{r}(p,\omega_{i},\omega_{o}) cos\theta_i {\rm {d}} \omega_i \approx F_0 \int_{\Omega^{+}}^{} \frac {f_r}{F} (1-(1-cos\theta_i)^5)cos\theta_i {\rm {d}} \omega_i +
+    \int_{\Omega^{+}}^{} \frac {f_r}{F} (1-cos\theta_i)^{5} cos\theta_{i} {\rm {d}} \omega_i$$
+
+    $F_0$ 提取出来后，内部就剩 $\theta$ 与 Roughness，故积分自变量为  $\theta$ 与 Roughness，积分值为一个颜色，可以生成一张纹理
+
+    <img src="../image/special-approximation.png" width="300">
+
+    避免了采样这个过程
 
 ## Lecture6 Real-time Environment Mapping
 
