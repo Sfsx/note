@@ -14,12 +14,12 @@
   - [Lecture4 Real-Time Shadows 2](#lecture4-real-time-shadows-2)
     - [PCSS](#pcss)
     - [Variance Soft Shadow Mapping](#variance-soft-shadow-mapping)
-      - [Mean 均值](#mean-%E5%9D%87%E5%80%BC)
-      - [Variance 方差](#variance-%E6%96%B9%E5%B7%AE)
+      - [Mean 均值](#mean-均值)
+      - [Variance 方差](#variance-方差)
       - [Light leaking](#light-leaking)
-    - [Moment Shadow mapping矩阴影映射](#moment-shadow-mapping%E7%9F%A9%E9%98%B4%E5%BD%B1%E6%98%A0%E5%B0%84)
+    - [Moment Shadow mapping(矩阴影映射)](#moment-shadow-mapping矩阴影映射)
   - [Lecture5 Distance Field Soft Shadow](#lecture5-distance-field-soft-shadow)
-    - [Signed distance function 有向距离场](#signed-distance-function-%E6%9C%89%E5%90%91%E8%B7%9D%E7%A6%BB%E5%9C%BA)
+    - [Signed distance function 有向距离场](#signed-distance-function-有向距离场)
       - [Usage 1](#usage-1)
       - [Usage 2](#usage-2)
     - [Shading from Environment Lighting](#shading-from-environment-lighting)
@@ -28,7 +28,8 @@
     - [Shadow from Environment Lighting](#shadow-from-environment-lighting)
     - [Spherical Harmonics](#spherical-harmonics)
     - [Recall: Prefiltering](#recall-prefiltering)
-    - [Precomputed Radiance Transfer](#precomputed-radiance-transfer)
+    - [Precomputed Radiance Transfer(PRT)](#precomputed-radiance-transferprt)
+      - [Diffuse Case](#diffuse-case)
 
 <!-- /TOC -->
 ## Lecture2 Recap of CG Basics
@@ -258,13 +259,23 @@ Use SDF to determine the percentage of occlusion
 
 由于基函数之间，两两点乘结果为0，可以理解为两两基函数正交。类比三维空间中，向量坐标三个分量的值是该向量在三维空间中两两正交的坐标轴上投影的长度。那么这种拆分可以看作将函数投影到两两正交的基函数上
 
+![](../image/spherical-harmonics.png)
+
+任意一个球面函数$f(\omega)$，他的每一个基函数 $B_i$ 前面的系数为
+
+$$c_i= \int_{\Omega}^{} f(\omega)B_i(\omega) {\rm d}\omega$$
+
+这里系数其实就是在基函数上投影的值，所以这个计算可以转化成：空间中某一个向量在基向量上的投影，也就是向量点积
+
 ### Recall: Prefiltering
 
 计算场景中的某个点在 diffuse 下的 shading
 
-可以利用环境光贴图的 SH 下的前三项（低频信号），由于只取前三项，去掉了高频信号，原来的环境光贴图会产生模糊的效果，这种模糊刚好就是 diffuse 下需要的，只要对环境贴图做 prefilter 之后实际渲染只要直接查询这张处理过图像上对应点的颜色就能直接得到结果
+可以利用环境光贴图的 SH 下的前三项（低频信号），由于只取前三项来近似光照。这个方法去掉了高频信号，原来的环境光贴图会产生模糊的效果，这种模糊刚好就是 diffuse 下需要的，只要对环境贴图做 prefilter 之后实际渲染只要直接查询这张处理过图像上对应点的颜色就能直接得到结果
 
-### Precomputed Radiance Transfer
+### Precomputed Radiance Transfer(PRT)
+
++ Handles shadows and global illumination
 
 $$
 L(o)= \int_{\Omega}^{} L(i)V(i)\rho(i, o)max(0, n \cdot i){\rm d}i
@@ -272,8 +283,31 @@ $$
 
 $L(i)$ 表示 light
 
-$V(i)\rho(i, o)max(0, n \cdot i)$ 表示 light transport
+$V(i)$ 表示 visibility
 
-预计算
+$\rho(i, o)max(0, n \cdot i)$ 表示 BRDF，入射方向，放射方向，这里两个空间方向都用 $\theta$ $\phi$ 表示，故 BRDF 是 4 维函数
 
-$L(i) = $
++ Approximate light using basis functions
+
+    $L(i) \approx \sum l_iB_i(\omega)$
+
++ Precomputation stage
+
+    积分剩余的部分对于一个 shading point 其实是不变的，就可以预计算。这种方式要求场景中的物体是静止的
+
+
+#### Diffuse Case
+
+$$
+\begin{aligned}
+L(o) =& \rho \int_{\Omega}^{} L(i)V(i)max(0, n \cdot i){\rm d}i \\
+    \approx& \rho \sum l_i \int B_i(i)V(i)max(0, n \cdot i){\rm d}i \\
+    \approx& \rho \sum l_i T_i
+\end{aligned}
+$$
+
+因为 $V(i)max(0, n \cdot i)$ 为一个球面函数，球面函数与基函数的点积，就是该球面函数在谋个基函数上投影的系数 $T_i$
+
+由于 $V(i)max(0, n \cdot i)$ 被预计算，故场景中物体必须是静止的，否则需要重新计算
+
+由于 $L(i)$ 被预计算，光源必须固定的
