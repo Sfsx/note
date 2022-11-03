@@ -30,6 +30,18 @@
     - [Recall: Prefiltering](#recall-prefiltering)
     - [Precomputed Radiance Transfer(PRT)](#precomputed-radiance-transferprt)
       - [Diffuse Case](#diffuse-case)
+  - [Lecture7 Real-time Global illumination(in 3D)](#lecture7-real-time-global-illuminationin-3d)
+    - [PRT](#prt)
+      - [Glossy Case](#glossy-case)
+      - [Precomp of light transport](#precomp-of-light-transport)
+      - [limitation](#limitation)
+    - [Wavelet](#wavelet)
+    - [Real-Time Global illumination (in 3D)](#real-time-global-illumination-in-3d)
+    - [Reflective Shadow Maps(RSM)](#reflective-shadow-mapsrsm)
+      - [$L_i$ 计算](#l_i-计算)
+      - [visibility 计算](#visibility-计算)
+      - [简化计算](#简化计算)
+      - [总结](#总结)
 
 <!-- /TOC -->
 ## Lecture2 Recap of CG Basics
@@ -267,6 +279,9 @@ $$c_i= \int_{\Omega}^{} f(\omega)B_i(\omega) {\rm d}\omega$$
 
 这里系数其实就是在基函数上投影的值，所以这个计算可以转化成：空间中某一个向量在基向量上的投影，也就是向量点积
 
++ sh 对于高频信息的还原比较差，需要非常多的项才能还原出高频部分
++ 支持旋转，被投影函数旋转后，能快速得倒新的基函数系数
+
 ### Recall: Prefiltering
 
 计算场景中的某个点在 diffuse 下的 shading
@@ -293,7 +308,7 @@ $\rho(i, o)max(0, n \cdot i)$ 表示 BRDF，入射方向，放射方向，这里
 
 + Precomputation stage
 
-    积分剩余的部分对于一个 shading point 其实是不变的，就可以预计算。这种方式要求场景中的物体是静止的
+    积分剩余的部分对于一个 shading point 其实是不变的，就可以预计算。这种方式要求场景中的**物体是静止**的，且相机**视角也是静止**的
 
 
 #### Diffuse Case
@@ -306,8 +321,110 @@ L(o) =& \rho \int_{\Omega}^{} L(i)V(i)max(0, n \cdot i){\rm d}i \\
 \end{aligned}
 $$
 
-因为 $V(i)max(0, n \cdot i)$ 为一个球面函数，球面函数与基函数的点积，就是该球面函数在谋个基函数上投影的系数 $T_i$
+由于 $\rho$ BRDF 是一个常值，可以直接提取到积分外部
+
+由于 $V(i)max(0, n \cdot i)$ 为一个球面函数，球面函数与基函数的点积，就是该球面函数在谋个基函数上投影的系数 $T_i$
 
 由于 $V(i)max(0, n \cdot i)$ 被预计算，故场景中物体必须是静止的，否则需要重新计算
 
 由于 $L(i)$ 被预计算，光源必须固定的
+
+## Lecture7 Real-time Global illumination(in 3D)
+
+### PRT
+
+#### Glossy Case
+
+$$
+\begin{aligned}
+L(o) =& \int_{\Omega}^{} L(i)V(i)\rho(i, o)max(0, n \cdot i){\rm d}i \\
+ \approx& \sum l_iT_i(o) \\
+ \approx& \sum (\sum l_it_{ij}(o))B_j(o)
+\end{aligned}
+$$
+
+将 light transport 投影到球谐函数上 $T_i(o) \approx \sum t_{ij}B_j(o)$
+
+这里 $\sum t_{ij}$ 这里可以看作是一个矩阵叫做 transport matrix，描述光线从 $i$ 方向道 $o$ 方向的一个转换 
+
+代价：
+
++ 任何一个顶点都要存一个二维矩阵 transport matrix，假设是 5 阶 SH basis 函数(5阶SH 有 $5^2$ 个基函数)，那就是 25 * 25 = 625 个数
++ 矩阵乘法也会耗费更多的性能
+
+#### Precomp of light transport
+
+$$
+\text{light transport} \qquad T_i = \int_{\Omega} B_i(i)V(i)max(0, n \cdot i ){\rm d}i
+$$
+
+这里 light transport 的预计算就可以把基函数当作光线，代入渲染方程，得到结果
+
+#### limitation
+
++ Dynamic lighting, but static scene/material
++ Big precomputation data
++ Low-frequency
+### Wavelet
+
++ 二维基函数，可以对全频率信息进行还原
++ 但不支持快速旋转，这意味着光线需要固定
+
+小波变换类似的 离散余弦变换 是 jpeg 的压缩变换
+
+[jpeg 压缩原理](https://www.zhihu.com/zvideo/1510204586644664321)
+
+每次投影，将高频信息保留
+
+### Real-Time Global illumination (in 3D) 
+
+In RTR, people seek simple and fast solutions to one bounce indirect illumation
+
+任意一点的颜色 = 直接光照 + 被直接光照照亮的地方作为光源，对该点进行二次光照
+
++ 通过 shadow map 查询，那些区域是被直接照亮
++ 这些小的区域又是如何对 p 点贡献
+
+### Reflective Shadow Maps(RSM)
+
+$$
+\begin{aligned}
+L_o(p, \omega_o) &= \int_{\Omega_{patch}} L_i(p,\omega_i)V(p, \omega)f_r(p, \omega_i, \omega_o)cos\theta_i{\rm d}\omega_i \\
+&= \int_{A_{patch}} L_i(q \to p) V(p, \omega_i) f_r(p, q \to p, \omega_o)\frac{cos\theta_p cos\theta_q}{||q-o||^2} {\rm d}A
+\end{aligned}
+$$
+
+#### $L_i$ 计算
+
+对于 p 点来说 $L_i(q \to p)$
+
++ $f_r = \rho/\pi$ p 点的BRDF
++ $L_i = f_r \cdot \frac{\Phi}{dA}$ 根据 BRDF 的定义，BRDF 等于 出射的 Radiance / 入射的 Irradiance，这里 $L_i$ 就是 q 点的出射， $\Phi$ 就是 q 点的入射，也就是光源的直接照射
+
+#### visibility 计算
+
+$V(p, \omega_i)$ 比较复杂，**直接省略，大胆近似**
+
+#### 简化计算
+
+正常来说，要计算对于 p 点所有贡献的 q ,即在 RSM 中所有像素点
+
+如何查找 shadaing point 附近的 area 对他
+
+shadaing point 反向投影到 shadow map 上，查找其附近区域的点。即深度比较接近的点，那么世界坐标就比较接近
+
+#### 总结
+
+RSM 其实就是一张shadow map 需要存储
+
++ 深度
++ 世界坐标用于计算两点间的距离
++ 法线用于计算 cos 项
++ flux 也就是 $\Phi$ 项
+
+优点
++ 实现简单
+  
+缺点
++ 没有计算 visibility 项
++ 每一个光源都要生成一张 map
