@@ -50,6 +50,6 @@ gRPC 没有使用 json、xml 这种传统的数据交换格式，而是使用 Pr
 
 gRPC 是基于 HTTP2，主要使用 HTTP2 的二进制分帧，既 header 帧与 data 帧
 
+## 参考资料
 
-
-
+[什么是RPC](https://zhuanlan.zhihu.com/p/148139089)
