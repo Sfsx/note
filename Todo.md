@@ -15,3 +15,10 @@ use tessellation shader to deal with heightMap
 1. some heightMap use 16bit single channel to record height information
 2. how to deal with objects of different shapes carrying textures
 3. How to combine pbr shaders
+
+## Interview
+
+DNS cname
+宏微任务
+vue3
+CDN
