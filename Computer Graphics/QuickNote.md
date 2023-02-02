@@ -641,6 +641,28 @@ Ray matching
 
 Use SDF to determine the percentage of occlusion
 
-和 usage 1 方法查询点 $p$，查询过程中以最小半径 ${\rm SDF}(p)$ 做圆，过起始点与圆做切线，起始点 $o$ 与圆心距离为 $p - o$ 那么夹角 $\theta = arccos(\frac{{\rm SDF}(p)}{p-o})$ 对几个点依次计算，最后比较得到最小夹角
+和 usage 1 方法查询点 $p$，查询过程中以最小半径 ${\rm SDF}(p)$ 做圆，过起始点与圆做切线，起始点 $o$ 与圆心距离为 $p - o$ 那么夹角 $\theta = arcsin(\frac{{\rm SDF}(p)}{p-o})$ 对几个点依次计算，最后比较得到最小夹角
 
-反三角函数
+由于反三角函数计算量较大
+
+$$ arcsin(\frac{{\rm SDF}(p)}{p-o}) $$
+
+可以用比值来近似
+
+$$min \left\{ \frac{k \cdot {\rm SDF}(p)}{p-o}, 1.0 \right\} $$
+
+其中 $k$ 用于控制阴影软硬，当 $k$ 非常大时，阴影就比较硬，相反阴影则软
+
+#### Pros and Cons of Disatance Field
+
++ Pros
+  + Fast
+  + High Quality
++ Cons
+  + Need precomputation
+  + Need heavy storage
+  + Artifact
+
+这里没有提及SDF的生成，这块是一个坑
+
+### Environment Lighting
