@@ -4,10 +4,16 @@
 
 1. URL 解析
 2. DNS 查询
-3. TCP 连接
-4. 流浪器发起 HTTP 请求
-5. 服务器响应 HTTP 请求
-6. 浏览器解析渲染页面
+3. TCP 握手
+4. TLS 协商
+5. 浏览器发起 HTTP 请求
+6. 服务器响应 HTTP 请求
+7. TCP 慢启动/ 14KB 规则
+8. 浏览器解析渲染页面
+
+参考资料
+
+[浏览器的工作原理](https://developer.mozilla.org/zh-CN/docs/Web/Performance/How_browsers_work)
 
 ### 关键渲染路径
 

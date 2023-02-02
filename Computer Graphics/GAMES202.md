@@ -42,6 +42,15 @@
       - [visibility 计算](#visibility-计算)
       - [简化计算](#简化计算)
       - [总结](#总结)
+  - [Lecture8 Real-time Global illumination(screen space)](#lecture8-real-time-global-illuminationscreen-space)
+    - [Light Propagation Volumes(LPV)](#light-propagation-volumeslpv)
+      - [Steps 1 Generation](#steps-1-generation)
+      - [Steps 2: injection](#steps-2-injection)
+      - [Steps 3: Propagation](#steps-3-propagation)
+      - [Steps 4: Rendering](#steps-4-rendering)
+    - [Voxel Global Illumination (VXGL)](#voxel-global-illumination-vxgl)
+      - [Pass 1 from light](#pass-1-from-light)
+    - [Screen Space Ambient Occlusion(SSAO)](#screen-space-ambient-occlusionssao)
 
 <!-- /TOC -->
 ## Lecture2 Recap of CG Basics
@@ -387,6 +396,8 @@ In RTR, people seek simple and fast solutions to one bounce indirect illumation
 
 ### Reflective Shadow Maps(RSM)
 
+通过 shadow map 可以知道被直接照亮的点，那么这些被直接照亮的点，就可以被当作间接光源
+
 $$
 \begin{aligned}
 L_o(p, \omega_o) &= \int_{\Omega_{patch}} L_i(p,\omega_i)V(p, \omega)f_r(p, \omega_i, \omega_o)cos\theta_i{\rm d}\omega_i \\
@@ -428,3 +439,64 @@ RSM 其实就是一张shadow map 需要存储
 缺点
 + 没有计算 visibility 项
 + 每一个光源都要生成一张 map
+
+## Lecture8 Real-time Global illumination(screen space)
+
+### Light Propagation Volumes(LPV)
+
+基础物理依赖 radiance 在传播中不会衰减
+
+将空间分割为一个一个小正六面体，以直接照亮的点作为间接光源，计算每个格子的 radinace, 并向正六面体的6个方向传播
+
+#### Steps 1 Generation
+
++ 找到微平面
++ 如同 RSM 寻找次级光源所在的微平面（和 RSM 一样无法处理多光源问题，每个光源，都需要单独生成一张 shadow map）
++ 可能会做一些采样，减少微平面数量
+
+#### Steps 2: injection
+
++ 将场景划分为3D的格子(三维的纹理)
++ 将格子中的所有的次级光源相加，并作为格子的 radiance，再通过 SH (前两阶)去模拟
+
+问题
++ SH 仅用两节差异较大，并且得不到 glossy 的结果
++ 光线照射到格子内物体的 radiance 当作整个格子的 radiance（这里会发生漏光，假设格子里有一面墙，那么这面墙的前后面的 radinace 都是一样的，会一样的亮，但是光线仅能照射到墙的其中一个面，墙是一种非常细的几何，比格子还要小）
+
+#### Steps 3: Propagation
+
++ 由于光线沿直线传播，通过格子某一个面的 radiance 就朝这个方向传播
++ 接收盒子直接将 radiance 相加，并用 SH 去模拟
++ 通过迭代(大致4～5次)，得到最终稳定值(这里为什么会收敛呢)
+
+#### Steps 4: Rendering
+
++ 对每一个 shading point 找到它所在的格子
++ 查询格子的 radiance 属性
++ rendering
+
+### Voxel Global Illumination (VXGL)
+
+two-pass algorithm
+
+与 RSM 不同
+
++ 这里场景中次级光源为不同的格子，RSM 中为纹理中的像素
++ 相机与 shading point 链接，通过材质确定反射范围，计算反射范围覆盖的格子，在计算这些格子对 shading point 的贡献（glossy 材质，反射范围是一个圆锥，但是 diffuse 材质，反射范围是一个半球，这时用 8个圆锥来拟合这个半球，做一个近似）
+
+#### Pass 1 from light
+
+shadow map 的方式计算直接光照照亮的格子
+
+问题
+
++ 格子实时划分，耗时较大
+
+### Screen Space Ambient Occlusion(SSAO)
+
++ 假设四面八方的环境光照是一个常量
++ 每一个 shadaing point 并不能接受所有方向的环境关照，存在一定遮挡关系
++ 物体是 diffuse
+
+$$L_o(p, \omega_o) = \int_{\Omega_{patch}} L_i(p,\omega_i)V(p, \omega)f_r(p, \omega_i, \omega_o)cos\theta_i{\rm d}\omega_i$$
+
