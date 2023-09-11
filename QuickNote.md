@@ -609,3 +609,23 @@ video 标签自动播放，在 ios 低电量情况下，还是会有一个播放
 android Litho
 
 ios ComponentKit
+
+# 移动端适配
+
++ Safari supports HEVC with alpha, and Chrome does not.
+  + ```ffmpeg -r 60 -i input%03d.png -c:v hevc_videotoolbox -allow_sw 1 -alpha_quality 0.75 -vtag hvc1 output.mov```
++ Chrome supports VP9 with alpha, and Safari does not.
+  + webm 可以使用 recordCanvas 
+  + webm 拆帧 png ```ffmpeg -vcodec libvpx -i ./record-canvas.webm -r 60 frames/%04d.png```
+  + 通过上述 ffmpeg 合成视频注意设置帧率 -r 设置，应该设置和录制一样的帧率
+
+```html
+<video width="600" height="100%" autoplay loop muted playsinline>
+  <source 
+    src="https://rotato.netlify.app/alpha-demo/movie-hevc.mov" 
+    type="video/mov">
+  <source 
+    src="https://rotato.netlify.app/alpha-demo/movie-webm.webm" 
+    type="video/webm">
+</video>
+```
