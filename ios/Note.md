@@ -15,3 +15,15 @@ app icons and launch screen
 4. Pruducts/UnityFramework 在文件夹展示，并复制到目标工程
 
 5. ios 不支持自定义事件，不支持自己 new 一个 UIEvent 事件
+
+## ios native
+
+### AVAudioPlayer
+
+AVAPlayer/AVAudioPlayer 对象需要放在类的属性上，否则不会播放
+
+### CoreHaptics
+
+ios 震动系统
+
+设计师可以用 [haptrix](https://www.haptrix.com/) 工具进行编辑，再生成配置文件，最后工程同学导入配置文件
