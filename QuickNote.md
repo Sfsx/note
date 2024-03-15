@@ -629,3 +629,10 @@ ios ComponentKit
     type="video/webm">
 </video>
 ```
+
+# 性能优化
+
+对于滚动，卡顿，可以看一下 chrome dev tool 的 layers
+如果内部图层较多可以考虑优化合成
+-webkit-mask-image
+mask-image
