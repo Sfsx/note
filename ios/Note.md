@@ -27,3 +27,16 @@ AVAPlayer/AVAudioPlayer 对象需要放在类的属性上，否则不会播放
 ios 震动系统
 
 设计师可以用 [haptrix](https://www.haptrix.com/) 工具进行编辑，再生成配置文件，最后工程同学导入配置文件
+
+### ios 推送测试eee
+
+https://icloud.developer.apple.com/dashboard/notifications
+
+
+### ios 生命周期回调
+
+ios 14 后优先使用 scenedelegate
+
+ios 14 前优先使用 appdelegate
+
+兼容情况两者都得添加相关逻辑
